@@ -40,12 +40,15 @@ namespace E7_20_v2._0
             this.DirectoryPath = new System.Windows.Forms.TextBox();
             this.DirectoryButton = new System.Windows.Forms.Button();
             this.AllMeterPanel = new System.Windows.Forms.Panel();
+            this.ReturnButton = new System.Windows.Forms.Button();
+            this.AllMeterSlow = new System.Windows.Forms.Button();
             this.AllMeterSavingPanel = new System.Windows.Forms.Panel();
             this.AllMeterSavingLabel = new System.Windows.Forms.Label();
             this.AllMeterStandardDeviation = new System.Windows.Forms.CheckBox();
             this.AllMeterMaxValue = new System.Windows.Forms.CheckBox();
             this.AllMeterMinValue = new System.Windows.Forms.CheckBox();
             this.AllMeterAverageValue = new System.Windows.Forms.CheckBox();
+            this.AllMeterFast = new System.Windows.Forms.Button();
             this.AllMeterSettings = new System.Windows.Forms.Panel();
             this.AllMeterMeasurementsPanel = new System.Windows.Forms.Panel();
             this.AllMeterMeasurements = new System.Windows.Forms.TextBox();
@@ -69,8 +72,6 @@ namespace E7_20_v2._0
             this.AllMeterL = new System.Windows.Forms.CheckBox();
             this.AllMeterC = new System.Windows.Forms.CheckBox();
             this.TemperatureMeterPanel = new System.Windows.Forms.Panel();
-            this.ReturnButton = new System.Windows.Forms.Button();
-            this.StartButton = new System.Windows.Forms.Button();
             this.StartPanel.SuspendLayout();
             this.AllMeterPanel.SuspendLayout();
             this.AllMeterSavingPanel.SuspendLayout();
@@ -81,6 +82,10 @@ namespace E7_20_v2._0
             this.MaxFPanel.SuspendLayout();
             this.AllMeterModes.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // Port
+            // 
+            this.Port.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.Port_DataReceived);
             // 
             // AllMeterButton
             // 
@@ -163,13 +168,40 @@ namespace E7_20_v2._0
             // AllMeterPanel
             // 
             this.AllMeterPanel.BackColor = System.Drawing.SystemColors.Window;
+            this.AllMeterPanel.Controls.Add(this.ReturnButton);
+            this.AllMeterPanel.Controls.Add(this.AllMeterSlow);
             this.AllMeterPanel.Controls.Add(this.AllMeterSavingPanel);
+            this.AllMeterPanel.Controls.Add(this.AllMeterFast);
             this.AllMeterPanel.Controls.Add(this.AllMeterSettings);
             this.AllMeterPanel.Controls.Add(this.AllMeterModes);
             this.AllMeterPanel.Location = new System.Drawing.Point(50, 75);
             this.AllMeterPanel.Name = "AllMeterPanel";
-            this.AllMeterPanel.Size = new System.Drawing.Size(700, 200);
+            this.AllMeterPanel.Size = new System.Drawing.Size(700, 230);
             this.AllMeterPanel.TabIndex = 3;
+            // 
+            // ReturnButton
+            // 
+            this.ReturnButton.BackColor = System.Drawing.Color.Salmon;
+            this.ReturnButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ReturnButton.Location = new System.Drawing.Point(500, 200);
+            this.ReturnButton.Name = "ReturnButton";
+            this.ReturnButton.Size = new System.Drawing.Size(100, 25);
+            this.ReturnButton.TabIndex = 5;
+            this.ReturnButton.Text = "Return";
+            this.ReturnButton.UseVisualStyleBackColor = false;
+            this.ReturnButton.Click += new System.EventHandler(this.ReturnButton_Click);
+            // 
+            // AllMeterSlow
+            // 
+            this.AllMeterSlow.BackColor = System.Drawing.Color.PaleGreen;
+            this.AllMeterSlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterSlow.Location = new System.Drawing.Point(300, 200);
+            this.AllMeterSlow.Name = "AllMeterSlow";
+            this.AllMeterSlow.Size = new System.Drawing.Size(100, 25);
+            this.AllMeterSlow.TabIndex = 7;
+            this.AllMeterSlow.Text = "Slow";
+            this.AllMeterSlow.UseVisualStyleBackColor = false;
+            this.AllMeterSlow.Click += new System.EventHandler(this.AllMeterSlow_Click);
             // 
             // AllMeterSavingPanel
             // 
@@ -198,6 +230,7 @@ namespace E7_20_v2._0
             // AllMeterStandardDeviation
             // 
             this.AllMeterStandardDeviation.AutoSize = true;
+            this.AllMeterStandardDeviation.Enabled = false;
             this.AllMeterStandardDeviation.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterStandardDeviation.Location = new System.Drawing.Point(25, 120);
             this.AllMeterStandardDeviation.Name = "AllMeterStandardDeviation";
@@ -210,6 +243,7 @@ namespace E7_20_v2._0
             // AllMeterMaxValue
             // 
             this.AllMeterMaxValue.AutoSize = true;
+            this.AllMeterMaxValue.Enabled = false;
             this.AllMeterMaxValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterMaxValue.Location = new System.Drawing.Point(25, 60);
             this.AllMeterMaxValue.Name = "AllMeterMaxValue";
@@ -222,6 +256,7 @@ namespace E7_20_v2._0
             // AllMeterMinValue
             // 
             this.AllMeterMinValue.AutoSize = true;
+            this.AllMeterMinValue.Enabled = false;
             this.AllMeterMinValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterMinValue.Location = new System.Drawing.Point(25, 90);
             this.AllMeterMinValue.Name = "AllMeterMinValue";
@@ -244,7 +279,18 @@ namespace E7_20_v2._0
             this.AllMeterAverageValue.TabIndex = 8;
             this.AllMeterAverageValue.Text = "AverageValue";
             this.AllMeterAverageValue.UseVisualStyleBackColor = true;
-            this.AllMeterAverageValue.CheckedChanged += new System.EventHandler(this.AllMeterAverageValue_CheckedChanged);
+            // 
+            // AllMeterFast
+            // 
+            this.AllMeterFast.BackColor = System.Drawing.Color.PaleGreen;
+            this.AllMeterFast.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterFast.Location = new System.Drawing.Point(100, 200);
+            this.AllMeterFast.Name = "AllMeterFast";
+            this.AllMeterFast.Size = new System.Drawing.Size(100, 25);
+            this.AllMeterFast.TabIndex = 6;
+            this.AllMeterFast.Text = "Fast";
+            this.AllMeterFast.UseVisualStyleBackColor = false;
+            this.AllMeterFast.Click += new System.EventHandler(this.AllMeterFast_Click);
             // 
             // AllMeterSettings
             // 
@@ -501,31 +547,6 @@ namespace E7_20_v2._0
             this.TemperatureMeterPanel.Size = new System.Drawing.Size(720, 100);
             this.TemperatureMeterPanel.TabIndex = 4;
             // 
-            // ReturnButton
-            // 
-            this.ReturnButton.BackColor = System.Drawing.Color.Salmon;
-            this.ReturnButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ReturnButton.Location = new System.Drawing.Point(475, 300);
-            this.ReturnButton.Name = "ReturnButton";
-            this.ReturnButton.Size = new System.Drawing.Size(100, 25);
-            this.ReturnButton.TabIndex = 5;
-            this.ReturnButton.Text = "Return";
-            this.ReturnButton.UseVisualStyleBackColor = false;
-            this.ReturnButton.Visible = false;
-            this.ReturnButton.Click += new System.EventHandler(this.ReturnButton_Click);
-            // 
-            // StartButton
-            // 
-            this.StartButton.BackColor = System.Drawing.Color.PaleGreen;
-            this.StartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.StartButton.Location = new System.Drawing.Point(225, 300);
-            this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(100, 25);
-            this.StartButton.TabIndex = 6;
-            this.StartButton.Text = "Start";
-            this.StartButton.UseVisualStyleBackColor = false;
-            this.StartButton.Visible = false;
-            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -533,8 +554,6 @@ namespace E7_20_v2._0
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.Menu;
             this.ClientSize = new System.Drawing.Size(784, 461);
-            this.Controls.Add(this.StartButton);
-            this.Controls.Add(this.ReturnButton);
             this.Controls.Add(this.TemperatureMeterPanel);
             this.Controls.Add(this.AllMeterPanel);
             this.Controls.Add(this.StartPanel);
@@ -607,7 +626,8 @@ namespace E7_20_v2._0
         private System.Windows.Forms.CheckBox AllMeterAverageValue;
         private System.Windows.Forms.TextBox AllMeterMeasurements;
         private System.Windows.Forms.Button ReturnButton;
-        private System.Windows.Forms.Button StartButton;
+        private System.Windows.Forms.Button AllMeterFast;
+        private System.Windows.Forms.Button AllMeterSlow;
     }
 }
 
