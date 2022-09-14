@@ -11,19 +11,42 @@ namespace E7_20_v2._0
 {
     public partial class App : Form
     {
-        private string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        private readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
-        private int _maxFIndex = 1;
-        private int _minFIndex = 0;
-        private int _currentWidth = 800;
-        private int _currentHeight = 500;
+        private class AllMeter
+        {
+            public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
+            public bool[] Modes { get; private set; }
+            public bool[] Params { get; private set; }
 
+            public int MaxFIndex = 1;
+            public int MinFIndex = 0;
+            public int GetF(int index) => _fArray[index];
+
+            public AllMeter()
+            {
+                Modes = new bool[8];
+                Params = new bool[4] { true, false, false, false };
+            }
+            public void UpdateList(ComboBox box, int start, int end)
+            {
+                box.Items.Clear();
+                for (int i = start; i < end; i++)
+                {
+                    box.Items.Add(_fArray[i].ToString());
+                }
+            }
+        }
         private enum MenuMode
         {
             StartMenu,
             AllMeterMenu,
             TemperatureMeterMenu
         }
+        private string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        private int _currentWidth = 800;
+        private int _currentHeight = 500;
+
+        private AllMeter _allMeter;
+
         public App()
         {
             InitializeComponent();
@@ -55,7 +78,7 @@ namespace E7_20_v2._0
                 case MenuMode.StartMenu:
                     break;
                 case MenuMode.AllMeterMenu:
-                    InitAllMeter();
+                    AllMeterInit();
                     break;
                 case MenuMode.TemperatureMeterMenu:
                     break;
@@ -110,46 +133,87 @@ namespace E7_20_v2._0
         #endregion
 
         #region AllMeterPanel
-        private void InitAllMeter()
+        private void AllMeterInit()
         {
+            if (_allMeter == null)
+                _allMeter = new AllMeter();
             AllMeterMeasurements.Text = AllMeterMeasurementsBar.Value.ToString();
-            NewList(AllMeterMaxFDropBox, _maxFIndex, _fArray.Length - 1);
-            NewList(AllMeterMinFDropBox, 0, _maxFIndex-1);
-            AllMeterMaxFDropBox.Text = _fArray[_maxFIndex].ToString();
-            AllMeterMinFDropBox.Text = _fArray[_minFIndex].ToString();
+            UpdateLists();
         }
-        private void NewList(ComboBox box, int from, int to)
-        {
-            box.Items.Clear();
-            for (int i = from; i <= to; i++)
-            {
-                box.Items.Add(_fArray[i].ToString());
-            }
-        }
-        private void MeasurementsBar_Scroll(object sender, EventArgs e)
+        private void AllMeterMeasurementsBar_Scroll(object sender, EventArgs e)
         {
             AllMeterMeasurements.Text = AllMeterMeasurementsBar.Value.ToString();
         }
-        private void MaxFDropBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void AllMeterMaxFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _maxFIndex = _minFIndex + 1 + AllMeterMaxFDropBox.SelectedIndex;
-            NewList(AllMeterMaxFDropBox, _minFIndex + 1, _fArray.Length - 1);
-            NewList(AllMeterMinFDropBox, 0, _maxFIndex - 1);
-            AllMeterMaxFDropBox.Text = _fArray[_maxFIndex].ToString();
+            _allMeter.MaxFIndex = _allMeter.MinFIndex + 1 + AllMeterMaxFDropBox.SelectedIndex;
+            UpdateLists();
         }
 
-        private void MinFDropBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void AllMeterMinFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _minFIndex = AllMeterMinFDropBox.SelectedIndex;
-            NewList(AllMeterMaxFDropBox, _minFIndex + 1, _fArray.Length - 1);
-            NewList(AllMeterMinFDropBox, 0, _maxFIndex - 1);
-            AllMeterMinFDropBox.Text = _fArray[_minFIndex].ToString();
+            _allMeter.MinFIndex = AllMeterMinFDropBox.SelectedIndex;
+            UpdateLists();
+        }
+        private void UpdateLists()
+        {
+            _allMeter.UpdateList(AllMeterMaxFDropBox, _allMeter.MinFIndex + 1, _allMeter._fArray.Length);
+            _allMeter.UpdateList(AllMeterMinFDropBox, 0, _allMeter.MaxFIndex);
+            AllMeterMaxFDropBox.Text = _allMeter._fArray[_allMeter.MaxFIndex].ToString();
+            AllMeterMinFDropBox.Text = _allMeter._fArray[_allMeter.MinFIndex].ToString();
+        }
+        private void AllMeterC_CheckedChanged(object sender, EventArgs e)
+        {
+            AllMeterD.Enabled = AllMeterC.Checked;
+            if (AllMeterC.Checked == false)
+                AllMeterD.Checked = false;
         }
 
+        private void AllMeterL_CheckedChanged(object sender, EventArgs e)
+        {
+            AllMeterQl.Enabled = AllMeterL.Checked;
+            if (AllMeterL.Checked == false)
+                AllMeterQl.Checked = false;
+        }
+
+        private void AllMeterR_CheckedChanged(object sender, EventArgs e)
+        {
+            AllMeterQr.Enabled = AllMeterR.Checked;
+            if (AllMeterR.Checked == false)
+                AllMeterQr.Checked = false;
+        }
+
+        private void AllMeterZ_CheckedChanged(object sender, EventArgs e)
+        {
+            AllMeterFi.Enabled = AllMeterZ.Checked;
+            if (AllMeterZ.Checked == false)
+                AllMeterFi.Checked = false;
+        }
+
+        private void AllMeterAverageValue_CheckedChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void AllMeterMinValue_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AllMeterMaxValue_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AllMeterStandardDeviation_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
         #endregion
 
         #region TemperatureMeterPanel
         #endregion
+
 
     }
 }
