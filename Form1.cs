@@ -232,6 +232,8 @@ namespace E7_20_v2._0
             AllMeterD.Enabled = AllMeterC.Checked;
             if (AllMeterC.Checked == false)
                 AllMeterD.Checked = false;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
@@ -239,6 +241,8 @@ namespace E7_20_v2._0
             AllMeterQl.Enabled = AllMeterL.Checked;
             if (AllMeterL.Checked == false)
                 AllMeterQl.Checked = false;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
 
         public void AllMeterR_CheckedChanged(object sender, EventArgs e)
@@ -246,6 +250,8 @@ namespace E7_20_v2._0
             AllMeterQr.Enabled = AllMeterR.Checked;
             if (AllMeterR.Checked == false)
                 AllMeterQr.Checked = false;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
 
         public void AllMeterZ_CheckedChanged(object sender, EventArgs e)
@@ -253,6 +259,8 @@ namespace E7_20_v2._0
             AllMeterFi.Enabled = AllMeterZ.Checked;
             if (AllMeterZ.Checked == false)
                 AllMeterFi.Checked = false;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
 
         public void AllMeterMinValue_CheckedChanged(object sender, EventArgs e)

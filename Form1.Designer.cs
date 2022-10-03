@@ -238,6 +238,7 @@ namespace E7_20_v2._0
             this.AllMeterStandardDeviation.TabIndex = 11;
             this.AllMeterStandardDeviation.Text = "StandardDeviation";
             this.AllMeterStandardDeviation.UseVisualStyleBackColor = true;
+            this.AllMeterStandardDeviation.CheckedChanged += new System.EventHandler(this.AllMeterStandardDeviation_CheckedChanged);
             // 
             // AllMeterMaxValue
             // 
