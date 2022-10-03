@@ -9,94 +9,34 @@ using System.Windows.Forms;
 
 namespace E7_20_v2._0
 {
+    public enum SpeedMode
+    {
+        Fast,
+        Slow
+    }
+    public struct Modes
+    {
+        public bool C;
+        public bool L;
+        public bool R;
+        public bool Z;
+        public bool D;
+        public bool Ql;
+        public bool Qr;
+        public bool Fi;
+    }
+    public struct Params
+    {
+        public bool Avg;
+        public bool Min;
+        public bool Max;
+        public bool Div;
+    }
     public partial class App : Form
     {
-        public enum SpeedMode
-        {
-            Fast,
-            Slow
-        }
         public const int PACK_LENGTH = 22;
+        public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
 
-
-        public class Grasper
-        {
-            public int _bufferSize;
-            public Queue<byte[]> _data;
-            public Queue<byte> _pack;
-            public bool _RecivedStartByte;
-            public SpeedMode _speed;
-
-            public Grasper(int size, int amount, SpeedMode speed)
-            {
-                _bufferSize = size;
-                _speed = speed;
-                _data = new Queue<byte[]>(amount);
-                _pack = new Queue<byte>(_bufferSize);
-            }
-
-            public void AddByte(byte newByte)
-            {
-                if (_RecivedStartByte == false)
-                {
-                    if (newByte == 0xAA)
-                    {
-                        _pack.Clear();
-                        _pack.Enqueue(newByte);
-                    }
-                }
-                else
-                {
-                    if (_pack.Count == _bufferSize)
-                    {
-                        _data.Enqueue(_pack.ToArray());
-                        _pack.Clear();
-                    }
-                    _pack.Enqueue(newByte);
-                }
-            }
-        }
-        public class AllMeterGrasper : Grasper
-        {
-            public AllMeterGrasper(int size, int amount, SpeedMode speed) : base(size, amount, speed)
-            {
-
-            }
-        }
-        public class AllMeter
-        {
-            public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
-
-            public bool[] Modes;
-            public bool[] Params;
-
-            public int MaxFIndex = 1;
-            public int MinFIndex = 0;
-            public int GetF(int index) => _fArray[index];
-            public AllMeterGrasper _grasper;
-
-            public AllMeter()
-            {
-                Modes = new bool[8];
-                Params = new bool[4] { true, false, false, false };
-            }
-            public void UpdateList(ComboBox box, int start, int end)
-            {
-                box.Items.Clear();
-                for (int i = start; i < end; i++)
-                {
-                    box.Items.Add(_fArray[i].ToString());
-                }
-            }
-            public void UpdateOutput(int paramIndex, bool newValue)
-            {
-                Params[paramIndex] = newValue;
-            }
-            public void Start(int portSize, int dataAmount, SpeedMode speed = SpeedMode.Fast)
-            {
-                _grasper = new AllMeterGrasper(portSize, dataAmount, speed);
-            }
-        }
         public enum MenuMode
         {
             StartMenu,
@@ -106,8 +46,10 @@ namespace E7_20_v2._0
         public string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         public int _currentWidth = 800;
         public int _currentHeight = 500;
+        private int _maxIndex = 1;
+        private int _minIndex = 1;
 
-        public AllMeter _allMeter;
+        //    public AllMeter _allMeter;
 
         public App()
         {
@@ -178,16 +120,20 @@ namespace E7_20_v2._0
         }
         public bool CheckGeneralInput()
         {
-            //if (Port.IsOpen == false)
-            //{
-            //    MessageBox.Show("Choose the port please");
-            //    return false;
-            //}
-            //if (FileName.Text == "" || FileName.Text == "Write the file name")
-            //{
-            //    MessageBox.Show("Write the file name please");
-            //    return false;
-            //}
+
+            return true; // temporary
+
+
+            if (Port.IsOpen == false)
+            {
+                MessageBox.Show("Choose the port please");
+                return false;
+            }
+            if (FileName.Text == "" || FileName.Text.Contains(" "))
+            {
+                MessageBox.Show("Write the file name please without spaces");
+                return false;
+            }
             return true;
         }
         #endregion
@@ -195,15 +141,11 @@ namespace E7_20_v2._0
         #region AllMeterPanel
         public void AllMeterInit()
         {
-            if (_allMeter == null)
-                _allMeter = new AllMeter();
             AllMeterMeasurements.Text = AllMeterMeasurementsBar.Value.ToString();
-            UpdateLists();
+            UpdateLists(_minIndex,_maxIndex);
         }
         public void AllMeterMeasurementsBar_Scroll(object sender, EventArgs e)
         {
-            if (_allMeter == null)
-                _allMeter = new AllMeter();
             AllMeterMeasurements.Text = AllMeterMeasurementsBar.Value.ToString();
             AllMeterMaxValue.Enabled = AllMeterMeasurementsBar.Value > 1;
             AllMeterMinValue.Enabled = AllMeterMeasurementsBar.Value > 1;
@@ -211,29 +153,33 @@ namespace E7_20_v2._0
         }
         public void AllMeterMaxFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _allMeter.MaxFIndex = _allMeter.MinFIndex + 1 + AllMeterMaxFDropBox.SelectedIndex;
-            UpdateLists();
+            UpdateLists(AllMeterMinFDropBox.SelectedIndex, AllMeterMaxFDropBox.SelectedIndex);
         }
 
         public void AllMeterMinFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _allMeter.MinFIndex = AllMeterMinFDropBox.SelectedIndex;
-            UpdateLists();
+            UpdateLists(AllMeterMinFDropBox.SelectedIndex, AllMeterMaxFDropBox.SelectedIndex);
         }
-        public void UpdateLists()
+        public void UpdateLists(int min, int max)
         {
-            _allMeter.UpdateList(AllMeterMaxFDropBox, _allMeter.MinFIndex + 1, _allMeter._fArray.Length);
-            _allMeter.UpdateList(AllMeterMinFDropBox, 0, _allMeter.MaxFIndex);
-            AllMeterMaxFDropBox.Text = _allMeter._fArray[_allMeter.MaxFIndex].ToString();
-            AllMeterMinFDropBox.Text = _allMeter._fArray[_allMeter.MinFIndex].ToString();
+            AllMeterMinFDropBox.Items.Clear();
+            AllMeterMaxFDropBox.Items.Clear();
+            for (int i = 0; i < max; i++)
+            {
+                AllMeterMinFDropBox.Items.Add(_fArray[i].ToString());
+            }
+            for (int i = min+1; i < _fArray.Length; i++)
+            {
+                AllMeterMaxFDropBox.Items.Add(_fArray[i].ToString());
+            }
         }
         public void AllMeterC_CheckedChanged(object sender, EventArgs e)
         {
             AllMeterD.Enabled = AllMeterC.Checked;
             if (AllMeterC.Checked == false)
                 AllMeterD.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
@@ -241,8 +187,8 @@ namespace E7_20_v2._0
             AllMeterQl.Enabled = AllMeterL.Checked;
             if (AllMeterL.Checked == false)
                 AllMeterQl.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
 
         public void AllMeterR_CheckedChanged(object sender, EventArgs e)
@@ -250,8 +196,8 @@ namespace E7_20_v2._0
             AllMeterQr.Enabled = AllMeterR.Checked;
             if (AllMeterR.Checked == false)
                 AllMeterQr.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
 
         public void AllMeterZ_CheckedChanged(object sender, EventArgs e)
@@ -259,32 +205,55 @@ namespace E7_20_v2._0
             AllMeterFi.Enabled = AllMeterZ.Checked;
             if (AllMeterZ.Checked == false)
                 AllMeterFi.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterD.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
         }
-
         public void AllMeterMinValue_CheckedChanged(object sender, EventArgs e)
         {
-            _allMeter.UpdateOutput(1, AllMeterMinValue.Checked);
+            if ((AllMeterMinValue.Checked | AllMeterMaxValue.Checked | AllMeterStandardDeviation.Checked) == false)
+            {
+                AllMeterAverageValue.Checked = true;
+                AllMeterAverageValue.Enabled = false;
+            }
+            else
+            {
+                AllMeterAverageValue.Enabled = true;
+            }
 
         }
 
         public void AllMeterMaxValue_CheckedChanged(object sender, EventArgs e)
         {
-            _allMeter.UpdateOutput(2, AllMeterMaxValue.Checked);
+            if ((AllMeterMinValue.Checked | AllMeterMaxValue.Checked | AllMeterStandardDeviation.Checked) == false)
+            {
+                AllMeterAverageValue.Checked = true;
+                AllMeterAverageValue.Enabled = false;
+            }
+            else
+            {
+                AllMeterAverageValue.Enabled = true;
+            }
         }
         private void AllMeterStandardDeviation_CheckedChanged(object sender, EventArgs e)
         {
-            _allMeter.UpdateOutput(3, AllMeterStandardDeviation.Checked);
+            if ((AllMeterMinValue.Checked | AllMeterMaxValue.Checked | AllMeterStandardDeviation.Checked) == false)
+            {
+                AllMeterAverageValue.Checked = true;
+                AllMeterAverageValue.Enabled = false;
+            }
+            else
+            {
+                AllMeterAverageValue.Enabled = true;
+            }
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
-            _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value);
+     //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value);
         }
 
         public void AllMeterSlow_Click(object sender, EventArgs e)
         {
-            _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
+     //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
         }
         #endregion
 
@@ -296,5 +265,6 @@ namespace E7_20_v2._0
         {
 
         }
+
     }
 }

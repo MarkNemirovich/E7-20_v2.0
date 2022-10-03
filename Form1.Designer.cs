@@ -542,9 +542,9 @@ namespace E7_20_v2._0
             // TemperatureMeterPanel
             // 
             this.TemperatureMeterPanel.BackColor = System.Drawing.SystemColors.Window;
-            this.TemperatureMeterPanel.Location = new System.Drawing.Point(50, 350);
+            this.TemperatureMeterPanel.Location = new System.Drawing.Point(50, 331);
             this.TemperatureMeterPanel.Name = "TemperatureMeterPanel";
-            this.TemperatureMeterPanel.Size = new System.Drawing.Size(720, 100);
+            this.TemperatureMeterPanel.Size = new System.Drawing.Size(700, 100);
             this.TemperatureMeterPanel.TabIndex = 4;
             // 
             // App
