@@ -9,6 +9,7 @@ namespace E7_20_v2._0
     {
         public AllMeterGrasper(int bufferSize, int measuresAmount, SpeedMode speedMode): base(bufferSize, measuresAmount, speedMode)
         {
+
         }
     }
 }

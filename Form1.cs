@@ -36,6 +36,8 @@ namespace E7_20_v2._0
     {
         public const int PACK_LENGTH = 22;
         public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
+        public delegate void GetByte(byte bit);
+        public event GetByte ProvideByte;
 
         public enum MenuMode
         {
@@ -47,9 +49,8 @@ namespace E7_20_v2._0
         public int _currentWidth = 800;
         public int _currentHeight = 500;
         private int _maxIndex = 1;
-        private int _minIndex = 1;
+        private int _minIndex = 0;
 
-        //    public AllMeter _allMeter;
 
         public App()
         {
@@ -100,7 +101,6 @@ namespace E7_20_v2._0
                 return;
             if (Port.IsOpen)
                 Port.Close();
-            Port.Open();
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
@@ -142,7 +142,8 @@ namespace E7_20_v2._0
         public void AllMeterInit()
         {
             AllMeterMeasurements.Text = AllMeterMeasurementsBar.Value.ToString();
-            UpdateLists(_minIndex,_maxIndex);
+            UpdateLists();
+            StartEnabling();
         }
         public void AllMeterMeasurementsBar_Scroll(object sender, EventArgs e)
         {
@@ -150,36 +151,47 @@ namespace E7_20_v2._0
             AllMeterMaxValue.Enabled = AllMeterMeasurementsBar.Value > 1;
             AllMeterMinValue.Enabled = AllMeterMeasurementsBar.Value > 1;
             AllMeterStandardDeviation.Enabled = AllMeterMeasurementsBar.Value > 1;
+            if (AllMeterMeasurementsBar.Value == 1)
+            {
+                AllMeterAverageValue.Checked = true;
+                AllMeterAverageValue.Enabled = false;
+                AllMeterMinValue.Checked = false;
+                AllMeterMaxValue.Checked = false;
+                AllMeterStandardDeviation.Checked = false;
+            }
         }
         public void AllMeterMaxFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateLists(AllMeterMinFDropBox.SelectedIndex, AllMeterMaxFDropBox.SelectedIndex);
+            _maxIndex = _minIndex + AllMeterMaxFDropBox.SelectedIndex+1;
+            UpdateLists();
         }
 
         public void AllMeterMinFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateLists(AllMeterMinFDropBox.SelectedIndex, AllMeterMaxFDropBox.SelectedIndex);
+            _minIndex = AllMeterMinFDropBox.SelectedIndex;
+            UpdateLists();
         }
-        public void UpdateLists(int min, int max)
+        public void UpdateLists()
         {
             AllMeterMinFDropBox.Items.Clear();
             AllMeterMaxFDropBox.Items.Clear();
-            for (int i = 0; i < max; i++)
+            for (int i = 0; i < _maxIndex; i++)
             {
                 AllMeterMinFDropBox.Items.Add(_fArray[i].ToString());
             }
-            for (int i = min+1; i < _fArray.Length; i++)
+            for (int i = _minIndex+1; i < _fArray.Length; i++)
             {
                 AllMeterMaxFDropBox.Items.Add(_fArray[i].ToString());
             }
+            AllMeterMinFDropBox.SelectedIndex = _minIndex;
+            AllMeterMaxFDropBox.SelectedIndex = _maxIndex-_minIndex-1;
         }
         public void AllMeterC_CheckedChanged(object sender, EventArgs e)
         {
             AllMeterD.Enabled = AllMeterC.Checked;
             if (AllMeterC.Checked == false)
                 AllMeterD.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            StartEnabling();
         }
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
@@ -187,8 +199,7 @@ namespace E7_20_v2._0
             AllMeterQl.Enabled = AllMeterL.Checked;
             if (AllMeterL.Checked == false)
                 AllMeterQl.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            StartEnabling();
         }
 
         public void AllMeterR_CheckedChanged(object sender, EventArgs e)
@@ -196,8 +207,7 @@ namespace E7_20_v2._0
             AllMeterQr.Enabled = AllMeterR.Checked;
             if (AllMeterR.Checked == false)
                 AllMeterQr.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            StartEnabling();
         }
 
         public void AllMeterZ_CheckedChanged(object sender, EventArgs e)
@@ -205,8 +215,12 @@ namespace E7_20_v2._0
             AllMeterFi.Enabled = AllMeterZ.Checked;
             if (AllMeterZ.Checked == false)
                 AllMeterFi.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
-            AllMeterSlow.Enabled = AllMeterC.Enabled | AllMeterL.Enabled | AllMeterR.Enabled | AllMeterZ.Enabled;
+            StartEnabling();
+        }
+        private void StartEnabling()
+        {
+            AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
+            AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
         }
         public void AllMeterMinValue_CheckedChanged(object sender, EventArgs e)
         {
@@ -263,7 +277,7 @@ namespace E7_20_v2._0
 
         public void Port_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-
+            
         }
 
     }
