@@ -232,8 +232,6 @@ namespace E7_20_v2._0
             AllMeterD.Enabled = AllMeterC.Checked;
             if (AllMeterC.Checked == false)
                 AllMeterD.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
-            AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
         }
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
@@ -241,8 +239,6 @@ namespace E7_20_v2._0
             AllMeterQl.Enabled = AllMeterL.Checked;
             if (AllMeterL.Checked == false)
                 AllMeterQl.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
-            AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
         }
 
         public void AllMeterR_CheckedChanged(object sender, EventArgs e)
@@ -250,8 +246,6 @@ namespace E7_20_v2._0
             AllMeterQr.Enabled = AllMeterR.Checked;
             if (AllMeterR.Checked == false)
                 AllMeterQr.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
-            AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
         }
 
         public void AllMeterZ_CheckedChanged(object sender, EventArgs e)
@@ -259,8 +253,6 @@ namespace E7_20_v2._0
             AllMeterFi.Enabled = AllMeterZ.Checked;
             if (AllMeterZ.Checked == false)
                 AllMeterFi.Checked = false;
-            AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
-            AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
         }
 
         public void AllMeterMinValue_CheckedChanged(object sender, EventArgs e)
@@ -273,23 +265,18 @@ namespace E7_20_v2._0
         {
             _allMeter.UpdateOutput(2, AllMeterMaxValue.Checked);
         }
-
-        public void AllMeterStandardDeviation_CheckedChanged(object sender, EventArgs e)
+        private void AllMeterStandardDeviation_CheckedChanged(object sender, EventArgs e)
         {
             _allMeter.UpdateOutput(3, AllMeterStandardDeviation.Checked);
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
-        {            
+        {
             _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value);
         }
 
         public void AllMeterSlow_Click(object sender, EventArgs e)
         {
             _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
-        }
-        private void AllMeterStandardDeviation_CheckedChanged_1(object sender, EventArgs e)
-        {
-
         }
         #endregion
 

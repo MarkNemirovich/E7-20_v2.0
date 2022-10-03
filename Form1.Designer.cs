@@ -194,7 +194,6 @@ namespace E7_20_v2._0
             // AllMeterSlow
             // 
             this.AllMeterSlow.BackColor = System.Drawing.Color.PaleGreen;
-            this.AllMeterSlow.Enabled = false;
             this.AllMeterSlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterSlow.Location = new System.Drawing.Point(300, 200);
             this.AllMeterSlow.Name = "AllMeterSlow";
@@ -239,7 +238,6 @@ namespace E7_20_v2._0
             this.AllMeterStandardDeviation.TabIndex = 11;
             this.AllMeterStandardDeviation.Text = "StandardDeviation";
             this.AllMeterStandardDeviation.UseVisualStyleBackColor = true;
-            this.AllMeterStandardDeviation.CheckedChanged += new System.EventHandler(this.AllMeterStandardDeviation_CheckedChanged_1);
             // 
             // AllMeterMaxValue
             // 
@@ -284,7 +282,6 @@ namespace E7_20_v2._0
             // AllMeterFast
             // 
             this.AllMeterFast.BackColor = System.Drawing.Color.PaleGreen;
-            this.AllMeterFast.Enabled = false;
             this.AllMeterFast.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterFast.Location = new System.Drawing.Point(100, 200);
             this.AllMeterFast.Name = "AllMeterFast";
