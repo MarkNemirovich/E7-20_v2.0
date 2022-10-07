@@ -7,7 +7,7 @@ namespace E7_20_v2._0
 {
     class AllMeterGrasper:Grasper
     {
-        public AllMeterGrasper(int bufferSize, int measuresAmount, SpeedMode speedMode): base(bufferSize, measuresAmount, speedMode)
+        public AllMeterGrasper(SerialPortHandler port, int measuresAmount, SpeedMode speedMode): base(port, measuresAmount, speedMode)
         {
 
         }

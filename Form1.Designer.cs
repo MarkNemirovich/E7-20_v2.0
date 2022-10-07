@@ -29,8 +29,6 @@ namespace E7_20_v2._0
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.Port = new System.IO.Ports.SerialPort(this.components);
             this.AllMeterButton = new System.Windows.Forms.Button();
             this.TemperatureMeterButton = new System.Windows.Forms.Button();
             this.FolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -82,10 +80,6 @@ namespace E7_20_v2._0
             this.MaxFPanel.SuspendLayout();
             this.AllMeterModes.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // Port
-            // 
-            this.Port.DataReceived += new System.IO.Ports.SerialDataReceivedEventHandler(this.Port_DataReceived);
             // 
             // AllMeterButton
             // 
@@ -585,8 +579,6 @@ namespace E7_20_v2._0
         }
 
         #endregion
-
-        private System.IO.Ports.SerialPort Port;
         private System.Windows.Forms.Button AllMeterButton;
         private System.Windows.Forms.Button TemperatureMeterButton;
         private System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog;

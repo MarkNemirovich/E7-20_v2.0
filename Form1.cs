@@ -50,7 +50,7 @@ namespace E7_20_v2._0
         public int _currentHeight = 500;
         private int _maxIndex = 1;
         private int _minIndex = 0;
-
+        private SerialPortHandler _port = new SerialPortHandler();
 
         public App()
         {
@@ -60,6 +60,16 @@ namespace E7_20_v2._0
         {
             DirectoryPath.Text = _folderPath;
             ChangeMenuInterface(MenuMode.StartMenu);
+            FillThePorts();
+        }
+        public void FillThePorts()
+        {
+            PortsList.Items.Clear();
+            string[] ports = _port.GetPorts;
+            for (int i = 0; i < ports.Length; i++)
+            {
+                PortsList.Items.Add(ports[i]);
+            }
         }
         public void App_Resize(object sender, EventArgs e)
         {
@@ -99,8 +109,6 @@ namespace E7_20_v2._0
         {
             if (PortsList.SelectedItem.ToString() == null)
                 return;
-            if (Port.IsOpen)
-                Port.Close();
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
@@ -124,7 +132,7 @@ namespace E7_20_v2._0
             return true; // temporary
 
 
-            if (Port.IsOpen == false)
+            if (PortsList.Text == default(string))
             {
                 MessageBox.Show("Choose the port please");
                 return false;
@@ -274,11 +282,5 @@ namespace E7_20_v2._0
         #region TemperatureMeterPanel
 
         #endregion
-
-        public void Port_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
-        {
-            
-        }
-
     }
 }
