@@ -30,16 +30,13 @@ namespace E7_20_v2._0
         public bool Avg;
         public bool Min;
         public bool Max;
-        public bool Div;
+        public bool StdDiv;
     }
     public partial class App : Form
     {
-        public const int PACK_LENGTH = 22;
         public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
-        public delegate void GetByte(byte bit);
-        public event GetByte ProvideByte;
 
-        public enum MenuMode
+        private enum MenuMode
         {
             StartMenu,
             AllMeterMenu,
@@ -79,7 +76,7 @@ namespace E7_20_v2._0
             _currentWidth = width;
             _currentHeight = height;
         }
-        public void ChangeMenuInterface(MenuMode mode)
+        private void ChangeMenuInterface(MenuMode mode)
         {
             StartPanel.Enabled = (mode == MenuMode.StartMenu);
             AllMeterButton.Visible = (mode == MenuMode.StartMenu);
@@ -128,10 +125,6 @@ namespace E7_20_v2._0
         }
         public bool CheckGeneralInput()
         {
-
-            return true; // temporary
-
-
             if (PortsList.Text == default(string))
             {
                 MessageBox.Show("Choose the port please");
@@ -282,5 +275,10 @@ namespace E7_20_v2._0
         #region TemperatureMeterPanel
 
         #endregion
+
+        private void MeasuresTimer_Tick(object sender, EventArgs e)
+        {
+
+        }
     }
 }
