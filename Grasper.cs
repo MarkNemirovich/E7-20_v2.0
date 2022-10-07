@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace E7_20_v2._0
 {
@@ -47,6 +48,35 @@ namespace E7_20_v2._0
         private void SendByte()
         {
 
+        }
+        protected double[] LayOutMeasurement(byte[] measurement)
+        {
+            double[] output = new double[2];
+            output[0] = CountData(measurement, 16);
+            output[1] = CountData(measurement, 12);
+            return output;
+        }
+        private double CountData(byte[] currentData, int index)
+        {
+            double param = currentData[index];
+            param += currentData[index + 1] << 8;
+            if (currentData[index + 2] > 0x80)
+            {
+                param += (currentData[index + 2] - 0xFF - 1) << 16;
+            }
+            else
+            {
+                param += (currentData[index + 2] << 16);
+            }
+            if (currentData[index + 3] > 0x80)
+            {
+                param *= Math.Pow(10.0, currentData[index + 3] - 0xFF - 1);
+            }
+            else
+            {
+                param *= Math.Pow(10.0, currentData[index + 3]);
+            }
+            return param;
         }
     }
 }

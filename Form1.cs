@@ -30,11 +30,10 @@ namespace E7_20_v2._0
         public bool Avg;
         public bool Min;
         public bool Max;
-        public bool Div;
+        public bool StdDiv;
     }
     public partial class App : Form
     {
-        public const int PACK_LENGTH = 22;
         public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
 
         private enum MenuMode
@@ -276,5 +275,10 @@ namespace E7_20_v2._0
         #region TemperatureMeterPanel
 
         #endregion
+
+        private void MeasuresTimer_Tick(object sender, EventArgs e)
+        {
+
+        }
     }
 }
