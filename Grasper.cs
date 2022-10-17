@@ -8,18 +8,24 @@ namespace E7_20_v2._0
 {
     class Grasper
     {
+        protected readonly int MIN_LIMIT;
         private SerialPortHandler _port;
-        public Queue<byte[]> _data;
+        protected Queue<byte[]> _data { get; private set; }
         public SpeedMode _speedMode;
         protected Writer _writer;
-        private int _measuresAmount;
+        protected int _measuresAmount;
+        protected Modes _modes;
+        protected Params _parameters;
 
-        public Grasper(SerialPortHandler port, int measuresAmount, SpeedMode speedMode, string path)
+        public Grasper(SerialPortHandler port, int measuresAmount, Modes modes, Params parameters, SpeedMode speedMode, string path)
         {
             _port = port;
             _measuresAmount = measuresAmount;
+            _modes = modes;
+            _parameters = parameters;
             _speedMode = speedMode;
-            _data = new Queue<byte[]>(10);
+            MIN_LIMIT = 10 + measuresAmount;
+            _data = new Queue<byte[]>(MIN_LIMIT);
             _port.Start();
             _writer = new Writer(path);
 
@@ -28,7 +34,7 @@ namespace E7_20_v2._0
         private void GetPack(byte[] newPack)
         {
             _data.Enqueue(newPack);
-            if (_data.Count > 20)
+            if (_data.Count > MIN_LIMIT)
                 _data.Dequeue();
         }
         private void SendByte()
@@ -51,11 +57,12 @@ namespace E7_20_v2._0
             f *= (int)Math.Pow(10.0, current[6]);
             return f;
         }
-        public void WriteData()
+        public virtual bool WriteData()
         {
             var data = new List<double>();
             data.Add(GetF());
-            _writer.Write(data);
+            _writer.Write(data[0].ToString());
+            return true;
         }
         protected double[] LayOutMeasurement(byte[] measurement)
         {

@@ -73,6 +73,7 @@ namespace E7_20_v2._0
             this.AllMeterC = new System.Windows.Forms.CheckBox();
             this.TemperatureMeterPanel = new System.Windows.Forms.Panel();
             this.MeasuresTimer = new System.Windows.Forms.Timer(this.components);
+            this.AllMeterStop = new System.Windows.Forms.Button();
             this.StartPanel.SuspendLayout();
             this.AllMeterPanel.SuspendLayout();
             this.AllMeterSavingPanel.SuspendLayout();
@@ -182,6 +183,7 @@ namespace E7_20_v2._0
             // AllMeterPanel
             // 
             this.AllMeterPanel.BackColor = System.Drawing.SystemColors.Window;
+            this.AllMeterPanel.Controls.Add(this.AllMeterStop);
             this.AllMeterPanel.Controls.Add(this.ReturnButton);
             this.AllMeterPanel.Controls.Add(this.AllMeterSlow);
             this.AllMeterPanel.Controls.Add(this.AllMeterSavingPanel);
@@ -196,7 +198,7 @@ namespace E7_20_v2._0
             // ReturnButton
             // 
             this.ReturnButton.BackColor = System.Drawing.Color.Salmon;
-            this.ReturnButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ReturnButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ReturnButton.Location = new System.Drawing.Point(500, 200);
             this.ReturnButton.Name = "ReturnButton";
             this.ReturnButton.Size = new System.Drawing.Size(100, 25);
@@ -208,7 +210,7 @@ namespace E7_20_v2._0
             // AllMeterSlow
             // 
             this.AllMeterSlow.BackColor = System.Drawing.Color.PaleGreen;
-            this.AllMeterSlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterSlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterSlow.Location = new System.Drawing.Point(200, 200);
             this.AllMeterSlow.Name = "AllMeterSlow";
             this.AllMeterSlow.Size = new System.Drawing.Size(100, 25);
@@ -297,7 +299,7 @@ namespace E7_20_v2._0
             // AllMeterFast
             // 
             this.AllMeterFast.BackColor = System.Drawing.Color.PaleGreen;
-            this.AllMeterFast.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterFast.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterFast.Location = new System.Drawing.Point(50, 200);
             this.AllMeterFast.Name = "AllMeterFast";
             this.AllMeterFast.Size = new System.Drawing.Size(100, 25);
@@ -563,8 +565,21 @@ namespace E7_20_v2._0
             // 
             // MeasuresTimer
             // 
-            this.MeasuresTimer.Interval = 200;
+            this.MeasuresTimer.Interval = 1000;
             this.MeasuresTimer.Tick += new System.EventHandler(this.MeasuresTimer_Tick);
+            // 
+            // AllMeterStop
+            // 
+            this.AllMeterStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AllMeterStop.BackColor = System.Drawing.Color.Salmon;
+            this.AllMeterStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterStop.Location = new System.Drawing.Point(350, 200);
+            this.AllMeterStop.Name = "AllMeterStop";
+            this.AllMeterStop.Size = new System.Drawing.Size(100, 25);
+            this.AllMeterStop.TabIndex = 5;
+            this.AllMeterStop.Text = "Stop";
+            this.AllMeterStop.UseVisualStyleBackColor = false;
+            this.AllMeterStop.Click += new System.EventHandler(this.AllMeterStop_Click);
             // 
             // App
             // 
@@ -647,6 +662,7 @@ namespace E7_20_v2._0
         private System.Windows.Forms.Button AllMeterSlow;
         private System.Windows.Forms.Timer MeasuresTimer;
         private System.Windows.Forms.CheckBox AutoName;
+        private System.Windows.Forms.Button AllMeterStop;
     }
 }
 

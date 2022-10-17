@@ -8,19 +8,28 @@ namespace E7_20_v2._0
 {
     class AllMeterGrasper:Grasper
     {
-        public AllMeterGrasper(SerialPortHandler port, int measuresAmount, SpeedMode speedMode, string path): base(port, measuresAmount, speedMode, path)
+        public AllMeterGrasper(SerialPortHandler port, int measuresAmount, Modes modes, Params parameters, SpeedMode speedMode, string path): base(port, measuresAmount, modes, parameters, speedMode, path)
         {
 
         }
-        public double[][] GetData(Params parameters)
+        public override bool WriteData()
         {
-            List<double[]> data = new List<double[]>(_data.Count);
-            for (int i = 0; i < _data.Count; i++)
+            Queue<byte[]> current = _data;
+            if (current.Count < MIN_LIMIT)
+                return false;
+            List<double[]> output = new List<double[]>(_measuresAmount);
+            for (int i = 0; i < MIN_LIMIT; i++)
             {
-                data.Add(LayOutMeasurement(_data.Dequeue()));
+                if (i < MIN_LIMIT - _measuresAmount)
+                    current.Dequeue();
+                else
+                {
+                    output.Add(LayOutMeasurement(current.Dequeue()));
+                }
             }
-            return CalculateParams(data, parameters).ToArray();
-        }        
+            _writer.Write(CalculateParams(output, _parameters), true);
+            return true;
+        }     
         private List<double[]> CalculateParams(List<double[]> data, Params parameters)
         {
             double[] max = new double[2];

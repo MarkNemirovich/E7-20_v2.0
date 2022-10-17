@@ -35,13 +35,17 @@ namespace E7_20_v2._0
             }
         }
 
-        public void Write(List<double> data)
+        public void Write(List<double[]> data, bool subParamToo)
         {
             try
             {
                 string output = "";
-                foreach (double information in data)
-                    output += information.ToString();
+                foreach (double[] information in data)
+                {
+                    output += information[0].ToString();
+                    if (subParamToo)
+                        output += $"\t {information[1].ToString()}";
+                }
                 //if (_sigma)
                 //{
                 //    output = $"{_f,-10}{_data[0, 0],15:f5}{_data[0, 1],15:f5}{_data[0, 2],15:f5}{_data[0, 3],15:f5}" +

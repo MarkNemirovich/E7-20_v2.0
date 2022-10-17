@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
 
 namespace E7_20_v2._0
 {
@@ -25,13 +26,31 @@ namespace E7_20_v2._0
         public bool Ql;
         public bool Qr;
         public bool Fi;
+        public Modes(bool C, bool L, bool R, bool Z, bool D, bool Ql, bool Qr, bool Fi)
+        {
+            this.C = C;
+            this.L = L;
+            this.R = R;
+            this.Z = Z;
+            this.D = D;
+            this.Ql = Ql;
+            this.Qr = Qr;
+            this.Fi = Fi;
+        }
     }
     public struct Params
     {
         public bool Avg;
-        public bool Min;
         public bool Max;
+        public bool Min;
         public bool StdDiv;
+        public Params(bool Avg, bool Max, bool Min, bool StdDiv)
+        {
+            this.Avg = Avg;
+            this.Max = Max;
+            this.Min = Min;
+            this.StdDiv = StdDiv;
+        }
     }
     public partial class App : Form
     {
@@ -268,20 +287,36 @@ namespace E7_20_v2._0
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
-            _workMachine = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Fast, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
-            //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value);
-            AllMeterFast.Enabled = false;
-            AllMeterSlow.Enabled = false;
-            MeasuresTimer.Start();
+
+            Start(SpeedMode.Fast);
         }
 
         public void AllMeterSlow_Click(object sender, EventArgs e)
         {
-            _workMachine = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Slow, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
-            //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
-            AllMeterFast.Enabled = false;
-            AllMeterSlow.Enabled = false;
+            Start(SpeedMode.Slow);
+        }
+        private void Start(SpeedMode speed)
+        {
+            Modes m = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
+            Params p = new Params(AllMeterAverageValue.Checked, AllMeterMaxValue.Checked, AllMeterMinValue.Checked, AllMeterStandardDeviation.Checked);
+            _workMachine = new AllMeterGrasper(_port, AllMeterMeasurementsBar.Value, m, p, speed, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
+            MeasurementProcess(false);
             MeasuresTimer.Start();
+        }
+
+        private void AllMeterStop_Click(object sender, EventArgs e)
+        {
+            MeasuresTimer.Stop();
+            _workMachine.Finish();
+            MeasurementProcess(true);
+        }
+
+        private void MeasurementProcess(bool state)
+        {
+            AllMeterFast.Enabled = state;
+            AllMeterSlow.Enabled = state;
+            ReturnButton.Enabled = state;
+            AllMeterStop.Enabled = !state;
         }
         #endregion
 
