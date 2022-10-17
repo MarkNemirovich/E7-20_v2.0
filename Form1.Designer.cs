@@ -34,6 +34,7 @@ namespace E7_20_v2._0
             this.TemperatureMeterButton = new System.Windows.Forms.Button();
             this.FolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.StartPanel = new System.Windows.Forms.Panel();
+            this.AutoName = new System.Windows.Forms.CheckBox();
             this.FileName = new System.Windows.Forms.TextBox();
             this.PortsList = new System.Windows.Forms.ComboBox();
             this.DirectoryPath = new System.Windows.Forms.TextBox();
@@ -72,7 +73,6 @@ namespace E7_20_v2._0
             this.AllMeterC = new System.Windows.Forms.CheckBox();
             this.TemperatureMeterPanel = new System.Windows.Forms.Panel();
             this.MeasuresTimer = new System.Windows.Forms.Timer(this.components);
-            this.AutoName = new System.Windows.Forms.CheckBox();
             this.StartPanel.SuspendLayout();
             this.AllMeterPanel.SuspendLayout();
             this.AllMeterSavingPanel.SuspendLayout();
@@ -118,6 +118,19 @@ namespace E7_20_v2._0
             this.StartPanel.Name = "StartPanel";
             this.StartPanel.Size = new System.Drawing.Size(725, 33);
             this.StartPanel.TabIndex = 2;
+            // 
+            // AutoName
+            // 
+            this.AutoName.AutoSize = true;
+            this.AutoName.BackColor = System.Drawing.SystemColors.Window;
+            this.AutoName.Location = new System.Drawing.Point(545, 6);
+            this.AutoName.Name = "AutoName";
+            this.AutoName.Padding = new System.Windows.Forms.Padding(2, 3, 1, 2);
+            this.AutoName.Size = new System.Drawing.Size(50, 22);
+            this.AutoName.TabIndex = 4;
+            this.AutoName.Text = "auto";
+            this.AutoName.UseVisualStyleBackColor = false;
+            this.AutoName.CheckedChanged += new System.EventHandler(this.AutoName_CheckedChanged);
             // 
             // FileName
             // 
@@ -196,7 +209,7 @@ namespace E7_20_v2._0
             // 
             this.AllMeterSlow.BackColor = System.Drawing.Color.PaleGreen;
             this.AllMeterSlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AllMeterSlow.Location = new System.Drawing.Point(300, 200);
+            this.AllMeterSlow.Location = new System.Drawing.Point(200, 200);
             this.AllMeterSlow.Name = "AllMeterSlow";
             this.AllMeterSlow.Size = new System.Drawing.Size(100, 25);
             this.AllMeterSlow.TabIndex = 7;
@@ -223,7 +236,7 @@ namespace E7_20_v2._0
             this.AllMeterSavingLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterSavingLabel.Location = new System.Drawing.Point(50, 5);
             this.AllMeterSavingLabel.Name = "AllMeterSavingLabel";
-            this.AllMeterSavingLabel.Size = new System.Drawing.Size(122, 16);
+            this.AllMeterSavingLabel.Size = new System.Drawing.Size(121, 16);
             this.AllMeterSavingLabel.TabIndex = 16;
             this.AllMeterSavingLabel.Text = "Saving parameters";
             this.AllMeterSavingLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -235,7 +248,7 @@ namespace E7_20_v2._0
             this.AllMeterStandardDeviation.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterStandardDeviation.Location = new System.Drawing.Point(25, 120);
             this.AllMeterStandardDeviation.Name = "AllMeterStandardDeviation";
-            this.AllMeterStandardDeviation.Size = new System.Drawing.Size(139, 20);
+            this.AllMeterStandardDeviation.Size = new System.Drawing.Size(138, 20);
             this.AllMeterStandardDeviation.TabIndex = 11;
             this.AllMeterStandardDeviation.Text = "StandardDeviation";
             this.AllMeterStandardDeviation.UseVisualStyleBackColor = true;
@@ -248,7 +261,7 @@ namespace E7_20_v2._0
             this.AllMeterMaxValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterMaxValue.Location = new System.Drawing.Point(25, 60);
             this.AllMeterMaxValue.Name = "AllMeterMaxValue";
-            this.AllMeterMaxValue.Size = new System.Drawing.Size(87, 20);
+            this.AllMeterMaxValue.Size = new System.Drawing.Size(86, 20);
             this.AllMeterMaxValue.TabIndex = 10;
             this.AllMeterMaxValue.Text = "MaxValue";
             this.AllMeterMaxValue.UseVisualStyleBackColor = true;
@@ -261,7 +274,7 @@ namespace E7_20_v2._0
             this.AllMeterMinValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterMinValue.Location = new System.Drawing.Point(25, 90);
             this.AllMeterMinValue.Name = "AllMeterMinValue";
-            this.AllMeterMinValue.Size = new System.Drawing.Size(83, 20);
+            this.AllMeterMinValue.Size = new System.Drawing.Size(82, 20);
             this.AllMeterMinValue.TabIndex = 9;
             this.AllMeterMinValue.Text = "MinValue";
             this.AllMeterMinValue.UseVisualStyleBackColor = true;
@@ -276,7 +289,7 @@ namespace E7_20_v2._0
             this.AllMeterAverageValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterAverageValue.Location = new System.Drawing.Point(25, 30);
             this.AllMeterAverageValue.Name = "AllMeterAverageValue";
-            this.AllMeterAverageValue.Size = new System.Drawing.Size(114, 20);
+            this.AllMeterAverageValue.Size = new System.Drawing.Size(113, 20);
             this.AllMeterAverageValue.TabIndex = 8;
             this.AllMeterAverageValue.Text = "AverageValue";
             this.AllMeterAverageValue.UseVisualStyleBackColor = true;
@@ -285,7 +298,7 @@ namespace E7_20_v2._0
             // 
             this.AllMeterFast.BackColor = System.Drawing.Color.PaleGreen;
             this.AllMeterFast.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AllMeterFast.Location = new System.Drawing.Point(100, 200);
+            this.AllMeterFast.Location = new System.Drawing.Point(50, 200);
             this.AllMeterFast.Name = "AllMeterFast";
             this.AllMeterFast.Size = new System.Drawing.Size(100, 25);
             this.AllMeterFast.TabIndex = 6;
@@ -341,7 +354,7 @@ namespace E7_20_v2._0
             this.AllMeterMeasurementsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterMeasurementsLabel.Location = new System.Drawing.Point(5, 5);
             this.AllMeterMeasurementsLabel.Name = "AllMeterMeasurementsLabel";
-            this.AllMeterMeasurementsLabel.Size = new System.Drawing.Size(97, 16);
+            this.AllMeterMeasurementsLabel.Size = new System.Drawing.Size(96, 16);
             this.AllMeterMeasurementsLabel.TabIndex = 19;
             this.AllMeterMeasurementsLabel.Text = "Measurements";
             // 
@@ -361,7 +374,7 @@ namespace E7_20_v2._0
             this.AllMeterMinFLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterMinFLabel.Location = new System.Drawing.Point(5, 7);
             this.AllMeterMinFLabel.Name = "AllMeterMinFLabel";
-            this.AllMeterMinFLabel.Size = new System.Drawing.Size(91, 16);
+            this.AllMeterMinFLabel.Size = new System.Drawing.Size(90, 16);
             this.AllMeterMinFLabel.TabIndex = 19;
             this.AllMeterMinFLabel.Text = "Min frequency";
             // 
@@ -391,7 +404,7 @@ namespace E7_20_v2._0
             this.AllMeterMaxFLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterMaxFLabel.Location = new System.Drawing.Point(5, 7);
             this.AllMeterMaxFLabel.Name = "AllMeterMaxFLabel";
-            this.AllMeterMaxFLabel.Size = new System.Drawing.Size(95, 16);
+            this.AllMeterMaxFLabel.Size = new System.Drawing.Size(94, 16);
             this.AllMeterMaxFLabel.TabIndex = 19;
             this.AllMeterMaxFLabel.Text = "Max frequency";
             // 
@@ -411,7 +424,7 @@ namespace E7_20_v2._0
             this.AllMeterSettingsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterSettingsLabel.Location = new System.Drawing.Point(75, 5);
             this.AllMeterSettingsLabel.Name = "AllMeterSettingsLabel";
-            this.AllMeterSettingsLabel.Size = new System.Drawing.Size(87, 16);
+            this.AllMeterSettingsLabel.Size = new System.Drawing.Size(86, 16);
             this.AllMeterSettingsLabel.TabIndex = 17;
             this.AllMeterSettingsLabel.Text = "Initial settings";
             this.AllMeterSettingsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -439,7 +452,7 @@ namespace E7_20_v2._0
             this.AllMeterModesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterModesLabel.Location = new System.Drawing.Point(5, 5);
             this.AllMeterModesLabel.Name = "AllMeterModesLabel";
-            this.AllMeterModesLabel.Size = new System.Drawing.Size(143, 16);
+            this.AllMeterModesLabel.Size = new System.Drawing.Size(142, 16);
             this.AllMeterModesLabel.TabIndex = 16;
             this.AllMeterModesLabel.Text = "Measuring parameters";
             this.AllMeterModesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -451,7 +464,7 @@ namespace E7_20_v2._0
             this.AllMeterFi.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterFi.Location = new System.Drawing.Point(75, 120);
             this.AllMeterFi.Name = "AllMeterFi";
-            this.AllMeterFi.Size = new System.Drawing.Size(33, 20);
+            this.AllMeterFi.Size = new System.Drawing.Size(32, 20);
             this.AllMeterFi.TabIndex = 15;
             this.AllMeterFi.Text = "fi";
             this.AllMeterFi.UseVisualStyleBackColor = true;
@@ -463,7 +476,7 @@ namespace E7_20_v2._0
             this.AllMeterQr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterQr.Location = new System.Drawing.Point(75, 90);
             this.AllMeterQr.Name = "AllMeterQr";
-            this.AllMeterQr.Size = new System.Drawing.Size(37, 20);
+            this.AllMeterQr.Size = new System.Drawing.Size(36, 20);
             this.AllMeterQr.TabIndex = 14;
             this.AllMeterQr.Text = "Q";
             this.AllMeterQr.UseVisualStyleBackColor = true;
@@ -475,7 +488,7 @@ namespace E7_20_v2._0
             this.AllMeterQl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterQl.Location = new System.Drawing.Point(75, 60);
             this.AllMeterQl.Name = "AllMeterQl";
-            this.AllMeterQl.Size = new System.Drawing.Size(37, 20);
+            this.AllMeterQl.Size = new System.Drawing.Size(36, 20);
             this.AllMeterQl.TabIndex = 13;
             this.AllMeterQl.Text = "Q";
             this.AllMeterQl.UseVisualStyleBackColor = true;
@@ -487,7 +500,7 @@ namespace E7_20_v2._0
             this.AllMeterD.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterD.Location = new System.Drawing.Point(75, 30);
             this.AllMeterD.Name = "AllMeterD";
-            this.AllMeterD.Size = new System.Drawing.Size(37, 20);
+            this.AllMeterD.Size = new System.Drawing.Size(36, 20);
             this.AllMeterD.TabIndex = 12;
             this.AllMeterD.Text = "D";
             this.AllMeterD.UseVisualStyleBackColor = true;
@@ -498,7 +511,7 @@ namespace E7_20_v2._0
             this.AllMeterZ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterZ.Location = new System.Drawing.Point(25, 120);
             this.AllMeterZ.Name = "AllMeterZ";
-            this.AllMeterZ.Size = new System.Drawing.Size(35, 20);
+            this.AllMeterZ.Size = new System.Drawing.Size(34, 20);
             this.AllMeterZ.TabIndex = 11;
             this.AllMeterZ.Text = "Z";
             this.AllMeterZ.UseVisualStyleBackColor = true;
@@ -510,7 +523,7 @@ namespace E7_20_v2._0
             this.AllMeterR.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterR.Location = new System.Drawing.Point(25, 90);
             this.AllMeterR.Name = "AllMeterR";
-            this.AllMeterR.Size = new System.Drawing.Size(37, 20);
+            this.AllMeterR.Size = new System.Drawing.Size(36, 20);
             this.AllMeterR.TabIndex = 10;
             this.AllMeterR.Text = "R";
             this.AllMeterR.UseVisualStyleBackColor = true;
@@ -522,7 +535,7 @@ namespace E7_20_v2._0
             this.AllMeterL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterL.Location = new System.Drawing.Point(25, 60);
             this.AllMeterL.Name = "AllMeterL";
-            this.AllMeterL.Size = new System.Drawing.Size(34, 20);
+            this.AllMeterL.Size = new System.Drawing.Size(33, 20);
             this.AllMeterL.TabIndex = 9;
             this.AllMeterL.Text = "L";
             this.AllMeterL.UseVisualStyleBackColor = true;
@@ -534,7 +547,7 @@ namespace E7_20_v2._0
             this.AllMeterC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.AllMeterC.Location = new System.Drawing.Point(25, 30);
             this.AllMeterC.Name = "AllMeterC";
-            this.AllMeterC.Size = new System.Drawing.Size(36, 20);
+            this.AllMeterC.Size = new System.Drawing.Size(35, 20);
             this.AllMeterC.TabIndex = 8;
             this.AllMeterC.Text = "C";
             this.AllMeterC.UseVisualStyleBackColor = true;
@@ -552,19 +565,6 @@ namespace E7_20_v2._0
             // 
             this.MeasuresTimer.Interval = 200;
             this.MeasuresTimer.Tick += new System.EventHandler(this.MeasuresTimer_Tick);
-            // 
-            // AutoName
-            // 
-            this.AutoName.AutoSize = true;
-            this.AutoName.BackColor = System.Drawing.SystemColors.Window;
-            this.AutoName.Location = new System.Drawing.Point(545, 6);
-            this.AutoName.Name = "AutoName";
-            this.AutoName.Padding = new System.Windows.Forms.Padding(2, 3, 1, 2);
-            this.AutoName.Size = new System.Drawing.Size(50, 22);
-            this.AutoName.TabIndex = 4;
-            this.AutoName.Text = "auto";
-            this.AutoName.UseVisualStyleBackColor = false;
-            this.AutoName.CheckedChanged += new System.EventHandler(this.AutoName_CheckedChanged);
             // 
             // App
             // 

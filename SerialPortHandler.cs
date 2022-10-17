@@ -15,8 +15,6 @@ namespace E7_20_v2._0
         public delegate void Pack(byte[] pack);
         public event Pack providePack;
 
-        private Writer _writer;
-
         public SerialPortHandler()
         {
         }
@@ -27,7 +25,6 @@ namespace E7_20_v2._0
             _port.WriteTimeout = 500;
             _port.ReadBufferSize = 22;  // размер буфера!!!
             _port.DataReceived += new SerialDataReceivedEventHandler(ReceiveData);  // создание делегата на прием
-            _writer = new Writer(@"C:\Users\Markus\OneDrive\Рабочий стол", "File");
         }
         public string[] GetPorts => SerialPort.GetPortNames();
         public int GetSize => (_port == null ? 0 : _port.ReadBufferSize);
@@ -56,7 +53,7 @@ namespace E7_20_v2._0
                 _port.Read(bytes, 0, 22);
                 if (bytes[0] == 170 & bytes[1] == 0 & bytes[2] == 0)
                 {
-                    providePack?.Invoke(_pack.ToArray());
+                    providePack?.Invoke(bytes);
                 }
                 _port.DiscardInBuffer();
             }

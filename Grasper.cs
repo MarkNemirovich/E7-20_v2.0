@@ -9,27 +9,53 @@ namespace E7_20_v2._0
     class Grasper
     {
         private SerialPortHandler _port;
-        private int _portSize;
         public Queue<byte[]> _data;
-        public bool _RecivedStartByte;
         public SpeedMode _speedMode;
+        protected Writer _writer;
+        private int _measuresAmount;
 
-        public Grasper(SerialPortHandler port, int measuresAmount, SpeedMode speedMode)
+        public Grasper(SerialPortHandler port, int measuresAmount, SpeedMode speedMode, string path)
         {
             _port = port;
-            _portSize = _port.GetSize;
+            _measuresAmount = measuresAmount;
             _speedMode = speedMode;
-            _data = new Queue<byte[]>(measuresAmount);
-            _port.providePack += GetPack;
+            _data = new Queue<byte[]>(10);
             _port.Start();
+            _writer = new Writer(path);
+
+            _port.providePack += GetPack;
         }
         private void GetPack(byte[] newPack)
         {
             _data.Enqueue(newPack);
+            if (_data.Count > 20)
+                _data.Dequeue();
         }
         private void SendByte()
         {
 
+        }
+        protected int GetF()
+        {
+            if (_data.Count <= 0)
+            {
+                return -1;
+            }
+            var current = _data.Peek();
+            if (current.Length != 22)
+            {
+                return -1;
+            }
+            int f = Convert.ToInt32(current[4]);
+            f += Convert.ToInt32(current[5] << 8);
+            f *= (int)Math.Pow(10.0, current[6]);
+            return f;
+        }
+        public void WriteData()
+        {
+            var data = new List<double>();
+            data.Add(GetF());
+            _writer.Write(data);
         }
         protected double[] LayOutMeasurement(byte[] measurement)
         {
@@ -59,6 +85,10 @@ namespace E7_20_v2._0
                 param *= Math.Pow(10.0, currentData[index + 3]);
             }
             return param;
+        }
+        public void Finish()
+        {
+            _writer.Finish();
         }
     }
 }

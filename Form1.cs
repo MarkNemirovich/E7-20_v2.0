@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -35,6 +36,7 @@ namespace E7_20_v2._0
     public partial class App : Form
     {
         public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
+        Grasper _workMachine;
 
         private enum MenuMode
         {
@@ -266,14 +268,20 @@ namespace E7_20_v2._0
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
-            Grasper grasper = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Fast);
+            _workMachine = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Fast, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
             //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value);
+            AllMeterFast.Enabled = false;
+            AllMeterSlow.Enabled = false;
+            MeasuresTimer.Start();
         }
 
         public void AllMeterSlow_Click(object sender, EventArgs e)
         {
-            Grasper grasper = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
-     //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
+            _workMachine = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Slow, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
+            //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
+            AllMeterFast.Enabled = false;
+            AllMeterSlow.Enabled = false;
+            MeasuresTimer.Start();
         }
         #endregion
 
@@ -283,7 +291,8 @@ namespace E7_20_v2._0
 
         private void MeasuresTimer_Tick(object sender, EventArgs e)
         {
-
+            if (_workMachine != null)
+                _workMachine.WriteData();
         }
     }
 }
