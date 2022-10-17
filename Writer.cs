@@ -42,9 +42,9 @@ namespace E7_20_v2._0
                 string output = "";
                 foreach (double[] information in data)
                 {
-                    output += information[0].ToString();
+                    output += $"{information[0],10:e2}\t";
                     if (subParamToo)
-                        output += $"\t {information[1].ToString()}";
+                        output += $"{information[1],10:e2}\t";
                 }
                 //if (_sigma)
                 //{
@@ -56,7 +56,7 @@ namespace E7_20_v2._0
                 //    output = $"{_f,-10}{_data[0, 0],15}{_data[1, 0],15}";
                 //}
                 output = output.Replace('.', ',');  // для переноса в эксель табы и запятые
-                _flow.WriteLine(output); // в конечный файл числа
+                _flow.Write(output); // в конечный файл числа
             }
             catch
             {
@@ -65,7 +65,11 @@ namespace E7_20_v2._0
         }
         public void Write(string line)
         {
-            _flow.WriteLine(line);
+            _flow.Write(line);
+        }
+        public void NextLine()
+        {
+            _flow.WriteLine();
         }
 
         public void Finish()

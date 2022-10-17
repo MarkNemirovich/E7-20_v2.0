@@ -6,17 +6,39 @@ using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
-    class AllMeterGrasper:Grasper
+    class AllMeterGrasper : Grasper
     {
-        public AllMeterGrasper(SerialPortHandler port, int measuresAmount, Modes modes, Params parameters, SpeedMode speedMode, string path): base(port, measuresAmount, modes, parameters, speedMode, path)
+        public AllMeterGrasper(SerialPortHandler port, int measuresAmount, Modes modes, Params parameters, SpeedMode speedMode, string path) : base(port, measuresAmount, modes, parameters, speedMode, path)
         {
 
+        }
+        public override void WriteTitle()
+        {
+            string line = "f\t\t";
+            if (_modes.C)
+                line += "C\t\t";
+            if (_modes.D)
+                line += "D\t\t";
+            if (_modes.L)
+                line += "L\t\t";
+            if (_modes.Ql)
+                line += "Ql\t\t";
+            if (_modes.R)
+                line += "R\t\t";
+            if (_modes.Qr)
+                line += "Qr\t\t";
+            if (_modes.Z)
+                line += "Z\t\t";
+            if (_modes.Fi)
+                line += "fi\t\t";
+            _writer.Write(line);
         }
         public override bool WriteData()
         {
             Queue<byte[]> current = _data;
             if (current.Count < MIN_LIMIT)
                 return false;
+            base.WriteData();
             List<double[]> output = new List<double[]>(_measuresAmount);
             for (int i = 0; i < MIN_LIMIT; i++)
             {
@@ -36,8 +58,8 @@ namespace E7_20_v2._0
             double[] min = new double[2];
             double[] avg = new double[2];
             double[] stdDiviation = new double[2];
-
-            for (int i = 0; i < data.Count; i++)
+            int size = data.Count();
+            for (int i = 0; i < size; i++)
             {
                 if (parameters.Max)
                 {
@@ -53,8 +75,8 @@ namespace E7_20_v2._0
                     if (data[i][1] < min[1])
                         min[1] = data[i][1];
                 }
-                avg[0] += data[i][0] / _data.Count;
-                avg[1] += data[i][1] / _data.Count;
+                avg[0] += data[i][0] / size;
+                avg[1] += data[i][1] / size;
             }
             if (parameters.StdDiv)
             {

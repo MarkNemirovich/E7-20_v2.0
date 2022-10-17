@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -30,6 +31,7 @@ namespace E7_20_v2._0
             _writer = new Writer(path);
 
             _port.providePack += GetPack;
+            WriteTitle();
         }
         private void GetPack(byte[] newPack)
         {
@@ -57,8 +59,14 @@ namespace E7_20_v2._0
             f *= (int)Math.Pow(10.0, current[6]);
             return f;
         }
+        public virtual void WriteTitle()
+        {  
+            string line = "f\t\t";
+            _writer.Write(line);
+        }
         public virtual bool WriteData()
         {
+            _writer.NextLine();
             var data = new List<double>();
             data.Add(GetF());
             _writer.Write(data[0].ToString());
