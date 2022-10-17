@@ -11,7 +11,6 @@ namespace E7_20_v2._0
         private SerialPortHandler _port;
         private int _portSize;
         public Queue<byte[]> _data;
-        public Queue<byte> _pack;
         public bool _RecivedStartByte;
         public SpeedMode _speedMode;
 
@@ -21,29 +20,12 @@ namespace E7_20_v2._0
             _portSize = _port.GetSize;
             _speedMode = speedMode;
             _data = new Queue<byte[]>(measuresAmount);
-            _pack = new Queue<byte>(_portSize);
+            _port.providePack += GetPack;
+            _port.Start();
         }
-
-        public void ReadByte(byte newByte)
+        private void GetPack(byte[] newPack)
         {
-            if (_RecivedStartByte == false)
-            {
-                if (newByte == 0xAA)
-                {
-                    _pack.Clear();
-                    _pack.Enqueue(newByte);
-                    _RecivedStartByte = true;
-                }
-            }
-            else
-            {
-                if (_pack.Count == _portSize)
-                {
-                    _data.Enqueue(_pack.ToArray());
-                    _pack.Clear();
-                }
-                _pack.Enqueue(newByte);
-            }
+            _data.Enqueue(newPack);
         }
         private void SendByte()
         {

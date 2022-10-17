@@ -57,9 +57,9 @@ namespace E7_20_v2._0
         {
             DirectoryPath.Text = _folderPath;
             ChangeMenuInterface(MenuMode.StartMenu);
-            FillThePorts();
         }
-        public void FillThePorts()
+
+        private void FillThePorts(object sender, EventArgs e)
         {
             PortsList.Items.Clear();
             string[] ports = _port.GetPorts;
@@ -67,6 +67,10 @@ namespace E7_20_v2._0
             {
                 PortsList.Items.Add(ports[i]);
             }
+        }
+        private void AutoName_CheckedChanged(object sender, EventArgs e)
+        {
+            FileName.Enabled = !AutoName.Checked;
         }
         public void App_Resize(object sender, EventArgs e)
         {
@@ -104,8 +108,7 @@ namespace E7_20_v2._0
         }
         public void PortsList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (PortsList.SelectedItem.ToString() == null)
-                return;
+            _port = new SerialPortHandler(PortsList.SelectedItem.ToString());
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
@@ -263,11 +266,13 @@ namespace E7_20_v2._0
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
-     //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value);
+            Grasper grasper = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Fast);
+            //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value);
         }
 
         public void AllMeterSlow_Click(object sender, EventArgs e)
         {
+            Grasper grasper = new Grasper(_port, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
      //       _allMeter.Start(PACK_LENGTH, AllMeterMeasurementsBar.Value, SpeedMode.Slow);
         }
         #endregion
