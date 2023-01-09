@@ -11,33 +11,7 @@ using static System.Windows.Forms.AxHost;
 
 namespace E7_20_v2._0
 {
-    public enum SpeedMode
-    {
-        Fast,
-        Slow
-    }
-    public struct Modes
-    {
-        public bool C;
-        public bool L;
-        public bool R;
-        public bool Z;
-        public bool D;
-        public bool Ql;
-        public bool Qr;
-        public bool Fi;
-        public Modes(bool C, bool L, bool R, bool Z, bool D, bool Ql, bool Qr, bool Fi)
-        {
-            this.C = C;
-            this.L = L;
-            this.R = R;
-            this.Z = Z;
-            this.D = D;
-            this.Ql = Ql;
-            this.Qr = Qr;
-            this.Fi = Fi;
-        }
-    }
+   
     public struct Params
     {
         public bool Avg;

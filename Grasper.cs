@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace E7_20_v2._0
 {
-    class Grasper
+    class Grasper : IOperations
     {
         protected readonly int MIN_LIMIT;
         private SerialPortHandler _port;
@@ -104,6 +104,22 @@ namespace E7_20_v2._0
         public void Finish()
         {
             _writer.Finish();
+        }
+        public bool ChangeFrequency(SpeedMode newMode)
+        {
+            throw new NotImplementedException();
+        }
+        public bool ChangeMode(Modes newMode)
+        {
+            throw new NotImplementedException();
+        }
+        public bool GetLastData(out byte[] output)
+        {
+            throw new NotImplementedException();
+        }
+        public bool ReadBuffer(int length, out byte[][] output)
+        {
+            throw new NotImplementedException();
         }
     }
 }
