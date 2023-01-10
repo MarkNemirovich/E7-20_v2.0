@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="ExcelWritter.cs" />
+    <Compile Include="FileDirectory.cs" />
     <Compile Include="IOperations.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

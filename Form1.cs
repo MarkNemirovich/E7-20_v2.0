@@ -3,34 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.AxHost;
 
 namespace E7_20_v2._0
 {
-   
-    public struct Params
-    {
-        public bool Avg;
-        public bool Max;
-        public bool Min;
-        public bool StdDiv;
-        public Params(bool Avg, bool Max, bool Min, bool StdDiv)
-        {
-            this.Avg = Avg;
-            this.Max = Max;
-            this.Min = Min;
-            this.StdDiv = StdDiv;
-        }
-    }
     public partial class App : Form
     {
-        public readonly int[] _fArray = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
-        Grasper _workMachine;
-
         private enum MenuMode
         {
             StartMenu,
@@ -38,11 +18,11 @@ namespace E7_20_v2._0
             TemperatureMeterMenu
         }
         public string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        public int _currentWidth = 800;
-        public int _currentHeight = 500;
+        private int _currentWidth = 800;
+        private int _currentHeight = 500;
         private int _maxIndex = 1;
         private int _minIndex = 0;
-        private SerialPortHandler _port = new SerialPortHandler();
+  //      private SerialPortHandler _port = new SerialPortHandler();
 
         public App()
         {
@@ -57,11 +37,11 @@ namespace E7_20_v2._0
         private void FillThePorts(object sender, EventArgs e)
         {
             PortsList.Items.Clear();
-            string[] ports = _port.GetPorts;
-            for (int i = 0; i < ports.Length; i++)
-            {
-                PortsList.Items.Add(ports[i]);
-            }
+            //string[] ports = _port.GetPorts;
+            //for (int i = 0; i < ports.Length; i++)
+            //{
+            //    PortsList.Items.Add(ports[i]);
+            //}
         }
         private void AutoName_CheckedChanged(object sender, EventArgs e)
         {
@@ -103,7 +83,7 @@ namespace E7_20_v2._0
         }
         public void PortsList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _port = new SerialPortHandler(PortsList.SelectedItem.ToString());
+     //       _port = new SerialPortHandler(PortsList.SelectedItem.ToString());
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
@@ -176,11 +156,11 @@ namespace E7_20_v2._0
             AllMeterMaxFDropBox.Items.Clear();
             for (int i = 0; i < _maxIndex; i++)
             {
-                AllMeterMinFDropBox.Items.Add(_fArray[i].ToString());
+                AllMeterMinFDropBox.Items.Add(Constants.MAIN_FREQUENCES[i].ToString());
             }
-            for (int i = _minIndex+1; i < _fArray.Length; i++)
+            for (int i = _minIndex+1; i < Constants.MAIN_FREQUENCES.Length; i++)
             {
-                AllMeterMaxFDropBox.Items.Add(_fArray[i].ToString());
+                AllMeterMaxFDropBox.Items.Add(Constants.MAIN_FREQUENCES[i].ToString());
             }
             AllMeterMinFDropBox.SelectedIndex = _minIndex;
             AllMeterMaxFDropBox.SelectedIndex = _maxIndex-_minIndex-1;
@@ -273,7 +253,7 @@ namespace E7_20_v2._0
         {
             Modes m = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
             Params p = new Params(AllMeterAverageValue.Checked, AllMeterMaxValue.Checked, AllMeterMinValue.Checked, AllMeterStandardDeviation.Checked);
-            _workMachine = new AllMeterGrasper(_port, AllMeterMeasurementsBar.Value, m, p, speed, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
+          //  _workMachine = new AllMeterGrasper(_port, AllMeterMeasurementsBar.Value, m, p, speed, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
             MeasurementProcess(false);
             MeasuresTimer.Start();
         }
@@ -281,7 +261,7 @@ namespace E7_20_v2._0
         private void AllMeterStop_Click(object sender, EventArgs e)
         {
             MeasuresTimer.Stop();
-            _workMachine.Finish();
+        //    _workMachine.Finish();
             MeasurementProcess(true);
         }
 
@@ -300,8 +280,8 @@ namespace E7_20_v2._0
 
         private void MeasuresTimer_Tick(object sender, EventArgs e)
         {
-            if (_workMachine != null)
-                _workMachine.WriteData();
+        //    if (_workMachine != null)
+        //        _workMachine.WriteData();
         }
     }
 }
