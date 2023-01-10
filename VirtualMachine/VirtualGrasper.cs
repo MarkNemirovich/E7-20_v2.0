@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace E7_20_v2._0
@@ -7,17 +7,16 @@ namespace E7_20_v2._0
     internal class VirtualGrasper : IOperations
     {
         private Random _rand;
-        private List<byte[]> _data;
-        private int _amount;
+        private byte[][] _data;
+        private int _measuresAmount;
         private Thread creatorThread;
-        public bool ChangeFrequency(SpeedMode newMode) => true;
-        public bool ChangeMode(Modes newMode) => true;
+        public bool ChangeFrequency() => true;
 
         public VirtualGrasper(int amount, int delay)
         {
             _rand = new Random();
-            _data = new List<byte[]>(100);
-            _amount = amount;
+            _data = new byte[100][];
+            _measuresAmount = amount;
             creatorThread = new Thread(CreateNewData);
             creatorThread.Start((object)delay);
         }
@@ -28,11 +27,14 @@ namespace E7_20_v2._0
             output = null;
             lock (_data)
             {
-                index = _data.FindLastIndex(data => data.Length == 0); // Default byte[] has length 0
+                index = _data.Length;
                 if (index > 0)
                 {
                     output = _data[index];
-                    _data[index] = null;
+                    byte[][] temp = new byte[_data.Length - 1][];
+                    for (int i = 0; i < _data.Length - 1; i++)
+                        temp[i] = _data[i];
+                    _data = temp;
                     finded = true;
                 }
             }
@@ -40,8 +42,8 @@ namespace E7_20_v2._0
         }
         public bool ReadBuffer(int length, out byte[][] output)
         {
-            byte[][] buffer = new byte[_amount][]; 
-            for(int i = 0; i < _amount; i++)
+            byte[][] buffer = new byte[_measuresAmount][]; 
+            for(int i = 0; i < _measuresAmount; i++)
             {
                 if (GetLastData(out buffer[i]) == false)
                 {
@@ -59,20 +61,25 @@ namespace E7_20_v2._0
             output[1] = 0;
             for (int i = 2; i < Constants.SIZE; i++)
                 output[i] = (byte)_rand.Next(0, 256);
-            lock(_data)
+            var temp = new byte[_data.Length+1][];
+            int len = _data.Length;
+            lock (_data)
             {
-                _data.Add(output);
-                if (_data.Count >= 100)
+                for (int i = 0; i < len; i++)
+                    temp[i] = _data[i];
+                temp[len] = output;
+                _data = temp;
+                if (len >= 100)
                     Shift();
             }
             Thread.Sleep(Convert.ToInt32(delay));
         }
         private void Shift()
         {
-            for (int i = 0; i < 100 - _amount; i++)
-                _data[i] = _data[i + _amount];
-            for (int i = 100 - _amount; i < 100; i++)
-                _data[i] = null;
+            byte[][] temp = new byte[Constants.BUFFER_LIMIT - _measuresAmount][];
+            for (int i = 0; i < Constants.BUFFER_LIMIT - _measuresAmount; i++)
+                temp[i] = _data[i+ _measuresAmount];
+            _data = temp;
         }
     }
 }

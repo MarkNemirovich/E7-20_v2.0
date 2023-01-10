@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.Ports;
+using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
     internal static class Constants
     {
+        public const int BUFFER_LIMIT = 100;
         public const int SIZE = 22;
         public static readonly int[] MAIN_FREQUENCES = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
     }
@@ -47,10 +50,10 @@ namespace E7_20_v2._0
     }
     public struct Modes
     {
-        public Dictionary<string, bool> _modes;
-        public Modes(bool C, bool L, bool R, bool Z, bool D, bool Ql, bool Qr, bool Fi)
+        public Dictionary<string, byte> _modes;
+        public Modes(byte C, byte L, byte R, byte Z, byte D, byte Ql, byte Qr, byte Fi)
         {
-            _modes = new Dictionary<string, bool>();
+            _modes = new Dictionary<string, byte>();
             _modes.Add("C", C);
             _modes.Add("L", L);
             _modes.Add("R", R);
@@ -60,7 +63,7 @@ namespace E7_20_v2._0
             _modes.Add("Qr", Qr);
             _modes.Add("Fi", Fi);
         }
-        public void ChangeValue(string modeName, bool modeValue)
+        public void ChangeValue(string modeName, byte modeValue)
         {
             foreach (var mode in _modes)
             {

@@ -17,7 +17,7 @@ namespace E7_20_v2._0
             AllMeterMenu,
             TemperatureMeterMenu
         }
-        public string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        private string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         private int _currentWidth = 800;
         private int _currentHeight = 500;
         private int _maxIndex = 1;
@@ -251,7 +251,7 @@ namespace E7_20_v2._0
         }
         private void Start(SpeedMode speed)
         {
-            Modes m = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
+     //       Modes m = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
             Params p = new Params(AllMeterAverageValue.Checked, AllMeterMaxValue.Checked, AllMeterMinValue.Checked, AllMeterStandardDeviation.Checked);
           //  _workMachine = new AllMeterGrasper(_port, AllMeterMeasurementsBar.Value, m, p, speed, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
             MeasurementProcess(false);
