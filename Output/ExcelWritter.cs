@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using E7_20_v2._0;
 using GemBox.Spreadsheet;
 
-namespace DM6500Remote
+namespace E7_20_v2._0
 {
     internal class ExcelWritter
     {
@@ -12,8 +10,7 @@ namespace DM6500Remote
         private ExcelFile _exelFile;
         private ExcelWorksheet _exelSheet;
         private int _lineNumber;
-        private int _lineWidth = 0;
-        private int _listNumber = 0;
+        private int _lineWidth;
         static ExcelWritter()
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
@@ -22,15 +19,11 @@ namespace DM6500Remote
         {            
             _exelFile = new ExcelFile();
             _fileDirectory = new FileDirectory(directory, fileName);
+            _exelSheet = _exelFile.Worksheets.Add($"{_fileDirectory.GetShortName}");
         }
-        public void CreateNewList(Modes interestedModes)
+        public void FillTheTitle(Modes interestedModes)
         {
-            _exelSheet = _exelFile.Worksheets.Add($"{_fileDirectory.GetShortName}_№{_listNumber}");
             _lineNumber = 0;
-            FillTheTitle(interestedModes);
-        }
-        private void FillTheTitle(Modes interestedModes)
-        {
             int column = 0;
             _exelSheet.Cells[_lineNumber, column].Value = "f";
             foreach (var mode in interestedModes._modes)
@@ -43,7 +36,6 @@ namespace DM6500Remote
             }
             _lineWidth = column;
             _lineNumber++;
-            _listNumber++;
         }
         public void AddLine(double[] data)
         {

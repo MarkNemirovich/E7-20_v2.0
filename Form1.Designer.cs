@@ -157,7 +157,6 @@ namespace E7_20_v2._0
             this.PortsList.TabIndex = 2;
             this.PortsList.Text = "Choose the port";
             this.PortsList.DropDown += new System.EventHandler(this.FillThePorts);
-            this.PortsList.SelectedIndexChanged += new System.EventHandler(this.PortsList_SelectedIndexChanged);
             // 
             // DirectoryPath
             // 

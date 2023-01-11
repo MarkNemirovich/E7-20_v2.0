@@ -9,15 +9,16 @@ using System.Windows.Forms;
 
 namespace E7_20_v2._0
 {
-    class RealGrasper : IOperations
+    class RealGrasper : IOoperations
     {
         protected List<byte[]> _data { get; private set; }
         protected Modes _modes;
         protected Params _parameters;
         protected SpeedMode _speedMode;
-        private SerialPortHandler _port;
+        private IOprovider _port;
         private int _measuresAmount;
         private int _startFrequency;
+        private int _f;
 
         /// <summary>
         /// Machine interface for work with a device
@@ -27,13 +28,14 @@ namespace E7_20_v2._0
         /// <param name="speedMode">speedMode</param>
         /// <param name="modes">modes</param>
         /// <param name="parameters">parameters</param>
-        public RealGrasper(string portName, int measuresAmount, SpeedMode speedMode, Modes modes, Params parameters)
+        public RealGrasper(string portName, int measuresAmount, int startFrequency, SpeedMode speedMode, Modes modes, Params parameters)
         {
             _measuresAmount = measuresAmount;
+            _startFrequency= startFrequency;
             _speedMode = speedMode;
             _modes = modes;
             _parameters = parameters;
-            _port = new SerialPortHandler(portName);
+            _port = new IOprovider(portName);
             _port.ProvidePack += GetPack;
             _port.Start();
             SetInitialFrequency();
@@ -53,16 +55,20 @@ namespace E7_20_v2._0
         }
         private void SetInitialFrequency()
         {
-            int f = GetFrequency();
-            while (f == _startFrequency)
+            _f = GetFrequency();
+            while (_f == _startFrequency)
             {
-                if (f > _startFrequency)
+                if (_f > _startFrequency)
                 {
                     _port.SendData((byte)Direction.LEFT);
                 }
                 else
                     _port.SendData((byte)Direction.RIGHT);
             }
+        }
+        public bool NewMode(byte command)
+        {
+            return true;
         }
         public bool ChangeFrequency()
         {
@@ -72,6 +78,7 @@ namespace E7_20_v2._0
                 _port.Finish();
                 return false;
             }
+            _f = f;
             _port.SendData((byte)_speedMode);
             return true;
         }
@@ -86,12 +93,13 @@ namespace E7_20_v2._0
                     f += Convert.ToInt32(data[5] << 8);
                     f *= (int)Math.Pow(10.0, data[6]);
                 }
+                _f = f;
             }
             catch
             {
                 throw new Exception("Cannot calculate the frequency");
             }
-            return f;
+            return _f;
         }
         public bool GetLastData(out byte[] output)
         {

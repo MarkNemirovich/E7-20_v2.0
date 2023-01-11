@@ -24,6 +24,14 @@ namespace E7_20_v2._0
         UP = 0x6,
         LEFT = 0x9
     }
+    public enum ModeCommands : byte
+    {
+        modeC = 0xB,
+        modeL = 0x7,
+        modeR = 0x3,
+        modeZ = 0x2
+    }
+
     public struct Params
     {
         private Dictionary<string, bool> _params;
@@ -50,10 +58,10 @@ namespace E7_20_v2._0
     }
     public struct Modes
     {
-        public Dictionary<string, byte> _modes;
-        public Modes(byte C, byte L, byte R, byte Z, byte D, byte Ql, byte Qr, byte Fi)
+        public Dictionary<string, bool> _modes;
+        public Modes(bool C, bool L, bool R, bool Z, bool D, bool Ql, bool Qr, bool Fi)
         {
-            _modes = new Dictionary<string, byte>();
+            _modes = new Dictionary<string, bool>();
             _modes.Add("C", C);
             _modes.Add("L", L);
             _modes.Add("R", R);
@@ -63,7 +71,7 @@ namespace E7_20_v2._0
             _modes.Add("Qr", Qr);
             _modes.Add("Fi", Fi);
         }
-        public void ChangeValue(string modeName, byte modeValue)
+        public void ChangeValue(string modeName, bool modeValue)
         {
             foreach (var mode in _modes)
             {

@@ -8,14 +8,14 @@ using System.Xml.Linq;
 namespace E7_20_v2._0
 {
 
-    class SerialPortHandler
+    class IOprovider
     {
         private SerialPort _port = new SerialPort("VirtualPort", 9600, Parity.None, 8, StopBits.One);
         public delegate void Pack(byte[] pack);
         public event Pack ProvidePack;
-        public string[] GetPorts => SerialPort.GetPortNames();
+        public static string[] GetPorts => SerialPort.GetPortNames();
 
-        public SerialPortHandler(string name)
+        public IOprovider(string name)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace E7_20_v2._0
                 _port.DiscardInBuffer();
             }
         }
-        ~SerialPortHandler()
+        ~IOprovider()
         {
             Finish();
         }

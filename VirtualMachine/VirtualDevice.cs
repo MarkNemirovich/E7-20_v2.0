@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace E7_20_v2._0
@@ -6,18 +9,80 @@ namespace E7_20_v2._0
     internal class VirtualDevice
     {
         private VirtualGrasper _dataGenerator;
+        private ExcelWritter _writter;
+        private SpeedMode _speedMode;
+        private Modes _modes;
         private int _dataAmount;
-        public VirtualDevice(VirtualGrasper dataGenerator, int dataAmount)
+        private int _f;
+        public VirtualDevice(string direcroty, string fileName, int dataAmount, int startFrequency, SpeedMode speedMode, Modes modes, Params parameters)
         {
-            _dataGenerator = dataGenerator;
             _dataAmount = dataAmount;
+            _speedMode= speedMode;
+            _modes = modes;
+            _dataGenerator = new VirtualGrasper(dataAmount);
+            _writter = new ExcelWritter(direcroty, fileName);
+            SetInitialFrequency(startFrequency);
+            _writter.FillTheTitle(modes);
         }
-        public bool GetData(out int f, out double[] main, out double[] sub)
+        private void SetInitialFrequency(int startFrequency)
         {
-            f = GetF();
+            _f = startFrequency;            
+        }
+        public void GetMeasure()
+        {
+            List<double> outputData = new List<double>(2);
+            outputData.Add(Convert.ToDouble(GetF()));
+            double[] main;
+            double[] sub;
+            bool isMainChecked = false;
+            string additional = null;
+            foreach (var mode in _modes._modes)
+            {
+                if (mode.Value == true)
+                {
+                    switch (mode.Key)
+                    {
+                        case "C":
+                            ChangeMode((byte)ModeCommands.modeC);
+                            
+                            additional = "D";
+                            break;
+                        case "L":
+                            ChangeMode((byte)ModeCommands.modeC);
+                            additional = "Ql";
+                            break;
+                        case "R":
+                            ChangeMode((byte)ModeCommands.modeC);
+                            additional = "Qr";
+                            break;
+                        case "Z":
+                            ChangeMode((byte)ModeCommands.modeC);
+                            additional = "Fi";
+                            break;
+                        default:
+                            isMainChecked = true;
+                            break;
+                    }
+                    if (isMainChecked)
+                        break;
+                    while (GetData(out main, out sub) == false)
+                        Thread.Sleep(100);
+                    outputData.Add(main.Average());
+                    if (_modes._modes[additional])
+                        outputData.Add(sub.Average());
+                }
+            }
+        }
+
+        private void ChangeMode(byte message)
+        {
+            _dataGenerator.NewMode(message);
+        }
+        public bool GetData(out double[] main, out double[] sub)
+        {
             main = new double[_dataAmount];
             sub = new double[_dataAmount];
-            if (f == -1)
+            if (_f < 0)
                 return false;
             if (_dataGenerator.ReadBuffer(_dataAmount, out byte[][] output) == false)
                 return false;

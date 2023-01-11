@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    internal class VirtualGrasper : IOperations
+    internal class VirtualGrasper : IOoperations
     {
         private Random _rand;
         private byte[][] _data;
@@ -12,10 +12,10 @@ namespace E7_20_v2._0
         private Thread creatorThread;
         public bool ChangeFrequency() => true;
 
-        public VirtualGrasper(int amount, int delay)
+        public VirtualGrasper(int amount, int delay = 10)
         {
             _rand = new Random();
-            _data = new byte[100][];
+            _data = new byte[0][];
             _measuresAmount = amount;
             creatorThread = new Thread(CreateNewData);
             creatorThread.Start((object)delay);
@@ -39,6 +39,11 @@ namespace E7_20_v2._0
                 }
             }
             return finded;
+        }
+        public bool NewMode(byte command)
+        {
+            _data = new byte[0][];
+            return true;
         }
         public bool ReadBuffer(int length, out byte[][] output)
         {
@@ -69,7 +74,7 @@ namespace E7_20_v2._0
                     temp[i] = _data[i];
                 temp[len] = output;
                 _data = temp;
-                if (len >= 100)
+                if (len >= Constants.BUFFER_LIMIT)
                     Shift();
             }
             Thread.Sleep(Convert.ToInt32(delay));

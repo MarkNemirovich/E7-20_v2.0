@@ -1,9 +1,7 @@
-﻿using GemBox.Spreadsheet.Drawing;
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace E7_20_v2._0

@@ -22,7 +22,6 @@ namespace E7_20_v2._0
         private int _currentHeight = 500;
         private int _maxIndex = 1;
         private int _minIndex = 0;
-  //      private SerialPortHandler _port = new SerialPortHandler();
 
         public App()
         {
@@ -37,15 +36,20 @@ namespace E7_20_v2._0
         private void FillThePorts(object sender, EventArgs e)
         {
             PortsList.Items.Clear();
-            //string[] ports = _port.GetPorts;
-            //for (int i = 0; i < ports.Length; i++)
-            //{
-            //    PortsList.Items.Add(ports[i]);
-            //}
+            string[] ports = IOprovider.GetPorts;
+            for (int i = 0; i < ports.Length; i++)
+            {
+                PortsList.Items.Add(ports[i]);
+            }
+            if (ports.Length == 0)
+                PortsList.Items.Add("VirtualPort");
         }
         private void AutoName_CheckedChanged(object sender, EventArgs e)
         {
+            if (AutoName.Checked)
+                FileName.Text = "Experiment";
             FileName.Enabled = !AutoName.Checked;
+            
         }
         public void App_Resize(object sender, EventArgs e)
         {
@@ -80,10 +84,6 @@ namespace E7_20_v2._0
                 return;
             _folderPath = FolderBrowserDialog.SelectedPath;
             DirectoryPath.Text = _folderPath;
-        }
-        public void PortsList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-     //       _port = new SerialPortHandler(PortsList.SelectedItem.ToString());
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
