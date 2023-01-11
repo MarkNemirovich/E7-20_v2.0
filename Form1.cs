@@ -22,6 +22,7 @@ namespace E7_20_v2._0
         private int _currentHeight = 500;
         private int _maxIndex = 1;
         private int _minIndex = 0;
+        private VirtualDevice _device = null;
 
         public App()
         {
@@ -103,7 +104,7 @@ namespace E7_20_v2._0
         }
         public bool CheckGeneralInput()
         {
-            if (PortsList.Text == default(string))
+            if (PortsList.Text == default(string) || PortsList.Text.Contains("COM") == false)
             {
                 MessageBox.Show("Choose the port please");
                 return false;
@@ -214,7 +215,6 @@ namespace E7_20_v2._0
             }
 
         }
-
         public void AllMeterMaxValue_CheckedChanged(object sender, EventArgs e)
         {
             if ((AllMeterMinValue.Checked | AllMeterMaxValue.Checked | AllMeterStandardDeviation.Checked) == false)
@@ -241,7 +241,6 @@ namespace E7_20_v2._0
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
-
             Start(SpeedMode.Fast);
         }
 
@@ -251,17 +250,23 @@ namespace E7_20_v2._0
         }
         private void Start(SpeedMode speed)
         {
-     //       Modes m = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
-            Params p = new Params(AllMeterAverageValue.Checked, AllMeterMaxValue.Checked, AllMeterMinValue.Checked, AllMeterStandardDeviation.Checked);
-          //  _workMachine = new AllMeterGrasper(_port, AllMeterMeasurementsBar.Value, m, p, speed, $"{DirectoryPath.Text}\\{FileName.Text}.txt");
+            Modes modes = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
+            Params param = new Params(AllMeterAverageValue.Checked, AllMeterMaxValue.Checked, AllMeterMinValue.Checked, AllMeterStandardDeviation.Checked);
             MeasurementProcess(false);
+            int minF = Constants.MAIN_FREQUENCES[AllMeterMinFDropBox.SelectedIndex];
+            int maxF = Constants.MAIN_FREQUENCES[AllMeterMaxFDropBox.SelectedIndex];
+            _device = new VirtualDevice(DirectoryPath.Text, FileName.Text, AllMeterMeasurementsBar.Value, minF, maxF, speed, modes, param);
             MeasuresTimer.Start();
         }
 
         private void AllMeterStop_Click(object sender, EventArgs e)
         {
             MeasuresTimer.Stop();
-        //    _workMachine.Finish();
+            if (_device != null)
+            {
+                _device.Finish();
+                _device = null;
+            }
             MeasurementProcess(true);
         }
 
@@ -280,8 +285,14 @@ namespace E7_20_v2._0
 
         private void MeasuresTimer_Tick(object sender, EventArgs e)
         {
-        //    if (_workMachine != null)
-        //        _workMachine.WriteData();
+            if (_device != null)
+                if (_device.MakeMeasurement() == false)
+                    AllMeterStop_Click(sender, e);
+        }
+
+        private void App_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

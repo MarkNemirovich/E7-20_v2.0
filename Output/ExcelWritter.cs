@@ -4,7 +4,7 @@ using GemBox.Spreadsheet;
 
 namespace E7_20_v2._0
 {
-    internal class ExcelWritter
+    internal class ExcelWritter : IDisposable
     {
         private FileDirectory _fileDirectory;
         private ExcelFile _exelFile;
@@ -42,15 +42,17 @@ namespace E7_20_v2._0
             if (data.Length != _lineWidth+1) // +1 - it is f
                 _exelSheet.Cells[_lineNumber, 0].Value = "No data here";
             else
-                for (int i = 0; i <= data.Length; i++)
+                for (int i = 0; i < data.Length; i++)
                 {
                     _exelSheet.Cells[_lineNumber, i].Value = data[i];
                 }
             _lineNumber++;
         }
-        ~ExcelWritter()
+
+        public void Dispose()
         {
             _exelFile.Save(_fileDirectory.GetFullName);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -25,18 +25,24 @@ namespace E7_20_v2._0
             int index = -1;
             bool finded = false;
             output = null;
+            byte[][] snapshot;
             lock (_data)
             {
-                index = _data.Length;
-                if (index > 0)
-                {
-                    output = _data[index];
-                    byte[][] temp = new byte[_data.Length - 1][];
-                    for (int i = 0; i < _data.Length - 1; i++)
-                        temp[i] = _data[i];
-                    _data = temp;
-                    finded = true;
-                }
+                snapshot = _data;
+            }
+            index = snapshot.Length-1;
+            if (index > 0)
+            {
+                output = snapshot[index];
+                byte[][] temp = new byte[index][];
+                for (int i = 0; i < index; i++)
+                    temp[i] = snapshot[i];
+                snapshot = temp;
+                finded = true;
+            }
+            lock (_data)
+            {
+                 _data = snapshot;
             }
             return finded;
         }
@@ -61,30 +67,36 @@ namespace E7_20_v2._0
         }
         private void CreateNewData(object delay)
         {
-            byte[] output = new byte[Constants.SIZE];
-            output[0] = 0xAA;
-            output[1] = 0;
-            for (int i = 2; i < Constants.SIZE; i++)
-                output[i] = (byte)_rand.Next(0, 256);
-            var temp = new byte[_data.Length+1][];
-            int len = _data.Length;
-            lock (_data)
+            while (true)
             {
-                for (int i = 0; i < len; i++)
-                    temp[i] = _data[i];
-                temp[len] = output;
-                _data = temp;
+                byte[] output = new byte[Constants.SIZE];
+                output[0] = 0xAA;
+                output[1] = 0;
+                for (int i = 2; i < Constants.SIZE; i++)
+                    output[i] = (byte)_rand.Next(0, 256);
+                var temp = new byte[_data.Length + 1][];
+                int len = _data.Length;
+                lock (_data)
+                {
+                    for (int i = 0; i < len; i++)
+                        temp[i] = _data[i];
+                    temp[len] = output;
+                    _data = temp;
+                }
                 if (len >= Constants.BUFFER_LIMIT)
                     Shift();
+                Thread.Sleep(Convert.ToInt32(delay));
             }
-            Thread.Sleep(Convert.ToInt32(delay));
         }
         private void Shift()
         {
             byte[][] temp = new byte[Constants.BUFFER_LIMIT - _measuresAmount][];
-            for (int i = 0; i < Constants.BUFFER_LIMIT - _measuresAmount; i++)
-                temp[i] = _data[i+ _measuresAmount];
-            _data = temp;
+            lock (_data)
+            {
+                for (int i = 0; i < Constants.BUFFER_LIMIT - _measuresAmount; i++)
+                    temp[i] = _data[i + _measuresAmount];
+                _data = temp;
+            }
         }
     }
 }

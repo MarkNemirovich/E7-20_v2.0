@@ -21,27 +21,25 @@ namespace E7_20_v2._0
         {
             var list = Directory.GetFiles(_directory).Where(name => Regex.Match(name, $"\b{_fileName}\b") != null).ToArray();
             Array.Sort(list);
-            int numberOfMeasurement = 0;
+            int numberOfMeasurement = 1;
             bool isFounded = false;
             for (int i = 0; i < list.Length; i++)
             {
                 int start = list[i].IndexOf('№') + 1;
                 int end = list[i].IndexOf(".xlsx");
+                if (end - start <= 0)
+                    continue;
                 string number = list[i].Substring(start, end - start);
                 Int32.TryParse(number, out int n);
+                isFounded = true;
                 if (n == numberOfMeasurement)
-                {
                     numberOfMeasurement++;
-                }
                 else
                 {
                     numberOfMeasurement = n;
-                    isFounded = true;
                     break;
                 }
             }
-            if (isFounded == false)
-                numberOfMeasurement++;
             return numberOfMeasurement;
         }
         private string SetDate()

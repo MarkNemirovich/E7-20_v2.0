@@ -12,12 +12,14 @@ namespace E7_20_v2._0
         private ExcelWritter _writter;
         private SpeedMode _speedMode;
         private Modes _modes;
+        private int _endFrequency;
         private int _dataAmount;
         private int _f;
-        public VirtualDevice(string direcroty, string fileName, int dataAmount, int startFrequency, SpeedMode speedMode, Modes modes, Params parameters)
+        public VirtualDevice(string direcroty, string fileName, int dataAmount, int startFrequency, int endFrequency, SpeedMode speedMode, Modes modes, Params parameters)
         {
             _dataAmount = dataAmount;
-            _speedMode= speedMode;
+            _endFrequency = endFrequency;
+            _speedMode = speedMode;
             _modes = modes;
             _dataGenerator = new VirtualGrasper(dataAmount);
             _writter = new ExcelWritter(direcroty, fileName);
@@ -28,7 +30,7 @@ namespace E7_20_v2._0
         {
             _f = startFrequency;            
         }
-        public void GetMeasure()
+        public bool MakeMeasurement()
         {
             List<double> outputData = new List<double>(2);
             outputData.Add(Convert.ToDouble(GetF()));
@@ -72,11 +74,43 @@ namespace E7_20_v2._0
                         outputData.Add(sub.Average());
                 }
             }
+            _writter.AddLine(outputData.ToArray());
+            if (_f == _endFrequency)
+            {
+                _writter.Dispose();
+                return false;
+            }
+            ChangeFrequency(_speedMode);
+            return true;
         }
 
         private void ChangeMode(byte message)
         {
             _dataGenerator.NewMode(message);
+        }
+        private void ChangeFrequency(SpeedMode mode)
+        {
+            if(mode==SpeedMode.Fast)
+            {
+                int i = 0;
+                for (; i < Constants.MAIN_FREQUENCES.Length - 1; i++)
+                    if (_f == Constants.MAIN_FREQUENCES[i])
+                        break;
+                _f = Constants.MAIN_FREQUENCES[i + 1];
+            }
+            else
+            {
+                for (int i = 0; i < Constants.MAIN_FREQUENCES.Length - 1; i++)
+                {
+                    if (_f >= Constants.MAIN_FREQUENCES[i])
+                        continue;
+                    if (Constants.MAIN_FREQUENCES[i - 1] / 1000 == 0)
+                        _f += 1;
+                    else
+                        _f += 1000;
+                    break;
+                }
+            }
         }
         public bool GetData(out double[] main, out double[] sub)
         {
@@ -135,6 +169,10 @@ namespace E7_20_v2._0
                 param *= Math.Pow(10.0, input[index + 3]);
             }
             return param;
+        }
+        public void Finish()
+        {
+
         }
     }
 }
