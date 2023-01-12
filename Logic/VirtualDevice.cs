@@ -81,6 +81,7 @@ namespace E7_20_v2._0
                 return false;
             }
             _dataExchanger.ChangeFrequency((byte)_changeFrequencyCommand);
+            _f = _dataExchanger.GetFrequency();
             return true;
         }
         public bool GetData(out double[] main, out double[] sub)
