@@ -1,7 +1,9 @@
-﻿using System;
+﻿using E7_20_v2._0.Logic;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -20,9 +22,12 @@ namespace E7_20_v2._0
         private string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         private int _currentWidth = 800;
         private int _currentHeight = 500;
-        private int _maxIndex = 1;
-        private int _minIndex = 0;
-        private VirtualDevice _device = null;
+        private int _endIndex = 1;
+        private int _startIndex = 0;
+        private VirtualDevice _virtualMachine = null;
+        private RealDevice _workMachine = null;
+
+        private bool _IsDebug = true;
 
         public App()
         {
@@ -43,7 +48,7 @@ namespace E7_20_v2._0
                 PortsList.Items.Add(ports[i]);
             }
             if (ports.Length == 0)
-                PortsList.Items.Add("VirtualPort");
+                PortsList.Items.Add("VirtualCOM");
         }
         private void AutoName_CheckedChanged(object sender, EventArgs e)
         {
@@ -121,50 +126,31 @@ namespace E7_20_v2._0
         #region AllMeterPanel
         public void AllMeterInit()
         {
-            AllMeterMeasurements.Text = AllMeterMeasurementsBar.Value.ToString();
             UpdateLists();
             StartEnabling();
         }
-        public void AllMeterMeasurementsBar_Scroll(object sender, EventArgs e)
+        public void AllMeterEndFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AllMeterMeasurements.Text = AllMeterMeasurementsBar.Value.ToString();
-            AllMeterMaxValue.Enabled = AllMeterMeasurementsBar.Value > 1;
-            AllMeterMinValue.Enabled = AllMeterMeasurementsBar.Value > 1;
-            AllMeterStandardDeviation.Enabled = AllMeterMeasurementsBar.Value > 1;
-            if (AllMeterMeasurementsBar.Value == 1)
-            {
-                AllMeterAverageValue.Checked = true;
-                AllMeterAverageValue.Enabled = false;
-                AllMeterMinValue.Checked = false;
-                AllMeterMaxValue.Checked = false;
-                AllMeterStandardDeviation.Checked = false;
-            }
-        }
-        public void AllMeterMaxFDropBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _maxIndex = _minIndex + AllMeterMaxFDropBox.SelectedIndex+1;
+            _endIndex = AllMeterEndFDropBox.SelectedIndex;
             UpdateLists();
         }
 
-        public void AllMeterMinFDropBox_SelectedIndexChanged(object sender, EventArgs e)
+        public void AllMeterStartFDropBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _minIndex = AllMeterMinFDropBox.SelectedIndex;
+            _startIndex = AllMeterStartFDropBox.SelectedIndex;
             UpdateLists();
         }
         public void UpdateLists()
         {
-            AllMeterMinFDropBox.Items.Clear();
-            AllMeterMaxFDropBox.Items.Clear();
-            for (int i = 0; i < _maxIndex; i++)
+            AllMeterStartFDropBox.Items.Clear();
+            AllMeterEndFDropBox.Items.Clear();
+            for (int i = 0; i < Constants.MAIN_FREQUENCES.Length; i++)
             {
-                AllMeterMinFDropBox.Items.Add(Constants.MAIN_FREQUENCES[i].ToString());
+                AllMeterStartFDropBox.Items.Add(Constants.MAIN_FREQUENCES[i].ToString());
+                AllMeterEndFDropBox.Items.Add(Constants.MAIN_FREQUENCES[i].ToString());
             }
-            for (int i = _minIndex+1; i < Constants.MAIN_FREQUENCES.Length; i++)
-            {
-                AllMeterMaxFDropBox.Items.Add(Constants.MAIN_FREQUENCES[i].ToString());
-            }
-            AllMeterMinFDropBox.SelectedIndex = _minIndex;
-            AllMeterMaxFDropBox.SelectedIndex = _maxIndex-_minIndex-1;
+            AllMeterStartFDropBox.SelectedIndex = _startIndex;
+            AllMeterEndFDropBox.SelectedIndex = _endIndex;
         }
         public void AllMeterC_CheckedChanged(object sender, EventArgs e)
         {
@@ -202,43 +188,6 @@ namespace E7_20_v2._0
             AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
             AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
         }
-        public void AllMeterMinValue_CheckedChanged(object sender, EventArgs e)
-        {
-            if ((AllMeterMinValue.Checked | AllMeterMaxValue.Checked | AllMeterStandardDeviation.Checked) == false)
-            {
-                AllMeterAverageValue.Checked = true;
-                AllMeterAverageValue.Enabled = false;
-            }
-            else
-            {
-                AllMeterAverageValue.Enabled = true;
-            }
-
-        }
-        public void AllMeterMaxValue_CheckedChanged(object sender, EventArgs e)
-        {
-            if ((AllMeterMinValue.Checked | AllMeterMaxValue.Checked | AllMeterStandardDeviation.Checked) == false)
-            {
-                AllMeterAverageValue.Checked = true;
-                AllMeterAverageValue.Enabled = false;
-            }
-            else
-            {
-                AllMeterAverageValue.Enabled = true;
-            }
-        }
-        private void AllMeterStandardDeviation_CheckedChanged(object sender, EventArgs e)
-        {
-            if ((AllMeterMinValue.Checked | AllMeterMaxValue.Checked | AllMeterStandardDeviation.Checked) == false)
-            {
-                AllMeterAverageValue.Checked = true;
-                AllMeterAverageValue.Enabled = false;
-            }
-            else
-            {
-                AllMeterAverageValue.Enabled = true;
-            }
-        }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
             Start(SpeedMode.Fast);
@@ -251,22 +200,27 @@ namespace E7_20_v2._0
         private void Start(SpeedMode speed)
         {
             Modes modes = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
-            Params param = new Params(AllMeterAverageValue.Checked, AllMeterMaxValue.Checked, AllMeterMinValue.Checked, AllMeterStandardDeviation.Checked);
             MeasurementProcess(false);
-            int minF = Constants.MAIN_FREQUENCES[AllMeterMinFDropBox.SelectedIndex];
-            int maxF = Constants.MAIN_FREQUENCES[AllMeterMaxFDropBox.SelectedIndex];
-            _device = new VirtualDevice(DirectoryPath.Text, FileName.Text, AllMeterMeasurementsBar.Value, minF, maxF, speed, modes, param);
+            int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
+            int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
+            if (_IsDebug)
+                _virtualMachine = new VirtualDevice(DirectoryPath.Text, FileName.Text, startF, endF, speed, modes);
+            else
+                _workMachine = new RealDevice(PortsList.SelectedText, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes);
             MeasuresTimer.Start();
         }
 
         private void AllMeterStop_Click(object sender, EventArgs e)
         {
             MeasuresTimer.Stop();
-            if (_device != null)
+            if (_IsDebug)
             {
-                _device.Finish();
-                _device = null;
+                if (_virtualMachine != null)
+                    _virtualMachine.Break();
             }
+            else
+                if (_workMachine != null)
+                    _workMachine.Break();
             MeasurementProcess(true);
         }
 
@@ -285,14 +239,18 @@ namespace E7_20_v2._0
 
         private void MeasuresTimer_Tick(object sender, EventArgs e)
         {
-            if (_device != null)
-                if (_device.MakeMeasurement() == false)
+            if (_IsDebug)
+            {
+                if (_virtualMachine != null && _virtualMachine.MakeMeasurement() == false)
                     AllMeterStop_Click(sender, e);
+            }
+            else if (_workMachine != null && _workMachine.MakeMeasurement() == false)
+                AllMeterStop_Click(sender, e);
         }
-
-        private void App_FormClosed(object sender, FormClosedEventArgs e)
+        [Conditional("DEBUG")]
+        private void IsDebug(ref bool isDebug)
         {
-            Application.Exit();
+            isDebug = true;
         }
     }
 }

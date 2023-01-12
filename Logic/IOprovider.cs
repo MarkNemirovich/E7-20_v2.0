@@ -7,7 +7,6 @@ using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
-
     class IOprovider
     {
         private SerialPort _port = new SerialPort("VirtualPort", 9600, Parity.None, 8, StopBits.One);

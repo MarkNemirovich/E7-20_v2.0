@@ -11,7 +11,7 @@ namespace E7_20_v2._0
 {
     class RealGrasper : IOoperations
     {
-        protected List<byte[]> _data { get; private set; }
+        private Stack<byte[]> _data;
         protected Modes _modes;
         protected Params _parameters;
         protected SpeedMode _speedMode;
