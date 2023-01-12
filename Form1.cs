@@ -1,10 +1,10 @@
-﻿using E7_20_v2._0.Logic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO.Ports;
 using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.AxHost;
@@ -42,7 +42,7 @@ namespace E7_20_v2._0
         private void FillThePorts(object sender, EventArgs e)
         {
             PortsList.Items.Clear();
-            string[] ports = IOprovider.GetPorts;
+            string[] ports = SerialPort.GetPortNames();
             for (int i = 0; i < ports.Length; i++)
             {
                 PortsList.Items.Add(ports[i]);

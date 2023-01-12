@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace E7_20_v2._0.Logic
+namespace E7_20_v2._0
 {
     internal class RealDevice : BaseDevice, IMeasurement
     {
@@ -38,6 +38,7 @@ namespace E7_20_v2._0.Logic
             double[] sub;
             bool isMainChecked = false;
             string additional = null;
+            outputData.Add(_f);
             foreach (var mode in _modes._modes)
             {
                 if (mode.Value == true)
@@ -69,7 +70,6 @@ namespace E7_20_v2._0.Logic
                     do
                         Thread.Sleep(Constants.DELAY);
                     while (GetData(out main, out sub) == false);
-                    outputData.Add(_f);
                     outputData.Add(main.Average());
                     if (_modes._modes[additional])
                         outputData.Add(sub.Average());

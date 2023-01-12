@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.Xml;
 using System.Threading;
-using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
