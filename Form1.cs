@@ -197,14 +197,28 @@ namespace E7_20_v2._0
         }
         private void Start(SpeedMode speed)
         {
-            Modes modes = new Modes(AllMeterC.Checked, AllMeterL.Checked, AllMeterR.Checked, AllMeterZ.Checked, AllMeterD.Checked, AllMeterQl.Checked, AllMeterQr.Checked, AllMeterFi.Checked);
+            List<ModeCommands> modes = new List<ModeCommands>();
+            if (AllMeterC.Checked)
+                modes.Add(ModeCommands.modeC);
+            if (AllMeterD.Checked)
+                modes.Add(ModeCommands.modeD);
+            if (AllMeterL.Checked)
+                modes.Add(ModeCommands.modeL);
+            if (AllMeterQl.Checked)
+                modes.Add(ModeCommands.modeQl);
+            if (AllMeterQr.Checked)
+                modes.Add(ModeCommands.modeQr);
+            if (AllMeterZ.Checked)
+                modes.Add(ModeCommands.modeZ);
+            if (AllMeterFi.Checked)
+                modes.Add(ModeCommands.modeFi);
             MeasurementProcess(false);
             int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
             int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
             if (_IsDebug)
-                _virtualMachine = new VirtualDevice(DirectoryPath.Text, FileName.Text, startF, endF, speed, modes);
+                _virtualMachine = new VirtualDevice(DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             else
-                _workMachine = new RealDevice(PortsList.SelectedText, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes);
+                _workMachine = new RealDevice(PortsList.SelectedText, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             MeasuresTimer.Start();
         }
 

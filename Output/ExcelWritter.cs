@@ -20,18 +20,15 @@ namespace E7_20_v2._0
             _fileDirectory = new FileDirectory(directory, fileName);
             _exelSheet = _exelFile.Worksheets.Add($"{_fileDirectory.GetShortName}");
         }
-        public void FillTheTitle(Modes interestedModes)
+        public void FillTheTitle(ModeCommands[] interestedModes)
         {
             _lineNumber = 0;
             int column = 0;
             _exelSheet.Cells[_lineNumber, column].Value = "f";
-            foreach (var mode in interestedModes._modes)
+            foreach (var mode in interestedModes)
             {
-                if (mode.Value)
-                {
-                    column++;
-                    _exelSheet.Cells[_lineNumber, column].Value = mode.Key;
-                }
+                column++;
+                _exelSheet.Cells[_lineNumber, column].Value = mode.ToString();
             }
             _lineWidth = column;
             _lineNumber++;

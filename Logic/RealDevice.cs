@@ -11,7 +11,7 @@ namespace E7_20_v2._0
         private RealGrasper _dataExchanger;
         private Direction _changeDirection;
         private int _endFrequency;
-        public RealDevice(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, Modes modes) : base(direcroty, fileName, modes)
+        public RealDevice(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
         {
             SetInitialMode(speed, startFrequency);
             _endFrequency = endFrequency;
@@ -35,49 +35,29 @@ namespace E7_20_v2._0
         {
             int tempF = _f;
             List<double> outputData = new List<double>(2);
-            double[] main;
-            double[] sub;
-            bool isMainChecked = false;
-            string additional = null;
+            double[] main = new double[0];
+            double[] sub = new double[0];
             while (tempF == _f)
             {
                 outputData.Add(_f); 
                 Thread.Sleep(Constants.DELAY);
             }
-            foreach (var mode in _modes._modes)
+            foreach (var mode in _modes)
             {
-                if (mode.Value == true)
+                switch (mode)
                 {
-                    switch (mode.Key)
-                    {
-                        case "C":
-                            ChangeMode((byte)ModeCommands.modeC);
-                            additional = "D";
-                            break;
-                        case "L":
-                            ChangeMode((byte)ModeCommands.modeC);
-                            additional = "Ql";
-                            break;
-                        case "R":
-                            ChangeMode((byte)ModeCommands.modeC);
-                            additional = "Qr";
-                            break;
-                        case "Z":
-                            ChangeMode((byte)ModeCommands.modeC);
-                            additional = "Fi";
-                            break;
-                        default:
-                            isMainChecked = true;
-                            break;
-                    }
-                    if (isMainChecked)
+                    case ModeCommands.modeC:
+                    case ModeCommands.modeL:
+                    case ModeCommands.modeR:
+                    case ModeCommands.modeZ:
+                        ChangeMode((byte)mode);
+                        while (GetData(out main, out sub) == false)
+                            Thread.Sleep(Constants.DELAY);
+                        outputData.Add(main.Average());
                         break;
-                    do
-                        Thread.Sleep(Constants.DELAY);
-                    while (GetData(out main, out sub) == false);
-                    outputData.Add(main.Average());
-                    if (_modes._modes[additional])
+                    default:
                         outputData.Add(sub.Average());
+                        break;
                 }
             }
             WriteLine(outputData.ToArray());
