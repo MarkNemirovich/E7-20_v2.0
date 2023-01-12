@@ -1,9 +1,6 @@
 ﻿using GemBox.Spreadsheet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace E7_20_v2._0
 {
