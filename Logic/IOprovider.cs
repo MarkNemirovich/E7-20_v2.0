@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO.Ports;
-using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
