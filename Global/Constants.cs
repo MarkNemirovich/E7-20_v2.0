@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO.Ports;
-using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
@@ -32,31 +29,6 @@ namespace E7_20_v2._0
         modeL = 0x7,
         modeR = 0x3,
         modeZ = 0x2
-    }
-
-    public struct Params
-    {
-        private Dictionary<string, bool> _params;
-        public bool GetValue(string key) => _params.ContainsKey(key);
-        public Params(bool Avg, bool Max, bool Min, bool StdDiv)
-        {
-            _params = new Dictionary<string, bool>();
-            _params.Add("Avg", Avg);
-            _params.Add("Max", Max);
-            _params.Add("Min", Min);
-            _params.Add("StdDiv", StdDiv);
-        }
-        public void ChangeValue(string paramName, bool paramValue)
-        {
-            foreach (var param in _params)
-            {
-                if (String.Equals(param.Key, paramValue))
-                {
-                    _params[param.Key] = paramValue;
-                    return;
-                }
-            }
-        }
     }
     public struct Modes
     {
