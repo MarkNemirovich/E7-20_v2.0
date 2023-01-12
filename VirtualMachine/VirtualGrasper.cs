@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Org.BouncyCastle.Crypto.Paddings;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -7,95 +9,74 @@ namespace E7_20_v2._0
     internal class VirtualGrasper : IOoperations
     {
         private Random _rand;
-        private byte[][] _data;
-        private int _measuresAmount;
+        private Stack<byte[]> _data;
         private Thread creatorThread;
-        public bool ChangeFrequency() => true;
+        private bool isWork = false;
 
-        public VirtualGrasper(int amount, int delay = 10)
+        public VirtualGrasper()
         {
             _rand = new Random();
-            _data = new byte[0][];
-            _measuresAmount = amount;
+            _data = new Stack<byte[]>(Constants.BUFFER_LIMIT);
             creatorThread = new Thread(CreateNewData);
-            creatorThread.Start((object)delay);
+            isWork = true;
+            creatorThread.Start();
         }
         public bool GetLastData(out byte[] output)
         {
-            int index = -1;
-            bool finded = false;
             output = null;
-            byte[][] snapshot;
+            bool finded = false;
             lock (_data)
             {
-                snapshot = _data;
-            }
-            index = snapshot.Length-1;
-            if (index > 0)
-            {
-                output = snapshot[index];
-                byte[][] temp = new byte[index][];
-                for (int i = 0; i < index; i++)
-                    temp[i] = snapshot[i];
-                snapshot = temp;
-                finded = true;
-            }
-            lock (_data)
-            {
-                 _data = snapshot;
+                if (_data.Count > 0)
+                {
+                    output = _data.Peek();
+                    finded = true;
+                }
             }
             return finded;
         }
         public bool NewMode(byte command)
         {
-            _data = new byte[0][];
+            ClearData();
             return true;
         }
-        public bool ReadBuffer(int length, out byte[][] output)
+
+        public bool ChangeFrequency(byte command)
         {
-            byte[][] buffer = new byte[_measuresAmount][]; 
-            for(int i = 0; i < _measuresAmount; i++)
+            ClearData();
+            return true;
+        }
+        public void Break()
+        {
+            isWork = false;
+        }
+        private void CreateNewData()
+        {
+            while (isWork)
             {
-                if (GetLastData(out buffer[i]) == false)
+                int len = _data.Count;
+                if (len >= Constants.BUFFER_LIMIT)
                 {
-                    output = null;
-                    return false;
+                    ClearData();
+                    continue;
                 }
-            }
-            output = buffer;
-            return true;
-        }
-        private void CreateNewData(object delay)
-        {
-            while (true)
-            {
                 byte[] output = new byte[Constants.SIZE];
                 output[0] = 0xAA;
                 output[1] = 0;
                 for (int i = 2; i < Constants.SIZE; i++)
                     output[i] = (byte)_rand.Next(0, 256);
-                var temp = new byte[_data.Length + 1][];
-                int len = _data.Length;
                 lock (_data)
                 {
-                    for (int i = 0; i < len; i++)
-                        temp[i] = _data[i];
-                    temp[len] = output;
-                    _data = temp;
-                }
-                if (len >= Constants.BUFFER_LIMIT)
-                    Shift();
-                Thread.Sleep(Convert.ToInt32(delay));
+                    _data.Push(output);
+                }                
+                Thread.Sleep(Constants.DELAY);
             }
         }
-        private void Shift()
+        private void ClearData()
         {
-            byte[][] temp = new byte[Constants.BUFFER_LIMIT - _measuresAmount][];
             lock (_data)
             {
-                for (int i = 0; i < Constants.BUFFER_LIMIT - _measuresAmount; i++)
-                    temp[i] = _data[i + _measuresAmount];
-                _data = temp;
+                _data.Clear();
             }
         }
     }

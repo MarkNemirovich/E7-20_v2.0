@@ -4,7 +4,7 @@ using GemBox.Spreadsheet;
 
 namespace E7_20_v2._0
 {
-    internal class ExcelWritter : IDisposable
+    internal class ExcelWritter
     {
         private FileDirectory _fileDirectory;
         private ExcelFile _exelFile;
@@ -48,11 +48,9 @@ namespace E7_20_v2._0
                 }
             _lineNumber++;
         }
-
-        public void Dispose()
+        public void Save()
         {
             _exelFile.Save(_fileDirectory.GetFullName);
-            GC.SuppressFinalize(this);
         }
     }
 }

@@ -19,10 +19,9 @@ namespace E7_20_v2._0
 
         private int SetFileNumber()
         {
-            var list = Directory.GetFiles(_directory).Where(name => Regex.Match(name, $"\b{_fileName}\b") != null).ToArray();
+            var list = Directory.GetFiles(_directory).Where(name => name.Contains($"{_fileName}_{SetDate()}")).ToArray();
             Array.Sort(list);
-            int numberOfMeasurement = 1;
-            bool isFounded = false;
+            int numberOfMeasurement = 0;
             for (int i = 0; i < list.Length; i++)
             {
                 int start = list[i].IndexOf('№') + 1;
@@ -31,14 +30,10 @@ namespace E7_20_v2._0
                     continue;
                 string number = list[i].Substring(start, end - start);
                 Int32.TryParse(number, out int n);
-                isFounded = true;
                 if (n == numberOfMeasurement)
                     numberOfMeasurement++;
                 else
-                {
-                    numberOfMeasurement = n;
                     break;
-                }
             }
             return numberOfMeasurement;
         }

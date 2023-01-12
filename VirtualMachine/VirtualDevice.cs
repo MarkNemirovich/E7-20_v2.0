@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Xml.Linq;
 
@@ -10,25 +11,38 @@ namespace E7_20_v2._0
     {
         private VirtualGrasper _dataGenerator;
         private ExcelWritter _writter;
-        private SpeedMode _speedMode;
         private Modes _modes;
+        private int _startFrequency;
         private int _endFrequency;
-        private int _dataAmount;
+        private Direction _changeFrequencyCommand;
         private int _f;
-        public VirtualDevice(string direcroty, string fileName, int dataAmount, int startFrequency, int endFrequency, SpeedMode speedMode, Modes modes, Params parameters)
+        public VirtualDevice(string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speedMode, Modes modes)
         {
-            _dataAmount = dataAmount;
+            _startFrequency = startFrequency;
             _endFrequency = endFrequency;
-            _speedMode = speedMode;
+            if (speedMode == SpeedMode.Fast)
+            {
+                if (startFrequency > endFrequency)
+                    _changeFrequencyCommand = Direction.LEFT;
+                else
+                    _changeFrequencyCommand = Direction.RIGHT;
+            }
+            else
+            {
+                if (startFrequency > endFrequency)
+                    _changeFrequencyCommand = Direction.DOWN;
+                else
+                    _changeFrequencyCommand = Direction.UP;
+            }
             _modes = modes;
-            _dataGenerator = new VirtualGrasper(dataAmount);
+            _dataGenerator = new VirtualGrasper();
             _writter = new ExcelWritter(direcroty, fileName);
-            SetInitialFrequency(startFrequency);
+            SetInitialFrequency();
             _writter.FillTheTitle(modes);
         }
-        private void SetInitialFrequency(int startFrequency)
+        private void SetInitialFrequency()
         {
-            _f = startFrequency;            
+            _f = _startFrequency;            
         }
         public bool MakeMeasurement()
         {
@@ -77,10 +91,9 @@ namespace E7_20_v2._0
             _writter.AddLine(outputData.ToArray());
             if (_f == _endFrequency)
             {
-                _writter.Dispose();
                 return false;
             }
-            ChangeFrequency(_speedMode);
+            ChangeFrequency();
             return true;
         }
 
@@ -88,65 +101,66 @@ namespace E7_20_v2._0
         {
             _dataGenerator.NewMode(message);
         }
-        private void ChangeFrequency(SpeedMode mode)
+        private void ChangeFrequency()
         {
-            if(mode==SpeedMode.Fast)
+            GetF();
+            int i = 0;
+            switch (_changeFrequencyCommand)
             {
-                int i = 0;
-                for (; i < Constants.MAIN_FREQUENCES.Length - 1; i++)
-                    if (_f == Constants.MAIN_FREQUENCES[i])
-                        break;
-                _f = Constants.MAIN_FREQUENCES[i + 1];
-            }
-            else
-            {
-                for (int i = 0; i < Constants.MAIN_FREQUENCES.Length - 1; i++)
-                {
-                    if (_f >= Constants.MAIN_FREQUENCES[i])
-                        continue;
-                    if (Constants.MAIN_FREQUENCES[i - 1] / 1000 == 0)
-                        _f += 1;
-                    else
-                        _f += 1000;
+                case Direction.RIGHT:
+                case Direction.LEFT:
+                    for (; i < Constants.MAIN_FREQUENCES.Length - 1; i++)
+                        if (_f == Constants.MAIN_FREQUENCES[i])
+                            break;
+                    if (_changeFrequencyCommand == Direction.RIGHT)
+                        _f = Constants.MAIN_FREQUENCES[i + 1];
+                    if (_changeFrequencyCommand == Direction.LEFT)
+                        _f = Constants.MAIN_FREQUENCES[i - 1];
                     break;
-                }
+                case Direction.UP:
+                case Direction.DOWN:
+                    for (; i < Constants.MAIN_FREQUENCES.Length - 1; i++)
+                    {
+                        if (_f >= Constants.MAIN_FREQUENCES[i])
+                            continue;
+                        int value = 1000;
+                        if (Constants.MAIN_FREQUENCES[i - 1] / 1000 == 0)
+                            value = 1;
+                        if (_changeFrequencyCommand== Direction.DOWN)
+                            value = -value;
+                        _f += value;
+                        break;
+                    }
+                    break;
             }
         }
         public bool GetData(out double[] main, out double[] sub)
         {
-            main = new double[_dataAmount];
-            sub = new double[_dataAmount];
-            if (_f < 0)
-                return false;
-            if (_dataGenerator.ReadBuffer(_dataAmount, out byte[][] output) == false)
-                return false;
-            Calculate(output, ref main, ref sub);
+            _f = GetF();
+            main = new double[Constants.MEASURES_AMOUNT];
+            sub = new double[Constants.MEASURES_AMOUNT];
+            byte[] data = new byte[Constants.SIZE];
+            for (int i = 0; i < Constants.MEASURES_AMOUNT; i++)
+            {
+                while (_dataGenerator.GetLastData(out data) == false)
+                    Thread.Sleep(Constants.DELAY);
+                Calculate(data, ref main[i], ref sub[i]);
+            }
             return true;
+        }
+        public void Break()
+        {
+            _writter.Save();
+            _dataGenerator.Break();
         }
         private int GetF()
         {
-            if (_dataGenerator.GetLastData(out byte[] data) == false)
-                return -1;
-            int newF = 0;
-            try
-            {
-                newF = Convert.ToInt32(data[4]);
-                newF += Convert.ToInt32(data[5] << 8);
-                newF *= (int)Math.Pow(10.0, data[6]);
-            }
-            catch
-            {
-                newF = -1;
-            }
-            return newF;
+            return _f;
         }
-        private void Calculate(byte[][] input, ref double[] main, ref double[] sub)
+        private void Calculate(byte[] input, ref double main, ref double sub)
         {
-            for (int i = 0; i < _dataAmount; i++)    // считывает, что набралось в буффере
-            {
-                main[i] = CountData(input[i], 16);
-                sub[i] = CountData(input[i], 12);
-            }
+            main = CountData(input, 16);
+            sub = CountData(input, 12);
         }
         private double CountData(byte[] input, int index)
         {
@@ -169,10 +183,6 @@ namespace E7_20_v2._0
                 param *= Math.Pow(10.0, input[index + 3]);
             }
             return param;
-        }
-        public void Finish()
-        {
-
         }
     }
 }
