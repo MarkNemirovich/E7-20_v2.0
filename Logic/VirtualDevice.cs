@@ -39,6 +39,7 @@ namespace E7_20_v2._0
             double[] sub;
             bool isMainChecked = false;
             string additional = null;
+            outputData.Add(_f);
             foreach (var mode in _modes._modes)
             {
                 if (mode.Value == true)
@@ -69,7 +70,6 @@ namespace E7_20_v2._0
                         break;
                     while (GetData(out main, out sub) == false)
                         Thread.Sleep(Constants.DELAY);
-                    outputData.Add(_f);
                     outputData.Add(main.Average());
                     if (_modes._modes[additional])
                         outputData.Add(sub.Average());

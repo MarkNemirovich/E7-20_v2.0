@@ -33,12 +33,17 @@ namespace E7_20_v2._0
         }
         public bool MakeMeasurement()
         {
+            int tempF = _f;
             List<double> outputData = new List<double>(2);
             double[] main;
             double[] sub;
             bool isMainChecked = false;
             string additional = null;
-            outputData.Add(_f);
+            while (tempF == _f)
+            {
+                outputData.Add(_f); 
+                Thread.Sleep(Constants.DELAY);
+            }
             foreach (var mode in _modes._modes)
             {
                 if (mode.Value == true)

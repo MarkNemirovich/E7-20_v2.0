@@ -1,5 +1,4 @@
-﻿using GemBox.Spreadsheet;
-using System;
+﻿using System;
 
 namespace E7_20_v2._0
 {
