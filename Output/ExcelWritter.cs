@@ -39,7 +39,7 @@ namespace E7_20_v2._0
         public void AddLine(double[] data)
         {
             if (data.Length != _lineWidth+1) // +1 - it is f
-                _exelSheet.Cells[_lineNumber, 0].Value = "No data here";
+                _exelSheet.Cells[_lineNumber, 0].Value = "Incorrect data";
             else
                 for (int i = 0; i < data.Length; i++)
                 {
