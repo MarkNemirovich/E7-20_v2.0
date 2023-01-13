@@ -5,13 +5,13 @@ namespace E7_20_v2._0
     internal class BaseDevice
     {
         private ExcelWritter _writter;
-        protected Modes _modes;
+        protected ModeCommands[] _modes;
         protected int _f;
-        public BaseDevice(string direcroty, string fileName, Modes modes)
+        public BaseDevice(string direcroty, string fileName, ModeCommands[] modes)
         {
             _modes = modes;
             _writter = new ExcelWritter(direcroty, fileName);
-            _writter.FillTheTitle(modes);
+            _writter.FillTheTitle(_modes);
         }
         #region Virtual methods
         protected virtual void SetInitialMode(SpeedMode speed = SpeedMode.Fast, int target = default(int)) { }
