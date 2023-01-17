@@ -35,7 +35,7 @@ namespace E7_20_v2._0
             }
             return finded;
         }
-        public bool NewMode(byte command)
+        public bool ChangeMode(byte command)
         {
             ClearData();
             return true;
@@ -45,7 +45,7 @@ namespace E7_20_v2._0
             return _f;
         }
 
-        public bool ChangeFrequency(byte command)
+        public void ChangeFrequency(byte command)
         {
             ClearData();
             int i = 0;
@@ -74,7 +74,7 @@ namespace E7_20_v2._0
                 }
             }
             catch { }
-            return true;
+            return;
         }
         public void Break()
         {

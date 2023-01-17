@@ -60,7 +60,6 @@
   <ItemGroup>
     <Compile Include="Logic\BaseDevice.cs" />
     <Compile Include="Global\Constants.cs" />
-    <Compile Include="Global\IMeasurement.cs" />
     <Compile Include="Logic\IOprovider.cs" />
     <Compile Include="Logic\RealDevice.cs" />
     <Compile Include="Output\ExcelWritter.cs" />

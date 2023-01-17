@@ -43,7 +43,10 @@ namespace E7_20_v2._0
             try
             {
                 if (_port.IsOpen == true)
-                _port.Close();
+                {
+                    _port.DataReceived -= new SerialDataReceivedEventHandler(ReceiveData);
+                    _port.Close();
+                }
             }
             catch
             {

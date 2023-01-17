@@ -4,9 +4,9 @@ namespace E7_20_v2._0
 {
     internal interface IOoperations
     { 
-        bool NewMode(byte command);
+        bool ChangeMode(byte command);
         int GetFrequency();
-        bool ChangeFrequency(byte command);
+        void ChangeFrequency(byte command);
         bool GetLastData(out byte[] output);
     }
 }

@@ -16,7 +16,7 @@ namespace E7_20_v2._0
             _port.ProvidePack += GetPack;
             _port.Start();
         }
-        public bool NewMode(byte command)
+        public bool ChangeMode(byte command)
         {
             Send(command);
             return true;
@@ -41,18 +41,12 @@ namespace E7_20_v2._0
             catch { f = -1; }
             return f;
         }
-        public bool ChangeFrequency(byte command)
+        public void ChangeFrequency(byte command)
         {
             int f = GetFrequency();
-            if (f == Constants.MAIN_FREQUENCES[Constants.MAIN_FREQUENCES.Length - 1])
-            {
-                Break();
-                return false;
-            }
             Send(command);
             while (GetFrequency() == f)
                 Thread.Sleep(Constants.DELAY);
-            return true;
         }
         public bool GetLastData(out byte[] output)
         {

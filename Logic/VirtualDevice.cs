@@ -87,7 +87,7 @@ namespace E7_20_v2._0
         }
         sealed protected override void ChangeMode(byte message)
         {
-            _dataExchanger.NewMode(message);
+            _dataExchanger.ChangeMode(message);
         }
         private void SetInitialFrequency()
         {
