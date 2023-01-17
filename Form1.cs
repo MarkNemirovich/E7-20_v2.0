@@ -206,9 +206,9 @@ namespace E7_20_v2._0
                 modes.Add(ModeCommands.L);
             if (AllMeterQl.Checked)
                 modes.Add(ModeCommands.Ql);
-            if (AllMeterL.Checked)
-                modes.Add(ModeCommands.R);
             if (AllMeterR.Checked)
+                modes.Add(ModeCommands.R);
+            if (AllMeterQr.Checked)
                 modes.Add(ModeCommands.Qr);
             if (AllMeterZ.Checked)
                 modes.Add(ModeCommands.Z);
@@ -232,9 +232,8 @@ namespace E7_20_v2._0
                 if (_virtualMachine != null)
                     _virtualMachine.Break();
             }
-            else
-                if (_workMachine != null)
-                    _workMachine.Break();
+            else if (_workMachine != null)
+                _workMachine.IsWorking = false;
             MeasurementProcess(true);
         }
 

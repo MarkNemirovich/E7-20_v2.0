@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    internal class VirtualDevice : BaseDevice, IMeasurement
+    internal class VirtualDevice : BaseDevice
     {
         private VirtualGrasper _dataExchanger;
         private Direction _changeFrequencyCommand;

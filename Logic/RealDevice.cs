@@ -12,6 +12,7 @@ namespace E7_20_v2._0
         private RealGrasper _dataExchanger;
         private Direction _changeDirection;
         private int _endFrequency;
+        private int _startFrequency;
         public RealDevice(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
         {
             if (speed == SpeedMode.Fast)
@@ -28,18 +29,24 @@ namespace E7_20_v2._0
                 else
                     _changeDirection = Direction.UP;
             }
+            _startFrequency= startFrequency;
             _endFrequency= endFrequency;
             _dataExchanger = new RealGrasper(portName);
-            _f = _dataExchanger.GetFrequency();
-            SetInitialMode(startFrequency);
             IsWorking = true;
-            var measurementLoop = new Thread(MakeMeasurement);
-            measurementLoop.Start();
+            var workerTHread = new Thread(StartWork);
+            workerTHread.Start();
+        }
+        private void StartWork()
+        {
+            _f = _dataExchanger.GetFrequency();
+            SetInitialMode(_startFrequency);
+            MakeMeasurement();
         }
         public void MakeMeasurement()
         {
             while (IsWorking)
             {
+                int currentF = _f;
                 List<double> outputData = new List<double>(2);
                 double[] main = new double[0];
                 double[] sub = new double[0];
@@ -66,8 +73,11 @@ namespace E7_20_v2._0
                 if (_f == _endFrequency)
                 {
                     IsWorking = false;
+                    break;
                 }
                 _dataExchanger.ChangeFrequency((byte)_changeDirection);
+                while (_f == currentF)
+                    _f=_dataExchanger.GetFrequency();
             }
             Break();
         }
