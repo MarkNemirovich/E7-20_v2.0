@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Mail;
+using System.Threading;
 
 namespace E7_20_v2._0
 {
@@ -16,11 +18,7 @@ namespace E7_20_v2._0
         }
         public bool NewMode(byte command)
         {
-            _port.SendData(command);
-            lock (_data)
-            {
-                _data.Clear();
-            }
+            Send(command);
             return true;
         }
         public int GetFrequency()
@@ -29,7 +27,10 @@ namespace E7_20_v2._0
             int f = -1;
             lock (_data)
             {
-                lastData = _data.Peek();
+                if (_data.Count > 0)
+                    lastData = _data.Peek();
+                else
+                    return f;
             }
             try
             {
@@ -37,7 +38,7 @@ namespace E7_20_v2._0
                 f += Convert.ToInt32(lastData[5] << 8);
                 f *= (int)Math.Pow(10.0, lastData[6]);
             }
-            catch { }
+            catch { f = -1; }
             return f;
         }
         public bool ChangeFrequency(byte command)
@@ -48,7 +49,9 @@ namespace E7_20_v2._0
                 Break();
                 return false;
             }
-            _port.SendData(command);
+            Send(command);
+            while (GetFrequency() == f)
+                Thread.Sleep(Constants.DELAY);
             return true;
         }
         public bool GetLastData(out byte[] output)
@@ -76,6 +79,18 @@ namespace E7_20_v2._0
                     _data.Clear();
                 _data.Push(newPack);
             }
+        }
+        private void Send(byte command)
+        {
+            _port.SendData(command);
+            lock (_data)
+            {
+                _data.Clear();
+            }
+            do
+            {
+                Thread.Sleep(Constants.DELAY);
+            } while (GetFrequency() == -1);
         }
     }
 }

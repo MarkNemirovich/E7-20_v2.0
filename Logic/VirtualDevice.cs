@@ -42,10 +42,10 @@ namespace E7_20_v2._0
             {
                 switch (mode)
                 {
-                    case ModeCommands.modeC:
-                    case ModeCommands.modeL:
-                    case ModeCommands.modeR:
-                    case ModeCommands.modeZ:
+                    case ModeCommands.C:
+                    case ModeCommands.L:
+                    case ModeCommands.R:
+                    case ModeCommands.Z:
                         ChangeMode((byte)mode);
                         while (GetData(out main, out sub) == false)
                             Thread.Sleep(Constants.DELAY);

@@ -25,7 +25,7 @@ namespace E7_20_v2._0
         private VirtualDevice _virtualMachine = null;
         private RealDevice _workMachine = null;
 
-        private bool _IsDebug = true;
+        private bool _IsDebug = false;
 
         public App()
         {
@@ -199,26 +199,26 @@ namespace E7_20_v2._0
         {
             List<ModeCommands> modes = new List<ModeCommands>();
             if (AllMeterC.Checked)
-                modes.Add(ModeCommands.modeC);
+                modes.Add(ModeCommands.C);
             if (AllMeterD.Checked)
-                modes.Add(ModeCommands.modeD);
+                modes.Add(ModeCommands.D);
             if (AllMeterL.Checked)
-                modes.Add(ModeCommands.modeL);
+                modes.Add(ModeCommands.L);
             if (AllMeterQl.Checked)
-                modes.Add(ModeCommands.modeQl);
+                modes.Add(ModeCommands.Ql);
             if (AllMeterQr.Checked)
-                modes.Add(ModeCommands.modeQr);
+                modes.Add(ModeCommands.Qr);
             if (AllMeterZ.Checked)
-                modes.Add(ModeCommands.modeZ);
+                modes.Add(ModeCommands.Z);
             if (AllMeterFi.Checked)
-                modes.Add(ModeCommands.modeFi);
+                modes.Add(ModeCommands.Fi);
             MeasurementProcess(false);
             int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
             int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
             if (_IsDebug)
                 _virtualMachine = new VirtualDevice(DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             else
-                _workMachine = new RealDevice(PortsList.SelectedText, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
+                _workMachine = new RealDevice(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             MeasuresTimer.Start();
         }
 

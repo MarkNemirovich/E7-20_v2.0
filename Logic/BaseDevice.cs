@@ -14,7 +14,7 @@ namespace E7_20_v2._0
             _writter.FillTheTitle(_modes);
         }
         #region Virtual methods
-        protected virtual void SetInitialMode(SpeedMode speed = SpeedMode.Fast, int target = default(int)) { }
+        protected virtual void SetInitialMode(int target = default(int)) { }
         protected virtual void ChangeMode(byte message) { }
         protected virtual void Break()
         {

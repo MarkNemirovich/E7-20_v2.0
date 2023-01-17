@@ -13,7 +13,6 @@ namespace E7_20_v2._0
         private int _endFrequency;
         public RealDevice(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
         {
-            SetInitialMode(speed, startFrequency);
             _endFrequency = endFrequency;
             if (speed == SpeedMode.Fast)
             {
@@ -30,26 +29,23 @@ namespace E7_20_v2._0
                     _changeDirection = Direction.UP;
             }
             _dataExchanger = new RealGrasper(portName);
+            _f = _dataExchanger.GetFrequency();
+            SetInitialMode(startFrequency);
         }
         public bool MakeMeasurement()
         {
-            int tempF = _f;
             List<double> outputData = new List<double>(2);
             double[] main = new double[0];
             double[] sub = new double[0];
-            while (tempF == _f)
-            {
-                outputData.Add(_f); 
-                Thread.Sleep(Constants.DELAY);
-            }
+            outputData.Add(_f); 
             foreach (var mode in _modes)
             {
                 switch (mode)
                 {
-                    case ModeCommands.modeC:
-                    case ModeCommands.modeL:
-                    case ModeCommands.modeR:
-                    case ModeCommands.modeZ:
+                    case ModeCommands.C:
+                    case ModeCommands.L:
+                    case ModeCommands.R:
+                    case ModeCommands.Z:
                         ChangeMode((byte)mode);
                         while (GetData(out main, out sub) == false)
                             Thread.Sleep(Constants.DELAY);
@@ -65,7 +61,7 @@ namespace E7_20_v2._0
             {
                 return false;
             }
-            _dataExchanger.ChangeFrequency((byte)_changeDirection);
+            _dataExchanger.ChangeFrequency((byte)_changeDirection); 
             return true;
         }
         public bool GetData(out double[] main, out double[] sub)
@@ -82,12 +78,15 @@ namespace E7_20_v2._0
             }
             return true;
         }
-        sealed protected override void SetInitialMode(SpeedMode speed, int target) 
+        sealed protected override void SetInitialMode(int target) 
         {
-            do
+            while (true)
             {
-                ChangeFrequency(_f, target, speed);
-            } while (_f != target);
+                _f = _dataExchanger.GetFrequency();
+                if (_f == target)
+                    break;
+                ChangeFrequency(_f, target);
+            } 
         }
         sealed protected override void ChangeMode(byte message) 
         {
@@ -98,22 +97,12 @@ namespace E7_20_v2._0
             base.Break();
             _dataExchanger.Break();
         }
-        private void ChangeFrequency(int currentFrequency, int targetFrequency, SpeedMode mode)
+        private void ChangeFrequency(int currentFrequency, int targetFrequency)
         {
-            if (mode == SpeedMode.Fast)
-            {
-                if (currentFrequency > targetFrequency)
-                    _dataExchanger.ChangeFrequency((byte)Direction.LEFT);
-                if (currentFrequency < targetFrequency)
-                    _dataExchanger.ChangeFrequency((byte)Direction.RIGHT);
-            }
-            else
-            {
-                if (currentFrequency > targetFrequency)
-                    _dataExchanger.ChangeFrequency((byte)Direction.DOWN);
-                if (currentFrequency < targetFrequency)
-                    _dataExchanger.ChangeFrequency((byte)Direction.UP);
-            }
+            var changeDirection = Direction.RIGHT;
+            if (currentFrequency > targetFrequency)
+                changeDirection = Direction.LEFT;
+            _dataExchanger.ChangeFrequency((byte)changeDirection);
         }
     }
 }
