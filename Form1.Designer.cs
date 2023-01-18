@@ -62,14 +62,18 @@ namespace E7_20_v2._0
             this.AllMeterR = new System.Windows.Forms.CheckBox();
             this.AllMeterL = new System.Windows.Forms.CheckBox();
             this.AllMeterC = new System.Windows.Forms.CheckBox();
-            this.TemperatureMeterPanel = new System.Windows.Forms.Panel();
+            this.ProgressPanel = new System.Windows.Forms.Panel();
             this.MeasuresTimer = new System.Windows.Forms.Timer(this.components);
+            this.ProgressBar = new System.Windows.Forms.ProgressBar();
+            this.EstimatedTime = new System.Windows.Forms.TextBox();
+            this.EstimatedTimeLabel = new System.Windows.Forms.Label();
             this.StartPanel.SuspendLayout();
             this.AllMeterPanel.SuspendLayout();
             this.AllMeterSettings.SuspendLayout();
             this.AllMeterStartFPanel.SuspendLayout();
             this.AllMeterEndFPanel.SuspendLayout();
             this.AllMeterModes.SuspendLayout();
+            this.ProgressPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // AllMeterButton
@@ -465,19 +469,52 @@ namespace E7_20_v2._0
             this.AllMeterC.UseVisualStyleBackColor = true;
             this.AllMeterC.CheckedChanged += new System.EventHandler(this.AllMeterC_CheckedChanged);
             // 
-            // TemperatureMeterPanel
+            // ProgressPanel
             // 
-            this.TemperatureMeterPanel.BackColor = System.Drawing.SystemColors.Window;
-            this.TemperatureMeterPanel.Location = new System.Drawing.Point(67, 407);
-            this.TemperatureMeterPanel.Margin = new System.Windows.Forms.Padding(4);
-            this.TemperatureMeterPanel.Name = "TemperatureMeterPanel";
-            this.TemperatureMeterPanel.Size = new System.Drawing.Size(933, 123);
-            this.TemperatureMeterPanel.TabIndex = 4;
+            this.ProgressPanel.BackColor = System.Drawing.SystemColors.Window;
+            this.ProgressPanel.Controls.Add(this.EstimatedTimeLabel);
+            this.ProgressPanel.Controls.Add(this.EstimatedTime);
+            this.ProgressPanel.Controls.Add(this.ProgressBar);
+            this.ProgressPanel.Enabled = false;
+            this.ProgressPanel.Location = new System.Drawing.Point(67, 407);
+            this.ProgressPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.ProgressPanel.Name = "ProgressPanel";
+            this.ProgressPanel.Size = new System.Drawing.Size(933, 123);
+            this.ProgressPanel.TabIndex = 4;
+            this.ProgressPanel.Visible = false;
             // 
             // MeasuresTimer
             // 
             this.MeasuresTimer.Interval = 1000;
             this.MeasuresTimer.Tick += new System.EventHandler(this.MeasuresTimer_Tick);
+            // 
+            // ProgressBar
+            // 
+            this.ProgressBar.Location = new System.Drawing.Point(33, 68);
+            this.ProgressBar.Name = "ProgressBar";
+            this.ProgressBar.Size = new System.Drawing.Size(866, 43);
+            this.ProgressBar.TabIndex = 0;
+            // 
+            // EstimatedTime
+            // 
+            this.EstimatedTime.Enabled = false;
+            this.EstimatedTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.EstimatedTime.Location = new System.Drawing.Point(238, 18);
+            this.EstimatedTime.Name = "EstimatedTime";
+            this.EstimatedTime.Size = new System.Drawing.Size(137, 35);
+            this.EstimatedTime.TabIndex = 2;
+            this.EstimatedTime.Text = "s";
+            this.EstimatedTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // EstimatedTimeLabel
+            // 
+            this.EstimatedTimeLabel.AutoSize = true;
+            this.EstimatedTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.EstimatedTimeLabel.Location = new System.Drawing.Point(48, 24);
+            this.EstimatedTimeLabel.Name = "EstimatedTimeLabel";
+            this.EstimatedTimeLabel.Size = new System.Drawing.Size(184, 29);
+            this.EstimatedTimeLabel.TabIndex = 3;
+            this.EstimatedTimeLabel.Text = "EstimatedTime";
             // 
             // App
             // 
@@ -486,7 +523,7 @@ namespace E7_20_v2._0
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.SystemColors.Menu;
             this.ClientSize = new System.Drawing.Size(1045, 567);
-            this.Controls.Add(this.TemperatureMeterPanel);
+            this.Controls.Add(this.ProgressPanel);
             this.Controls.Add(this.AllMeterPanel);
             this.Controls.Add(this.StartPanel);
             this.Controls.Add(this.TemperatureMeterButton);
@@ -507,6 +544,8 @@ namespace E7_20_v2._0
             this.AllMeterEndFPanel.PerformLayout();
             this.AllMeterModes.ResumeLayout(false);
             this.AllMeterModes.PerformLayout();
+            this.ProgressPanel.ResumeLayout(false);
+            this.ProgressPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -519,7 +558,7 @@ namespace E7_20_v2._0
         private System.Windows.Forms.Button DirectoryButton;
         private System.Windows.Forms.TextBox DirectoryPath;
         private System.Windows.Forms.Panel AllMeterPanel;
-        private System.Windows.Forms.Panel TemperatureMeterPanel;
+        private System.Windows.Forms.Panel ProgressPanel;
         private System.Windows.Forms.ComboBox PortsList;
         private System.Windows.Forms.TextBox FileName;
         private System.Windows.Forms.Panel AllMeterModes;
@@ -546,6 +585,9 @@ namespace E7_20_v2._0
         private System.Windows.Forms.Timer MeasuresTimer;
         private System.Windows.Forms.CheckBox AutoName;
         private System.Windows.Forms.Button AllMeterStop;
+        private System.Windows.Forms.ProgressBar ProgressBar;
+        private System.Windows.Forms.Label EstimatedTimeLabel;
+        private System.Windows.Forms.TextBox EstimatedTime;
     }
 }
 

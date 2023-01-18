@@ -69,7 +69,7 @@ namespace E7_20_v2._0
             AllMeterButton.Visible = (mode == MenuMode.StartMenu);
             TemperatureMeterButton.Visible = (mode == MenuMode.StartMenu);
             AllMeterPanel.Visible = (mode == MenuMode.AllMeterMenu);
-            TemperatureMeterPanel.Visible = (mode == MenuMode.TemperatureMeterMenu);
+            ProgressPanel.Visible = (mode == MenuMode.TemperatureMeterMenu);
             switch (mode)
             {
                 case MenuMode.StartMenu:
@@ -197,6 +197,11 @@ namespace E7_20_v2._0
         }
         private void Start(SpeedMode speed)
         {
+            if (AllMeterStartFDropBox.SelectedIndex == AllMeterEndFDropBox.SelectedIndex)
+            {
+                MessageBox.Show("Start and end frequences have to be different!");
+                return;
+            }
             List<ModeCommands> modes = new List<ModeCommands>();
             if (AllMeterC.Checked)
                 modes.Add(ModeCommands.C);
@@ -215,6 +220,10 @@ namespace E7_20_v2._0
             if (AllMeterFi.Checked)
                 modes.Add(ModeCommands.Fi);
             MeasurementProcess(false);
+            ProgressBar.Maximum = 0;
+            ProgressBar.Step = 0;
+            ProgressBar.Value = 0;
+            EstimatedTime.Text = "prepearing for start...";
             int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
             int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
             if (_IsDebug)
@@ -239,15 +248,14 @@ namespace E7_20_v2._0
 
         private void MeasurementProcess(bool state)
         {
+            AllMeterSettings.Enabled = state;
+            AllMeterModes.Enabled = state;
             AllMeterFast.Enabled = state;
             AllMeterSlow.Enabled = state;
             ReturnButton.Enabled = state;
             AllMeterStop.Enabled = !state;
+            ProgressPanel.Visible = !state;
         }
-        #endregion
-
-        #region TemperatureMeterPanel
-
         #endregion
 
         private void MeasuresTimer_Tick(object sender, EventArgs e)
@@ -257,13 +265,42 @@ namespace E7_20_v2._0
                 if (_virtualMachine != null && _virtualMachine.MakeMeasurement() == false)
                     AllMeterStop_Click(sender, e);
             }
-            else if (_workMachine != null && _workMachine.IsWorking == false)
-                AllMeterStop_Click(sender, e);
+            else if (_workMachine != null)
+            {
+                if (_workMachine.IsWorking == false)
+                    AllMeterStop_Click(sender, e);
+                else if (_workMachine.IsDataChanged)
+                {
+                    _workMachine.IsDataChanged = false;
+                    double time = _workMachine.GetProgress;
+                    if (ProgressBar.Maximum <= time)
+                    {
+                        ProgressBar.Maximum = (int)time;
+                    }
+                    else
+                    {
+                        if (ProgressBar.Step == 0)
+                        {
+                            ProgressBar.Step = ProgressBar.Maximum - (int)time - 1;
+                            ProgressBar.Value += ProgressBar.Step;
+                        }
+                        ProgressBar.Value += ProgressBar.Step;
+                    }
+                    if (time > 60)
+                        EstimatedTime.Text = Math.Round(time / 60, 2).ToString() + " min";
+                    else
+                        EstimatedTime.Text = Math.Round(time, 2).ToString() + " sec";
+                }
+            }
         }
-        [Conditional("DEBUG")]
+        [Conditional("Debug")]
         private void IsDebug(ref bool isDebug)
         {
             isDebug = true;
         }
+
+        #region TemperatureMeterPanel
+
+        #endregion
     }
 }

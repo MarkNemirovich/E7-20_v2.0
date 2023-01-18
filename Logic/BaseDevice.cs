@@ -6,6 +6,7 @@ namespace E7_20_v2._0
     {
         private ExcelWritter _writter;
         protected ModeCommands[] _modes;
+        protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
         protected int _f;
         public BaseDevice(string direcroty, string fileName, ModeCommands[] modes)
         {

@@ -9,6 +9,8 @@ namespace E7_20_v2._0
     internal class RealDevice : BaseDevice
     {
         public bool IsWorking = false;
+        public bool IsDataChanged = false;
+        public double GetProgress => CalculateTime();
         private RealGrasper _dataExchanger;
         private Direction _changeDirection;
         private int _endFrequency;
@@ -40,6 +42,7 @@ namespace E7_20_v2._0
         {
             _f = _dataExchanger.GetFrequency();
             SetInitialMode(_startFrequency);
+            IsDataChanged = true;
             MakeMeasurement();
         }
         public void MakeMeasurement()
@@ -53,13 +56,17 @@ namespace E7_20_v2._0
                 outputData.Add(_f);
                 foreach (var mode in _modes)
                 {
+                    if (IsWorking == false)
+                        break;
                     switch (mode)
                     {
                         case ModeCommands.C:
                         case ModeCommands.L:
                         case ModeCommands.R:
                         case ModeCommands.Z:
+                            if (_lastSwitchMode != mode)
                             ChangeMode((byte)mode);
+                            _lastSwitchMode = mode;
                             while (GetData(out main, out sub) == false)
                                 Thread.Sleep(Constants.DELAY);
                             outputData.Add(main.Average());
@@ -69,7 +76,10 @@ namespace E7_20_v2._0
                             break;
                     }
                 }
+                if (IsWorking == false)
+                    break;
                 WriteLine(outputData.ToArray());
+                IsDataChanged = true;
                 if (_f == _endFrequency)
                 {
                     IsWorking = false;
@@ -97,7 +107,7 @@ namespace E7_20_v2._0
         }
         sealed protected override void SetInitialMode(int target) 
         {
-            while (true)
+            while (true && IsWorking)
             {
                 _f = _dataExchanger.GetFrequency();
                 if (_f == -1)
@@ -122,6 +132,58 @@ namespace E7_20_v2._0
             if (currentFrequency > targetFrequency)
                 changeDirection = Direction.LEFT;
             _dataExchanger.ChangeFrequency((byte)changeDirection);
+        }
+
+        private double CalculateTime()
+        {
+            int f = _f;
+            int amount = 0;
+            amount += Convert.ToInt32(_modes.Contains(ModeCommands.C));
+            amount += Convert.ToInt32(_modes.Contains(ModeCommands.L));
+            amount += Convert.ToInt32(_modes.Contains(ModeCommands.R));
+            amount += Convert.ToInt32(_modes.Contains(ModeCommands.Z));
+            double stepTime = 3 * amount;
+            double time = 0;
+            if (amount == 1)
+                stepTime -= 0.5;
+            if (_changeDirection == Direction.UP || _changeDirection == Direction.DOWN)
+            {
+                if (f >= 1000)
+                {
+                    if (_endFrequency > 1000)
+                    {
+                        time = Math.Abs((_endFrequency - f)) * stepTime / 1000;
+                    }
+                    else
+                    {
+                        time = (f / 1000 - 1 + 1000 - _endFrequency) * stepTime;
+                    }
+                }
+                else
+                {
+                    if (_endFrequency >= 1000)
+                    {
+                        time = (_endFrequency / 1000 - 1 + 1000 - f) * stepTime;
+                    }
+                    else
+                    {
+                        time = Math.Abs((_endFrequency - f)) * stepTime;
+                    }
+                }
+            }
+            else
+            {
+                int iStartF = 0, iEndF = 0;
+                for (int i = 0; i < Constants.MAIN_FREQUENCES.Length; i++)
+                {
+                    if (Constants.MAIN_FREQUENCES[i] == f)
+                        iStartF = i;
+                    if (Constants.MAIN_FREQUENCES[i] == _endFrequency)
+                        iEndF = i;
+                }
+                time = Math.Abs(iStartF - iEndF) * stepTime;
+            }
+            return time;
         }
     }
 }
