@@ -68,8 +68,12 @@ namespace E7_20_v2._0
             StartPanel.Enabled = (mode == MenuMode.StartMenu);
             AllMeterButton.Visible = (mode == MenuMode.StartMenu);
             TemperatureMeterButton.Visible = (mode == MenuMode.StartMenu);
-            AllMeterPanel.Visible = (mode == MenuMode.AllMeterMenu);
-            ProgressPanel.Visible = (mode == MenuMode.TemperatureMeterMenu);
+            MeasurementSettings.Visible = (mode == MenuMode.AllMeterMenu || mode == MenuMode.TemperatureMeterMenu);
+            MeasurementModes.Visible = (mode == MenuMode.AllMeterMenu);
+            GeneralSettings.Visible = (mode == MenuMode.AllMeterMenu);
+            CuriePanel.Visible = (mode == MenuMode.TemperatureMeterMenu);
+            CurieCoefficientsPanel.Visible = (mode == MenuMode.TemperatureMeterMenu);
+            ControlButtonPanel.Visible = (mode != MenuMode.StartMenu);
             switch (mode)
             {
                 case MenuMode.StartMenu:
@@ -248,8 +252,10 @@ namespace E7_20_v2._0
 
         private void MeasurementProcess(bool state)
         {
-            AllMeterSettings.Enabled = state;
-            AllMeterModes.Enabled = state;
+            GeneralSettings.Enabled = state;
+            CuriePanel.Enabled = state;
+            MeasurementModes.Enabled = state;
+            CurieCoefficientsPanel.Enabled = state;
             AllMeterFast.Enabled = state;
             AllMeterSlow.Enabled = state;
             ReturnButton.Enabled = state;
