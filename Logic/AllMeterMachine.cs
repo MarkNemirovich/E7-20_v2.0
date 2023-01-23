@@ -8,8 +8,6 @@ namespace E7_20_v2._0
 {
     internal class AllMeterMachine : BaseDevice
     {
-        public bool IsWorking = false;
-        public bool IsDataChanged = false;
         public double GetProgress => CalculateTime();
         private RealGrasper _dataExchanger;
         private Direction _changeDirection;

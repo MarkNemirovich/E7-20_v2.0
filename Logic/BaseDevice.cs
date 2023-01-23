@@ -4,6 +4,9 @@ namespace E7_20_v2._0
 {
     internal class BaseDevice
     {
+        public bool IsWorking = false;
+        public bool IsDataChanged = false;
+
         private ExcelWritter _writter;
         protected ModeCommands[] _modes;
         protected ModeCommands _lastSwitchMode = ModeCommands.Fi;

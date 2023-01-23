@@ -9,7 +9,6 @@ namespace E7_20_v2._0
     {
         private readonly string _directory;
         private readonly string _fileName;
-        private CultureInfo ci = CultureInfo.InstalledUICulture;
         public FileDirectory(string directory, string fileName)
         {
             this._directory = directory;
@@ -39,17 +38,7 @@ namespace E7_20_v2._0
         private string SetDate()
         {
             string date = DateTime.Today.ToShortDateString();
-            switch (ci.TwoLetterISOLanguageName)
-            {
-                case "ru-RU":
-                    date = date.Replace(':', '_');
-                    break;
-                case "en-US":
-                case "en-UK":
-                    date = date.Replace('\\', '_');
-                    break;
-            }
-            return date;
+            return StyleFormatter.ChangeDataSeparator(date);
         }
         public string GetShortName => _fileName;
         public string GetFullName => $"{_directory}/{_fileName}_{SetDate()}_№{SetFileNumber()}.xlsx";

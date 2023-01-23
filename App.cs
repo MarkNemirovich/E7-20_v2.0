@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Security.Authentication;
 using System.Text;
 using System.Windows.Forms;
-using static System.Windows.Forms.AxHost;
 
 namespace E7_20_v2._0
 {
@@ -311,11 +311,31 @@ namespace E7_20_v2._0
         #region TemperatureMeterPanel
         private void CurieStart_Click(object sender, EventArgs e)
         {
-            List<ModeCommands> modes = GetModes();
-            MeasurementProcess(false);
-            ResetProgressBar();
+            if (CurieValidate())
+            {
+                List<ModeCommands> modes = GetModes();
+                MeasurementProcess(false);
+                ResetProgressBar();
+            }
+        }
+        private bool CurieValidate()
+        {
+            Int32.TryParse(Amount.Text, out int amount);
+            if (amount <= 0 || amount > 1000)
+            {
+                MessageBox.Show("Amount of measurements have to be in the range from 1 to 1000");
+                return false;
+            }
+            Interval.Text = StyleFormatter.ChangeDoubleSeparator(Interval.Text);
+            Double.TryParse(Interval.Text, out double interval);
+            Math.Round(interval, 2);
+            if (interval < 0.5 || interval > 1000)
+            {
+                MessageBox.Show("Interval between measurements have to be in the range from 0.5 to 1000.0 seconds with precition to 0.1 second");
+                return false;
+            }
+            return true;
         }
         #endregion
-
     }
 }
