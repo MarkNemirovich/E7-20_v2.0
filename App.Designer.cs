@@ -603,7 +603,7 @@ namespace E7_20_v2._0
             this.AllMeterStop.TabIndex = 5;
             this.AllMeterStop.Text = "Stop";
             this.AllMeterStop.UseVisualStyleBackColor = false;
-            this.AllMeterStop.Click += new System.EventHandler(this.AllMeterStop_Click);
+            this.AllMeterStop.Click += new System.EventHandler(this.Stop_Click);
             // 
             // ReturnButton
             // 

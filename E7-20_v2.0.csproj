@@ -59,7 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Output\StyleFormatter.cs" />
-    <Compile Include="Logic\BaseDevice.cs" />
+    <Compile Include="Logic\BaseMachine.cs" />
     <Compile Include="Global\Constants.cs" />
     <Compile Include="Logic\CurieMachine.cs" />
     <Compile Include="Logic\IOprovider.cs" />
@@ -76,8 +76,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logic\RealGrasper.cs" />
-    <Compile Include="Logic\VirtualGrasper.cs" />
-    <Compile Include="Logic\VirtualMachine.cs" />
     <EmbeddedResource Include="App.resx">
       <DependentUpon>App.cs</DependentUpon>
     </EmbeddedResource>

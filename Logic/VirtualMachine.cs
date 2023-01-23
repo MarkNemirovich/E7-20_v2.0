@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    internal class VirtualMachine : BaseDevice
+    internal class VirtualMachine : BaseMachine
     {
         private VirtualGrasper _dataExchanger;
         private Direction _changeFrequencyCommand;

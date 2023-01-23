@@ -2,21 +2,23 @@
 
 namespace E7_20_v2._0
 {
-    internal class BaseDevice
+    internal abstract class BaseMachine
     {
         public bool IsWorking = false;
         public bool IsDataChanged = false;
+        public double GetProgress => CalculateTime();
 
         private readonly ExcelWritter _writter;
         protected ModeCommands[] _modes;
         protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
         protected int _f;
-        public BaseDevice(string direcroty, string fileName, ModeCommands[] modes)
+        public BaseMachine(string direcroty, string fileName, ModeCommands[] modes)
         {
             _modes = modes;
             _writter = new ExcelWritter(direcroty, fileName);
             _writter.FillTheTitle(_modes);
         }
+        protected abstract double CalculateTime();
         #region Virtual methods
         protected virtual void SetInitialMode(int target = 0) { }
         protected virtual void ChangeMode(byte message) { }

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Security.Authentication;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
 
 namespace E7_20_v2._0
 {
@@ -21,12 +22,8 @@ namespace E7_20_v2._0
         private string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         private int _currentWidth = 800;
         private int _currentHeight = 500;
-        private VirtualMachine _virtualMachine = null;
-        private AllMeterMachine _workMachine = null;
+        private BaseMachine _workMachine = null;
         private MenuMode _currentPage = MenuMode.StartMenu;
-
-        private bool _IsDebug = false;
-
         public App()
         {
             InitializeComponent();
@@ -36,7 +33,6 @@ namespace E7_20_v2._0
             DirectoryPath.Text = _folderPath;
             ChangeMenuInterface(MenuMode.StartMenu);
         }
-
         private void FillThePorts(object sender, EventArgs e)
         {
             PortsList.Items.Clear();
@@ -47,13 +43,6 @@ namespace E7_20_v2._0
             }
             if (ports.Length == 0)
                 PortsList.Items.Add("VirtualCOM");
-        }
-        private void AutoName_CheckedChanged(object sender, EventArgs e)
-        {
-            if (AutoName.Checked)
-                FileName.Text = "Experiment";
-            FileName.Enabled = !AutoName.Checked;
-            
         }
         public void App_Resize(object sender, EventArgs e)
         {
@@ -89,6 +78,12 @@ namespace E7_20_v2._0
             }
         }
         #region GeneralPanel
+        private void AutoName_CheckedChanged(object sender, EventArgs e)
+        {
+            if (AutoName.Checked)
+                FileName.Text = "Experiment";
+            FileName.Enabled = !AutoName.Checked;
+        }
         public void DirectoryButton_Click(object sender, EventArgs e)
         {
             if (FolderBrowserDialog.ShowDialog() == DialogResult.Cancel)
@@ -98,23 +93,21 @@ namespace E7_20_v2._0
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
-            if (CheckGeneralInput() == false)
-                return;
-            ChangeMenuInterface(MenuMode.AllMeterMenu);
+            if (CheckGeneralInput())
+                ChangeMenuInterface(MenuMode.AllMeterMenu);
         }
         public void TemperatureMeterButton_Click(object sender, EventArgs e)
         {
-            if (CheckGeneralInput() == false)
-                return;
-            ChangeMenuInterface(MenuMode.CurieMenu);
+            if (CheckGeneralInput())
+                ChangeMenuInterface(MenuMode.CurieMenu);
         }
         public void ReturnButton_Click(object sender, EventArgs e)
         {
             ChangeMenuInterface(MenuMode.StartMenu);
         }
-        public bool CheckGeneralInput()
+        private bool CheckGeneralInput()
         {
-            if (PortsList.Text == default(string) || PortsList.Text.Contains("COM") == false)
+            if (String.IsNullOrEmpty(PortsList.Text))
             {
                 MessageBox.Show("Choose the port please");
                 return false;
@@ -126,7 +119,6 @@ namespace E7_20_v2._0
             }
             return true;
         }
-
         private void MeasurementProcess(bool state)
         {
             AllMeterSettings.Enabled = state;
@@ -138,9 +130,7 @@ namespace E7_20_v2._0
                 AllMeterSlow.Enabled = state;
             }
             else
-            {
                 CurieStart.Enabled = state;
-            }
             ReturnButton.Enabled = state;
             AllMeterStop.Enabled = !state;
             ProgressPanel.Visible = !state;
@@ -176,12 +166,7 @@ namespace E7_20_v2._0
         #endregion
 
         #region AllMeterPanel
-        public void AllMeterInit()
-        {
-            UpdateLists();
-            StartEnabling();
-        }
-        public void UpdateLists()
+        private void AllMeterInit()
         {
             AllMeterStartFDropBox.Items.Clear();
             AllMeterEndFDropBox.Items.Clear();
@@ -192,36 +177,33 @@ namespace E7_20_v2._0
             }
             AllMeterStartFDropBox.SelectedIndex = 0;
             AllMeterEndFDropBox.SelectedIndex = 1;
+            StartEnabling();
         }
         public void AllMeterC_CheckedChanged(object sender, EventArgs e)
         {
             AllMeterD.Enabled = AllMeterC.Checked;
-            if (AllMeterC.Checked == false)
-                AllMeterD.Checked = false;
+            AllMeterD.Checked = AllMeterC.Checked;
             StartEnabling();
         }
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
         {
-            AllMeterQl.Enabled = AllMeterL.Checked;
-            if (AllMeterL.Checked == false)
-                AllMeterQl.Checked = false;
+            AllMeterQl.Enabled = AllMeterL.Checked; 
+            AllMeterQl.Checked = AllMeterL.Checked;
             StartEnabling();
         }
 
         public void AllMeterR_CheckedChanged(object sender, EventArgs e)
         {
             AllMeterQr.Enabled = AllMeterR.Checked;
-            if (AllMeterR.Checked == false)
-                AllMeterQr.Checked = false;
+            AllMeterQr.Checked = AllMeterR.Checked;
             StartEnabling();
         }
 
         public void AllMeterZ_CheckedChanged(object sender, EventArgs e)
         {
             AllMeterFi.Enabled = AllMeterZ.Checked;
-            if (AllMeterZ.Checked == false)
-                AllMeterFi.Checked = false;
+            AllMeterFi.Checked = AllMeterZ.Checked;
             StartEnabling();
         }
         private void StartEnabling()
@@ -251,39 +233,58 @@ namespace E7_20_v2._0
             ResetProgressBar();
             int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
             int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
-            if (_IsDebug)
-                _virtualMachine = new VirtualMachine(DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
-            else
-                _workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
+            _workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             MeasuresTimer.Start();
         }
-
-        private void AllMeterStop_Click(object sender, EventArgs e)
+        #endregion
+        #region TemperatureMeterPanel
+        private void CurieStart_Click(object sender, EventArgs e)
+        {
+            Interval.Text = StyleFormatter.ChangeDoubleSeparator(Interval.Text);
+            if (CurieValidate())
+            {
+                List<ModeCommands> modes = GetModes();
+                MeasurementProcess(false);
+                ResetProgressBar();
+                _workMachine = new CurieMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, modes.ToArray(), Int32.Parse(Amount.Text), Double.Parse(Interval.Text));
+            }
+        }
+        private bool CurieValidate()
+        {
+            Int32.TryParse(Amount.Text, out int amount);
+            if (amount <= 0 || amount > 1000)
+            {
+                MessageBox.Show("Amount of measurements have to be in the range from 1 to 1000");
+                return false;
+            }
+            Double.TryParse(Interval.Text, out double interval);
+            Math.Round(interval, 2);
+            if (interval < 0.5 || interval > 1000)
+            {
+                MessageBox.Show("Interval between measurements have to be in the range from 0.5 to 1000.0 seconds with precition to 0.1 second");
+                return false;
+            }
+            return true;
+        }
+        #endregion
+        #region MeasurementControllers
+        private void Stop_Click(object sender, EventArgs e)
         {
             MeasuresTimer.Stop();
-            if (_IsDebug)
-            {
-                if (_virtualMachine != null)
-                    _virtualMachine.Break();
-            }
-            else if (_workMachine != null)
+            if (_workMachine != null)
                 _workMachine.IsWorking = false;
             MeasurementProcess(true);
         }
-        #endregion
-
         private void MeasuresTimer_Tick(object sender, EventArgs e)
         {
-            if (_IsDebug)
-            {
-                if (_virtualMachine != null && _virtualMachine.MakeMeasurement() == false)
-                    AllMeterStop_Click(sender, e);
-            }
-            else if (_workMachine != null)
+            if (_workMachine != null)
             {
                 if (_workMachine.IsWorking == false)
-                    AllMeterStop_Click(sender, e);
-                else if (_workMachine.IsDataChanged)
+                {
+                    Stop_Click(sender, e);
+                    return;
+                }
+                if (_workMachine.IsDataChanged)
                 {
                     _workMachine.IsDataChanged = false;
                     double time = _workMachine.GetProgress;
@@ -307,35 +308,6 @@ namespace E7_20_v2._0
                 }
             }
         }
-
-        #region TemperatureMeterPanel
-        private void CurieStart_Click(object sender, EventArgs e)
-        {
-            if (CurieValidate())
-            {
-                List<ModeCommands> modes = GetModes();
-                MeasurementProcess(false);
-                ResetProgressBar();
-            }
-        }
-        private bool CurieValidate()
-        {
-            Int32.TryParse(Amount.Text, out int amount);
-            if (amount <= 0 || amount > 1000)
-            {
-                MessageBox.Show("Amount of measurements have to be in the range from 1 to 1000");
-                return false;
-            }
-            Interval.Text = StyleFormatter.ChangeDoubleSeparator(Interval.Text);
-            Double.TryParse(Interval.Text, out double interval);
-            Math.Round(interval, 2);
-            if (interval < 0.5 || interval > 1000)
-            {
-                MessageBox.Show("Interval between measurements have to be in the range from 0.5 to 1000.0 seconds with precition to 0.1 second");
-                return false;
-            }
-            return true;
-        }
-        #endregion
+#endregion
     }
 }

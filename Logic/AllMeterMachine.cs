@@ -6,9 +6,8 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    internal class AllMeterMachine : BaseDevice
+    internal class AllMeterMachine : BaseMachine
     {
-        public double GetProgress => CalculateTime();
         private readonly RealGrasper _dataExchanger;
         private readonly Direction _changeDirection;
         private readonly int _endFrequency;
@@ -133,7 +132,7 @@ namespace E7_20_v2._0
             _dataExchanger.ChangeFrequency((byte)changeDirection);
         }
 
-        private double CalculateTime()
+        sealed protected override double CalculateTime()
         {
             int f = _f;
             int amount = 0;

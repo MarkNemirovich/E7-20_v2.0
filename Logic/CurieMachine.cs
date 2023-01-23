@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    internal class CurieMachine : BaseDevice
+    internal class CurieMachine : BaseMachine
     {
         public double GetProgress => CalculateTime();
         private readonly RealGrasper _dataExchanger;
@@ -96,7 +96,7 @@ namespace E7_20_v2._0
             base.Break();
             _dataExchanger.Break();
         }
-        private double CalculateTime()
+        sealed protected override double CalculateTime()
         {
             return ((double)(_measuresAmount-_measuresDone))/_measuresAmount*_delay/1000;
         }
