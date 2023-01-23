@@ -5,13 +5,13 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    internal class VirtualDevice : BaseDevice
+    internal class VirtualMachine : BaseDevice
     {
         private VirtualGrasper _dataExchanger;
         private Direction _changeFrequencyCommand;
         private int _startFrequency;
         private int _endFrequency;
-        public VirtualDevice(string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speedMode, ModeCommands[] modes) : base(direcroty, fileName, modes)
+        public VirtualMachine(string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speedMode, ModeCommands[] modes) : base(direcroty, fileName, modes)
         {
             _startFrequency = startFrequency;
             _endFrequency = endFrequency;

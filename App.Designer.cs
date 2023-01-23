@@ -40,22 +40,20 @@ namespace E7_20_v2._0
             this.DirectoryPath = new System.Windows.Forms.TextBox();
             this.DirectoryButton = new System.Windows.Forms.Button();
             this.Settings = new System.Windows.Forms.Panel();
-            this.CurieCoefficientsPanel = new System.Windows.Forms.Panel();
-            this.CurieD = new System.Windows.Forms.TextBox();
-            this.LabelD = new System.Windows.Forms.Label();
-            this.CurieC = new System.Windows.Forms.TextBox();
-            this.LabelC = new System.Windows.Forms.Label();
-            this.CurieB = new System.Windows.Forms.TextBox();
-            this.LabelB = new System.Windows.Forms.Label();
-            this.CurieA = new System.Windows.Forms.TextBox();
-            this.LabelA = new System.Windows.Forms.Label();
-            this.CurieCoefficientsLabel = new System.Windows.Forms.Label();
             this.CurieSettings = new System.Windows.Forms.Panel();
+            this.CurieD = new System.Windows.Forms.TextBox();
             this.CurieLable = new System.Windows.Forms.Label();
+            this.LabelD = new System.Windows.Forms.Label();
             this.Amount = new System.Windows.Forms.TextBox();
+            this.CurieC = new System.Windows.Forms.TextBox();
             this.AmountLabel = new System.Windows.Forms.Label();
+            this.LabelC = new System.Windows.Forms.Label();
             this.Interval = new System.Windows.Forms.TextBox();
+            this.CurieB = new System.Windows.Forms.TextBox();
             this.IntervalLabel = new System.Windows.Forms.Label();
+            this.LabelB = new System.Windows.Forms.Label();
+            this.LabelA = new System.Windows.Forms.Label();
+            this.CurieA = new System.Windows.Forms.TextBox();
             this.AllMeterSettings = new System.Windows.Forms.Panel();
             this.AllMeterStartFPanel = new System.Windows.Forms.Panel();
             this.AllMeterStartFLabel = new System.Windows.Forms.Label();
@@ -64,11 +62,7 @@ namespace E7_20_v2._0
             this.AllMeterEndFLabel = new System.Windows.Forms.Label();
             this.AllMeterEndFDropBox = new System.Windows.Forms.ComboBox();
             this.GeneralSettingsLabel = new System.Windows.Forms.Label();
-            this.AllMeterStop = new System.Windows.Forms.Button();
-            this.ReturnButton = new System.Windows.Forms.Button();
-            this.AllMeterSlow = new System.Windows.Forms.Button();
-            this.AllMeterFast = new System.Windows.Forms.Button();
-            this.AllMeterModes = new System.Windows.Forms.Panel();
+            this.SettingsModes = new System.Windows.Forms.Panel();
             this.AllMeterModesLabel = new System.Windows.Forms.Label();
             this.AllMeterFi = new System.Windows.Forms.CheckBox();
             this.AllMeterQr = new System.Windows.Forms.CheckBox();
@@ -78,6 +72,10 @@ namespace E7_20_v2._0
             this.AllMeterR = new System.Windows.Forms.CheckBox();
             this.AllMeterL = new System.Windows.Forms.CheckBox();
             this.AllMeterC = new System.Windows.Forms.CheckBox();
+            this.AllMeterStop = new System.Windows.Forms.Button();
+            this.ReturnButton = new System.Windows.Forms.Button();
+            this.AllMeterSlow = new System.Windows.Forms.Button();
+            this.AllMeterFast = new System.Windows.Forms.Button();
             this.ProgressPanel = new System.Windows.Forms.Panel();
             this.EstimatedTimeLabel = new System.Windows.Forms.Label();
             this.EstimatedTime = new System.Windows.Forms.TextBox();
@@ -87,12 +85,11 @@ namespace E7_20_v2._0
             this.CurieStart = new System.Windows.Forms.Button();
             this.StartPanel.SuspendLayout();
             this.Settings.SuspendLayout();
-            this.CurieCoefficientsPanel.SuspendLayout();
             this.CurieSettings.SuspendLayout();
             this.AllMeterSettings.SuspendLayout();
             this.AllMeterStartFPanel.SuspendLayout();
             this.AllMeterEndFPanel.SuspendLayout();
-            this.AllMeterModes.SuspendLayout();
+            this.SettingsModes.SuspendLayout();
             this.ProgressPanel.SuspendLayout();
             this.ControlButtonPanel.SuspendLayout();
             this.SuspendLayout();
@@ -195,145 +192,47 @@ namespace E7_20_v2._0
             // Settings
             // 
             this.Settings.BackColor = System.Drawing.SystemColors.Window;
-            this.Settings.Controls.Add(this.CurieCoefficientsPanel);
             this.Settings.Controls.Add(this.CurieSettings);
             this.Settings.Controls.Add(this.AllMeterSettings);
-            this.Settings.Location = new System.Drawing.Point(38, 122);
+            this.Settings.Controls.Add(this.SettingsModes);
+            this.Settings.Location = new System.Drawing.Point(38, 99);
             this.Settings.Name = "Settings";
-            this.Settings.Size = new System.Drawing.Size(675, 162);
+            this.Settings.Size = new System.Drawing.Size(675, 187);
             this.Settings.TabIndex = 3;
             // 
-            // CurieCoefficientsPanel
+            // CurieSettings
             // 
-            this.CurieCoefficientsPanel.BackColor = System.Drawing.SystemColors.Info;
-            this.CurieCoefficientsPanel.Controls.Add(this.CurieD);
-            this.CurieCoefficientsPanel.Controls.Add(this.LabelD);
-            this.CurieCoefficientsPanel.Controls.Add(this.CurieC);
-            this.CurieCoefficientsPanel.Controls.Add(this.LabelC);
-            this.CurieCoefficientsPanel.Controls.Add(this.CurieB);
-            this.CurieCoefficientsPanel.Controls.Add(this.LabelB);
-            this.CurieCoefficientsPanel.Controls.Add(this.CurieA);
-            this.CurieCoefficientsPanel.Controls.Add(this.LabelA);
-            this.CurieCoefficientsPanel.Controls.Add(this.CurieCoefficientsLabel);
-            this.CurieCoefficientsPanel.Location = new System.Drawing.Point(356, 20);
-            this.CurieCoefficientsPanel.Name = "CurieCoefficientsPanel";
-            this.CurieCoefficientsPanel.Size = new System.Drawing.Size(300, 122);
-            this.CurieCoefficientsPanel.TabIndex = 17;
-            this.CurieCoefficientsPanel.Visible = false;
+            this.CurieSettings.BackColor = System.Drawing.SystemColors.Info;
+            this.CurieSettings.Controls.Add(this.CurieD);
+            this.CurieSettings.Controls.Add(this.CurieLable);
+            this.CurieSettings.Controls.Add(this.LabelD);
+            this.CurieSettings.Controls.Add(this.Amount);
+            this.CurieSettings.Controls.Add(this.CurieC);
+            this.CurieSettings.Controls.Add(this.AmountLabel);
+            this.CurieSettings.Controls.Add(this.LabelC);
+            this.CurieSettings.Controls.Add(this.Interval);
+            this.CurieSettings.Controls.Add(this.CurieB);
+            this.CurieSettings.Controls.Add(this.IntervalLabel);
+            this.CurieSettings.Controls.Add(this.LabelB);
+            this.CurieSettings.Controls.Add(this.LabelA);
+            this.CurieSettings.Controls.Add(this.CurieA);
+            this.CurieSettings.Location = new System.Drawing.Point(19, 20);
+            this.CurieSettings.Margin = new System.Windows.Forms.Padding(2);
+            this.CurieSettings.Name = "CurieSettings";
+            this.CurieSettings.Size = new System.Drawing.Size(300, 157);
+            this.CurieSettings.TabIndex = 8;
+            this.CurieSettings.Visible = false;
             // 
             // CurieD
             // 
             this.CurieD.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CurieD.Location = new System.Drawing.Point(218, 81);
+            this.CurieD.Location = new System.Drawing.Point(216, 118);
             this.CurieD.Margin = new System.Windows.Forms.Padding(2);
             this.CurieD.Name = "CurieD";
             this.CurieD.Size = new System.Drawing.Size(38, 24);
             this.CurieD.TabIndex = 24;
             this.CurieD.Text = "1";
             this.CurieD.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // LabelD
-            // 
-            this.LabelD.AutoSize = true;
-            this.LabelD.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LabelD.Location = new System.Drawing.Point(229, 41);
-            this.LabelD.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.LabelD.Name = "LabelD";
-            this.LabelD.Size = new System.Drawing.Size(19, 18);
-            this.LabelD.TabIndex = 23;
-            this.LabelD.Text = "D";
-            // 
-            // CurieC
-            // 
-            this.CurieC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CurieC.Location = new System.Drawing.Point(158, 81);
-            this.CurieC.Margin = new System.Windows.Forms.Padding(2);
-            this.CurieC.Name = "CurieC";
-            this.CurieC.Size = new System.Drawing.Size(38, 24);
-            this.CurieC.TabIndex = 22;
-            this.CurieC.Text = "1";
-            this.CurieC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // LabelC
-            // 
-            this.LabelC.AutoSize = true;
-            this.LabelC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LabelC.Location = new System.Drawing.Point(169, 41);
-            this.LabelC.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.LabelC.Name = "LabelC";
-            this.LabelC.Size = new System.Drawing.Size(19, 18);
-            this.LabelC.TabIndex = 21;
-            this.LabelC.Text = "C";
-            // 
-            // CurieB
-            // 
-            this.CurieB.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CurieB.Location = new System.Drawing.Point(98, 81);
-            this.CurieB.Margin = new System.Windows.Forms.Padding(2);
-            this.CurieB.Name = "CurieB";
-            this.CurieB.Size = new System.Drawing.Size(38, 24);
-            this.CurieB.TabIndex = 20;
-            this.CurieB.Text = "1";
-            this.CurieB.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // LabelB
-            // 
-            this.LabelB.AutoSize = true;
-            this.LabelB.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LabelB.Location = new System.Drawing.Point(109, 41);
-            this.LabelB.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.LabelB.Name = "LabelB";
-            this.LabelB.Size = new System.Drawing.Size(18, 18);
-            this.LabelB.TabIndex = 19;
-            this.LabelB.Text = "B";
-            // 
-            // CurieA
-            // 
-            this.CurieA.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CurieA.Location = new System.Drawing.Point(38, 81);
-            this.CurieA.Margin = new System.Windows.Forms.Padding(2);
-            this.CurieA.Name = "CurieA";
-            this.CurieA.Size = new System.Drawing.Size(38, 24);
-            this.CurieA.TabIndex = 18;
-            this.CurieA.Text = "1";
-            this.CurieA.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // LabelA
-            // 
-            this.LabelA.AutoSize = true;
-            this.LabelA.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LabelA.Location = new System.Drawing.Point(49, 41);
-            this.LabelA.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.LabelA.Name = "LabelA";
-            this.LabelA.Size = new System.Drawing.Size(17, 18);
-            this.LabelA.TabIndex = 17;
-            this.LabelA.Text = "A";
-            // 
-            // CurieCoefficientsLabel
-            // 
-            this.CurieCoefficientsLabel.AutoSize = true;
-            this.CurieCoefficientsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.CurieCoefficientsLabel.Location = new System.Drawing.Point(98, 8);
-            this.CurieCoefficientsLabel.Name = "CurieCoefficientsLabel";
-            this.CurieCoefficientsLabel.Size = new System.Drawing.Size(108, 16);
-            this.CurieCoefficientsLabel.TabIndex = 16;
-            this.CurieCoefficientsLabel.Text = "Curie coefficients";
-            this.CurieCoefficientsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // CurieSettings
-            // 
-            this.CurieSettings.BackColor = System.Drawing.SystemColors.Info;
-            this.CurieSettings.Controls.Add(this.CurieLable);
-            this.CurieSettings.Controls.Add(this.Amount);
-            this.CurieSettings.Controls.Add(this.AmountLabel);
-            this.CurieSettings.Controls.Add(this.Interval);
-            this.CurieSettings.Controls.Add(this.IntervalLabel);
-            this.CurieSettings.Location = new System.Drawing.Point(19, 20);
-            this.CurieSettings.Margin = new System.Windows.Forms.Padding(2);
-            this.CurieSettings.Name = "CurieSettings";
-            this.CurieSettings.Size = new System.Drawing.Size(300, 122);
-            this.CurieSettings.TabIndex = 8;
-            this.CurieSettings.Visible = false;
             // 
             // CurieLable
             // 
@@ -346,47 +245,124 @@ namespace E7_20_v2._0
             this.CurieLable.Text = "Curie measuring";
             this.CurieLable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // LabelD
+            // 
+            this.LabelD.AutoSize = true;
+            this.LabelD.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.LabelD.Location = new System.Drawing.Point(227, 93);
+            this.LabelD.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.LabelD.Name = "LabelD";
+            this.LabelD.Size = new System.Drawing.Size(19, 18);
+            this.LabelD.TabIndex = 23;
+            this.LabelD.Text = "D";
+            // 
             // Amount
             // 
             this.Amount.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Amount.Location = new System.Drawing.Point(200, 75);
+            this.Amount.Location = new System.Drawing.Point(200, 60);
             this.Amount.Margin = new System.Windows.Forms.Padding(2);
             this.Amount.Name = "Amount";
             this.Amount.Size = new System.Drawing.Size(75, 24);
             this.Amount.TabIndex = 3;
             this.Amount.Text = "10";
             // 
+            // CurieC
+            // 
+            this.CurieC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CurieC.Location = new System.Drawing.Point(156, 118);
+            this.CurieC.Margin = new System.Windows.Forms.Padding(2);
+            this.CurieC.Name = "CurieC";
+            this.CurieC.Size = new System.Drawing.Size(38, 24);
+            this.CurieC.TabIndex = 22;
+            this.CurieC.Text = "1";
+            this.CurieC.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // AmountLabel
             // 
             this.AmountLabel.AutoSize = true;
             this.AmountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AmountLabel.Location = new System.Drawing.Point(25, 80);
+            this.AmountLabel.Location = new System.Drawing.Point(25, 65);
             this.AmountLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.AmountLabel.Name = "AmountLabel";
             this.AmountLabel.Size = new System.Drawing.Size(164, 18);
             this.AmountLabel.TabIndex = 2;
             this.AmountLabel.Text = "Measurements\' amount";
             // 
+            // LabelC
+            // 
+            this.LabelC.AutoSize = true;
+            this.LabelC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.LabelC.Location = new System.Drawing.Point(167, 93);
+            this.LabelC.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.LabelC.Name = "LabelC";
+            this.LabelC.Size = new System.Drawing.Size(19, 18);
+            this.LabelC.TabIndex = 21;
+            this.LabelC.Text = "C";
+            // 
             // Interval
             // 
             this.Interval.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Interval.Location = new System.Drawing.Point(200, 35);
+            this.Interval.Location = new System.Drawing.Point(200, 30);
             this.Interval.Margin = new System.Windows.Forms.Padding(2);
             this.Interval.Name = "Interval";
             this.Interval.Size = new System.Drawing.Size(75, 24);
             this.Interval.TabIndex = 1;
             this.Interval.Text = "10";
             // 
+            // CurieB
+            // 
+            this.CurieB.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CurieB.Location = new System.Drawing.Point(96, 118);
+            this.CurieB.Margin = new System.Windows.Forms.Padding(2);
+            this.CurieB.Name = "CurieB";
+            this.CurieB.Size = new System.Drawing.Size(38, 24);
+            this.CurieB.TabIndex = 20;
+            this.CurieB.Text = "1";
+            this.CurieB.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // IntervalLabel
             // 
             this.IntervalLabel.AutoSize = true;
             this.IntervalLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.IntervalLabel.Location = new System.Drawing.Point(25, 40);
+            this.IntervalLabel.Location = new System.Drawing.Point(25, 35);
             this.IntervalLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.IntervalLabel.Name = "IntervalLabel";
             this.IntervalLabel.Size = new System.Drawing.Size(125, 18);
             this.IntervalLabel.TabIndex = 0;
             this.IntervalLabel.Text = "Interval (seconds)";
+            // 
+            // LabelB
+            // 
+            this.LabelB.AutoSize = true;
+            this.LabelB.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.LabelB.Location = new System.Drawing.Point(107, 93);
+            this.LabelB.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.LabelB.Name = "LabelB";
+            this.LabelB.Size = new System.Drawing.Size(18, 18);
+            this.LabelB.TabIndex = 19;
+            this.LabelB.Text = "B";
+            // 
+            // LabelA
+            // 
+            this.LabelA.AutoSize = true;
+            this.LabelA.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.LabelA.Location = new System.Drawing.Point(47, 93);
+            this.LabelA.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.LabelA.Name = "LabelA";
+            this.LabelA.Size = new System.Drawing.Size(17, 18);
+            this.LabelA.TabIndex = 17;
+            this.LabelA.Text = "A";
+            // 
+            // CurieA
+            // 
+            this.CurieA.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.CurieA.Location = new System.Drawing.Point(36, 118);
+            this.CurieA.Margin = new System.Windows.Forms.Padding(2);
+            this.CurieA.Name = "CurieA";
+            this.CurieA.Size = new System.Drawing.Size(38, 24);
+            this.CurieA.TabIndex = 18;
+            this.CurieA.Text = "1";
+            this.CurieA.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // AllMeterSettings
             // 
@@ -469,73 +445,23 @@ namespace E7_20_v2._0
             this.GeneralSettingsLabel.Text = "General measurement";
             this.GeneralSettingsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // AllMeterStop
+            // SettingsModes
             // 
-            this.AllMeterStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.AllMeterStop.BackColor = System.Drawing.Color.Salmon;
-            this.AllMeterStop.Enabled = false;
-            this.AllMeterStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AllMeterStop.Location = new System.Drawing.Point(375, 8);
-            this.AllMeterStop.Name = "AllMeterStop";
-            this.AllMeterStop.Size = new System.Drawing.Size(112, 32);
-            this.AllMeterStop.TabIndex = 5;
-            this.AllMeterStop.Text = "Stop";
-            this.AllMeterStop.UseVisualStyleBackColor = false;
-            this.AllMeterStop.Click += new System.EventHandler(this.AllMeterStop_Click);
-            // 
-            // ReturnButton
-            // 
-            this.ReturnButton.BackColor = System.Drawing.Color.Salmon;
-            this.ReturnButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ReturnButton.Location = new System.Drawing.Point(525, 8);
-            this.ReturnButton.Name = "ReturnButton";
-            this.ReturnButton.Size = new System.Drawing.Size(112, 32);
-            this.ReturnButton.TabIndex = 5;
-            this.ReturnButton.Text = "Return";
-            this.ReturnButton.UseVisualStyleBackColor = false;
-            this.ReturnButton.Click += new System.EventHandler(this.ReturnButton_Click);
-            // 
-            // AllMeterSlow
-            // 
-            this.AllMeterSlow.BackColor = System.Drawing.Color.PaleGreen;
-            this.AllMeterSlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AllMeterSlow.Location = new System.Drawing.Point(188, 8);
-            this.AllMeterSlow.Name = "AllMeterSlow";
-            this.AllMeterSlow.Size = new System.Drawing.Size(112, 32);
-            this.AllMeterSlow.TabIndex = 7;
-            this.AllMeterSlow.Text = "Slow";
-            this.AllMeterSlow.UseVisualStyleBackColor = false;
-            this.AllMeterSlow.Click += new System.EventHandler(this.AllMeterSlow_Click);
-            // 
-            // AllMeterFast
-            // 
-            this.AllMeterFast.BackColor = System.Drawing.Color.PaleGreen;
-            this.AllMeterFast.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.AllMeterFast.Location = new System.Drawing.Point(38, 8);
-            this.AllMeterFast.Name = "AllMeterFast";
-            this.AllMeterFast.Size = new System.Drawing.Size(112, 32);
-            this.AllMeterFast.TabIndex = 6;
-            this.AllMeterFast.Text = "Fast";
-            this.AllMeterFast.UseVisualStyleBackColor = false;
-            this.AllMeterFast.Click += new System.EventHandler(this.AllMeterFast_Click);
-            // 
-            // AllMeterModes
-            // 
-            this.AllMeterModes.BackColor = System.Drawing.SystemColors.Info;
-            this.AllMeterModes.Controls.Add(this.AllMeterModesLabel);
-            this.AllMeterModes.Controls.Add(this.AllMeterFi);
-            this.AllMeterModes.Controls.Add(this.AllMeterQr);
-            this.AllMeterModes.Controls.Add(this.AllMeterQl);
-            this.AllMeterModes.Controls.Add(this.AllMeterD);
-            this.AllMeterModes.Controls.Add(this.AllMeterZ);
-            this.AllMeterModes.Controls.Add(this.AllMeterR);
-            this.AllMeterModes.Controls.Add(this.AllMeterL);
-            this.AllMeterModes.Controls.Add(this.AllMeterC);
-            this.AllMeterModes.Location = new System.Drawing.Point(394, 142);
-            this.AllMeterModes.Name = "AllMeterModes";
-            this.AllMeterModes.Size = new System.Drawing.Size(300, 122);
-            this.AllMeterModes.TabIndex = 0;
-            this.AllMeterModes.Visible = false;
+            this.SettingsModes.BackColor = System.Drawing.SystemColors.Info;
+            this.SettingsModes.Controls.Add(this.AllMeterModesLabel);
+            this.SettingsModes.Controls.Add(this.AllMeterFi);
+            this.SettingsModes.Controls.Add(this.AllMeterQr);
+            this.SettingsModes.Controls.Add(this.AllMeterQl);
+            this.SettingsModes.Controls.Add(this.AllMeterD);
+            this.SettingsModes.Controls.Add(this.AllMeterZ);
+            this.SettingsModes.Controls.Add(this.AllMeterR);
+            this.SettingsModes.Controls.Add(this.AllMeterL);
+            this.SettingsModes.Controls.Add(this.AllMeterC);
+            this.SettingsModes.Location = new System.Drawing.Point(357, 20);
+            this.SettingsModes.Name = "SettingsModes";
+            this.SettingsModes.Size = new System.Drawing.Size(300, 122);
+            this.SettingsModes.TabIndex = 0;
+            this.SettingsModes.Visible = false;
             // 
             // AllMeterModesLabel
             // 
@@ -644,6 +570,56 @@ namespace E7_20_v2._0
             this.AllMeterC.UseVisualStyleBackColor = true;
             this.AllMeterC.CheckedChanged += new System.EventHandler(this.AllMeterC_CheckedChanged);
             // 
+            // AllMeterStop
+            // 
+            this.AllMeterStop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.AllMeterStop.BackColor = System.Drawing.Color.Salmon;
+            this.AllMeterStop.Enabled = false;
+            this.AllMeterStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterStop.Location = new System.Drawing.Point(375, 8);
+            this.AllMeterStop.Name = "AllMeterStop";
+            this.AllMeterStop.Size = new System.Drawing.Size(112, 32);
+            this.AllMeterStop.TabIndex = 5;
+            this.AllMeterStop.Text = "Stop";
+            this.AllMeterStop.UseVisualStyleBackColor = false;
+            this.AllMeterStop.Click += new System.EventHandler(this.AllMeterStop_Click);
+            // 
+            // ReturnButton
+            // 
+            this.ReturnButton.BackColor = System.Drawing.Color.Salmon;
+            this.ReturnButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ReturnButton.Location = new System.Drawing.Point(525, 8);
+            this.ReturnButton.Name = "ReturnButton";
+            this.ReturnButton.Size = new System.Drawing.Size(112, 32);
+            this.ReturnButton.TabIndex = 5;
+            this.ReturnButton.Text = "Return";
+            this.ReturnButton.UseVisualStyleBackColor = false;
+            this.ReturnButton.Click += new System.EventHandler(this.ReturnButton_Click);
+            // 
+            // AllMeterSlow
+            // 
+            this.AllMeterSlow.BackColor = System.Drawing.Color.PaleGreen;
+            this.AllMeterSlow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterSlow.Location = new System.Drawing.Point(188, 8);
+            this.AllMeterSlow.Name = "AllMeterSlow";
+            this.AllMeterSlow.Size = new System.Drawing.Size(112, 32);
+            this.AllMeterSlow.TabIndex = 7;
+            this.AllMeterSlow.Text = "Slow";
+            this.AllMeterSlow.UseVisualStyleBackColor = false;
+            this.AllMeterSlow.Click += new System.EventHandler(this.AllMeterSlow_Click);
+            // 
+            // AllMeterFast
+            // 
+            this.AllMeterFast.BackColor = System.Drawing.Color.PaleGreen;
+            this.AllMeterFast.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.AllMeterFast.Location = new System.Drawing.Point(38, 8);
+            this.AllMeterFast.Name = "AllMeterFast";
+            this.AllMeterFast.Size = new System.Drawing.Size(112, 32);
+            this.AllMeterFast.TabIndex = 6;
+            this.AllMeterFast.Text = "Fast";
+            this.AllMeterFast.UseVisualStyleBackColor = false;
+            this.AllMeterFast.Click += new System.EventHandler(this.AllMeterFast_Click);
+            // 
             // ProgressPanel
             // 
             this.ProgressPanel.BackColor = System.Drawing.SystemColors.Window;
@@ -675,7 +651,7 @@ namespace E7_20_v2._0
             this.EstimatedTime.Location = new System.Drawing.Point(169, 16);
             this.EstimatedTime.Margin = new System.Windows.Forms.Padding(2);
             this.EstimatedTime.Name = "EstimatedTime";
-            this.EstimatedTime.Size = new System.Drawing.Size(114, 27);
+            this.EstimatedTime.Size = new System.Drawing.Size(150, 27);
             this.EstimatedTime.TabIndex = 2;
             this.EstimatedTime.Text = "s";
             this.EstimatedTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
@@ -711,6 +687,7 @@ namespace E7_20_v2._0
             // 
             this.CurieStart.BackColor = System.Drawing.Color.PaleGreen;
             this.CurieStart.Enabled = false;
+            this.CurieStart.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.CurieStart.Location = new System.Drawing.Point(40, 10);
             this.CurieStart.Name = "CurieStart";
             this.CurieStart.Size = new System.Drawing.Size(260, 30);
@@ -731,7 +708,6 @@ namespace E7_20_v2._0
             this.Controls.Add(this.CurieMeterButton);
             this.Controls.Add(this.AllMeterButton);
             this.Controls.Add(this.ControlButtonPanel);
-            this.Controls.Add(this.AllMeterModes);
             this.Controls.Add(this.Settings);
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.Name = "App";
@@ -740,8 +716,6 @@ namespace E7_20_v2._0
             this.StartPanel.ResumeLayout(false);
             this.StartPanel.PerformLayout();
             this.Settings.ResumeLayout(false);
-            this.CurieCoefficientsPanel.ResumeLayout(false);
-            this.CurieCoefficientsPanel.PerformLayout();
             this.CurieSettings.ResumeLayout(false);
             this.CurieSettings.PerformLayout();
             this.AllMeterSettings.ResumeLayout(false);
@@ -750,8 +724,8 @@ namespace E7_20_v2._0
             this.AllMeterStartFPanel.PerformLayout();
             this.AllMeterEndFPanel.ResumeLayout(false);
             this.AllMeterEndFPanel.PerformLayout();
-            this.AllMeterModes.ResumeLayout(false);
-            this.AllMeterModes.PerformLayout();
+            this.SettingsModes.ResumeLayout(false);
+            this.SettingsModes.PerformLayout();
             this.ProgressPanel.ResumeLayout(false);
             this.ProgressPanel.PerformLayout();
             this.ControlButtonPanel.ResumeLayout(false);
@@ -770,7 +744,7 @@ namespace E7_20_v2._0
         private System.Windows.Forms.Panel ProgressPanel;
         private System.Windows.Forms.ComboBox PortsList;
         private System.Windows.Forms.TextBox FileName;
-        private System.Windows.Forms.Panel AllMeterModes;
+        private System.Windows.Forms.Panel SettingsModes;
         private System.Windows.Forms.CheckBox AllMeterZ;
         private System.Windows.Forms.CheckBox AllMeterR;
         private System.Windows.Forms.CheckBox AllMeterL;
@@ -804,8 +778,6 @@ namespace E7_20_v2._0
         private System.Windows.Forms.TextBox Interval;
         private System.Windows.Forms.Label IntervalLabel;
         private System.Windows.Forms.Label CurieLable;
-        private System.Windows.Forms.Panel CurieCoefficientsPanel;
-        private System.Windows.Forms.Label CurieCoefficientsLabel;
         private System.Windows.Forms.TextBox CurieD;
         private System.Windows.Forms.Label LabelD;
         private System.Windows.Forms.TextBox CurieC;

@@ -21,8 +21,8 @@ namespace E7_20_v2._0
         private string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
         private int _currentWidth = 800;
         private int _currentHeight = 500;
-        private VirtualDevice _virtualMachine = null;
-        private RealDevice _workMachine = null;
+        private VirtualMachine _virtualMachine = null;
+        private AllMeterMachine _workMachine = null;
         private MenuMode _currentPage = MenuMode.StartMenu;
 
         private bool _IsDebug = false;
@@ -67,12 +67,11 @@ namespace E7_20_v2._0
         {
             StartPanel.Enabled = (mode == MenuMode.StartMenu);
             Settings.Visible = (mode == MenuMode.AllMeterMenu || mode == MenuMode.CurieMenu);
+            SettingsModes.Visible = (mode == MenuMode.AllMeterMenu || mode == MenuMode.CurieMenu);
             AllMeterSettings.Visible = (mode == MenuMode.AllMeterMenu);
             AllMeterButton.Visible = (mode == MenuMode.StartMenu);
-            AllMeterModes.Visible = (mode == MenuMode.AllMeterMenu);
             CurieSettings.Visible = (mode == MenuMode.CurieMenu);
             CurieMeterButton.Visible = (mode == MenuMode.StartMenu);
-            CurieCoefficientsPanel.Visible = (mode == MenuMode.CurieMenu);
             ControlButtonPanel.Visible = (mode != MenuMode.StartMenu); 
             AllMeterFast.Visible = (mode == MenuMode.AllMeterMenu);
             AllMeterSlow.Visible = (mode == MenuMode.AllMeterMenu);
@@ -86,7 +85,6 @@ namespace E7_20_v2._0
                     AllMeterInit();
                     break;
                 case MenuMode.CurieMenu:
-                    CurieInit();
                     break;
             }
         }
@@ -133,8 +131,7 @@ namespace E7_20_v2._0
         {
             AllMeterSettings.Enabled = state;
             CurieSettings.Enabled = state;
-            AllMeterModes.Enabled = state;
-            CurieCoefficientsPanel.Enabled = state;
+            SettingsModes.Enabled = state;
             if (_currentPage == MenuMode.AllMeterMenu)
             {
                 AllMeterFast.Enabled = state;
@@ -174,7 +171,7 @@ namespace E7_20_v2._0
             ProgressBar.Maximum = 0;
             ProgressBar.Step = 0;
             ProgressBar.Value = 0;
-            EstimatedTime.Text = "prepearing for start...";
+            EstimatedTime.Text = "preparing for start...";
         }
         #endregion
 
@@ -231,6 +228,7 @@ namespace E7_20_v2._0
         {
             AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
             AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
+            CurieStart.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
@@ -245,7 +243,7 @@ namespace E7_20_v2._0
         {
             if (AllMeterStartFDropBox.SelectedIndex == AllMeterEndFDropBox.SelectedIndex)
             {
-                MessageBox.Show("Start and end frequences have to be different!");
+                MessageBox.Show("Start and end frequencies have to be different!");
                 return;
             }
             List<ModeCommands> modes = GetModes();
@@ -254,9 +252,9 @@ namespace E7_20_v2._0
             int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
             int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
             if (_IsDebug)
-                _virtualMachine = new VirtualDevice(DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
+                _virtualMachine = new VirtualMachine(DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             else
-                _workMachine = new RealDevice(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
+                _workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             MeasuresTimer.Start();
         }
 
@@ -311,10 +309,6 @@ namespace E7_20_v2._0
         }
 
         #region TemperatureMeterPanel
-        private void CurieInit()
-        {
-          //  throw new NotImplementedException();
-        }
         private void CurieStart_Click(object sender, EventArgs e)
         {
             List<ModeCommands> modes = GetModes();

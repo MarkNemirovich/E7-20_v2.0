@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    internal class RealDevice : BaseDevice
+    internal class AllMeterMachine : BaseDevice
     {
         public bool IsWorking = false;
         public bool IsDataChanged = false;
@@ -15,7 +15,7 @@ namespace E7_20_v2._0
         private Direction _changeDirection;
         private int _endFrequency;
         private int _startFrequency;
-        public RealDevice(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
+        public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
         {
             if (speed == SpeedMode.Fast)
             {
