@@ -22,7 +22,7 @@ namespace E7_20_v2._0
             var workerTHread = new Thread(StartWork);
             workerTHread.Start();
         }
-        private async void StartWork()
+        private void StartWork()
         {
             int _f;
             do
@@ -65,7 +65,8 @@ namespace E7_20_v2._0
                         break;
                 }
             }
-            WriteLine(outputData.ToArray());
+            var outputThread = new Thread(WriteLine);
+            outputThread.Start(outputData.ToArray());
             IsDataChanged = true;
             _measuresDone++;
             if (_measuresDone == _measuresAmount)
@@ -77,7 +78,7 @@ namespace E7_20_v2._0
         {
             main = new double[Constants.MEASURES_AMOUNT];
             sub = new double[Constants.MEASURES_AMOUNT];
-            byte[] data = new byte[Constants.SIZE];
+            byte[] data;
             for (int i = 0; i < Constants.MEASURES_AMOUNT; i++)
             {
                 while (_dataExchanger.GetLastData(out data) == false)

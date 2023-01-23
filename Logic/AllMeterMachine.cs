@@ -9,10 +9,10 @@ namespace E7_20_v2._0
     internal class AllMeterMachine : BaseDevice
     {
         public double GetProgress => CalculateTime();
-        private RealGrasper _dataExchanger;
-        private Direction _changeDirection;
-        private int _endFrequency;
-        private int _startFrequency;
+        private readonly RealGrasper _dataExchanger;
+        private readonly Direction _changeDirection;
+        private readonly int _endFrequency;
+        private readonly int _startFrequency;
         public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
         {
             if (speed == SpeedMode.Fast)
@@ -76,7 +76,8 @@ namespace E7_20_v2._0
                 }
                 if (IsWorking == false)
                     break;
-                WriteLine(outputData.ToArray());
+                var outputThread = new Thread(WriteLine);
+                outputThread.Start(outputData.ToArray());
                 IsDataChanged = true;
                 if (_f == _endFrequency)
                 {
@@ -94,7 +95,7 @@ namespace E7_20_v2._0
             _f = _dataExchanger.GetFrequency();
             main = new double[Constants.MEASURES_AMOUNT];
             sub = new double[Constants.MEASURES_AMOUNT];
-            byte[] data = new byte[Constants.SIZE];
+            byte[] data;
             for (int i = 0; i < Constants.MEASURES_AMOUNT; i++)
             {
                 while (_dataExchanger.GetLastData(out data) == false)
@@ -141,7 +142,7 @@ namespace E7_20_v2._0
             amount += Convert.ToInt32(_modes.Contains(ModeCommands.R));
             amount += Convert.ToInt32(_modes.Contains(ModeCommands.Z));
             double stepTime = 3 * amount;
-            double time = 0;
+            double time;
             if (amount == 1)
                 stepTime -= 0.5;
             if (_changeDirection == Direction.UP || _changeDirection == Direction.DOWN)

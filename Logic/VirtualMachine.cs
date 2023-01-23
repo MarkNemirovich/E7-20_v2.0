@@ -57,7 +57,8 @@ namespace E7_20_v2._0
 
                 }
             }
-            WriteLine(outputData.ToArray());
+            var outputThread = new Thread(WriteLine);
+            outputThread.Start(outputData.ToArray());
             if (_f == _endFrequency)
             {
                 return false;
