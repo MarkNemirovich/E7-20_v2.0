@@ -5,11 +5,11 @@ using System.Threading;
 
 namespace E7_20_v2._0
 {
-    class RealGrasper : IOoperations
+    class DataGrasper : IOoperations
     {
-        private Stack<byte[]> _data;
-        private IOprovider _port;
-        public RealGrasper(string portName)
+        private readonly Stack<byte[]> _data;
+        private readonly IOprovider _port;
+        public DataGrasper(string portName)
         {
             _data= new Stack<byte[]>(Constants.BUFFER_LIMIT);
             _port = new IOprovider(portName);
@@ -54,9 +54,7 @@ namespace E7_20_v2._0
             lock (_data)
             {
                 if (_data.Count > 0)
-                {
                     output = _data.Pop();
-                }
             }
             return output != null;
         }

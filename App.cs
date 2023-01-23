@@ -61,7 +61,7 @@ namespace E7_20_v2._0
             AllMeterButton.Visible = (mode == MenuMode.StartMenu);
             CurieSettings.Visible = (mode == MenuMode.CurieMenu);
             CurieMeterButton.Visible = (mode == MenuMode.StartMenu);
-            ControlButtonPanel.Visible = (mode != MenuMode.StartMenu); 
+            ControlButtonPanel.Visible = (mode != MenuMode.StartMenu);
             AllMeterFast.Visible = (mode == MenuMode.AllMeterMenu);
             AllMeterSlow.Visible = (mode == MenuMode.AllMeterMenu);
             CurieStart.Visible = (mode == MenuMode.CurieMenu);
@@ -188,7 +188,7 @@ namespace E7_20_v2._0
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
         {
-            AllMeterQl.Enabled = AllMeterL.Checked; 
+            AllMeterQl.Enabled = AllMeterL.Checked;
             AllMeterQl.Checked = AllMeterL.Checked;
             StartEnabling();
         }
@@ -308,6 +308,6 @@ namespace E7_20_v2._0
                 }
             }
         }
-#endregion
+        #endregion
     }
 }

@@ -8,10 +8,20 @@ namespace E7_20_v2._0
 {
     internal class AllMeterMachine : BaseMachine
     {
-        private readonly RealGrasper _dataExchanger;
+        private readonly DataGrasper _dataExchanger;
         private readonly Direction _changeDirection;
         private readonly int _endFrequency;
         private readonly int _startFrequency;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="portName"></param>
+        /// <param name="direcroty"></param>
+        /// <param name="fileName"></param>
+        /// <param name="startFrequency"></param>
+        /// <param name="endFrequency"></param>
+        /// <param name="speed"></param>
+        /// <param name="modes"></param>
         public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
         {
             if (speed == SpeedMode.Fast)
@@ -30,7 +40,7 @@ namespace E7_20_v2._0
             }
             _startFrequency= startFrequency;
             _endFrequency= endFrequency;
-            _dataExchanger = new RealGrasper(portName);
+            _dataExchanger = new DataGrasper(portName);
             IsWorking = true;
             var workerTHread = new Thread(StartWork);
             workerTHread.Start();
@@ -149,24 +159,16 @@ namespace E7_20_v2._0
                 if (f >= 1000)
                 {
                     if (_endFrequency > 1000)
-                    {
                         time = Math.Abs((_endFrequency - f)) * stepTime / 1000;
-                    }
                     else
-                    {
                         time = (f / 1000 - 1 + 1000 - _endFrequency) * stepTime;
-                    }
                 }
                 else
                 {
                     if (_endFrequency >= 1000)
-                    {
                         time = (_endFrequency / 1000 - 1 + 1000 - f) * stepTime;
-                    }
                     else
-                    {
                         time = Math.Abs((_endFrequency - f)) * stepTime;
-                    }
                 }
             }
             else

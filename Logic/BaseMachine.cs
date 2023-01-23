@@ -38,21 +38,13 @@ namespace E7_20_v2._0
             double param = input[index];
             param += input[index + 1] << 8;
             if (input[index + 2] > 0x80)
-            {
                 param += (input[index + 2] - 0xFF - 1) << 16;
-            }
             else
-            {
                 param += (input[index + 2] << 16);
-            }
             if (input[index + 3] > 0x80)
-            {
                 param *= Math.Pow(10.0, input[index + 3] - 0xFF - 1);
-            }
             else
-            {
                 param *= Math.Pow(10.0, input[index + 3]);
-            }
             return param;
         }
         protected void WriteLine(object o)

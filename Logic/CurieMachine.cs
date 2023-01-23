@@ -7,17 +7,25 @@ namespace E7_20_v2._0
 {
     internal class CurieMachine : BaseMachine
     {
-        public double GetProgress => CalculateTime();
-        private readonly RealGrasper _dataExchanger;
+        private readonly DataGrasper _dataExchanger;
         private int _measuresDone;
         private readonly int _measuresAmount;
         private readonly int _delay;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="portName"></param>
+        /// <param name="direcroty"></param>
+        /// <param name="fileName"></param>
+        /// <param name="modes"></param>
+        /// <param name="amount"></param>
+        /// <param name="delay"></param>
         public CurieMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, int amount, double delay) : base(direcroty, fileName, modes)
         {
             _measuresDone = 0;
             _measuresAmount = amount;
             _delay = (int)(1000 * delay);
-            _dataExchanger = new RealGrasper(portName);
+            _dataExchanger = new DataGrasper(portName);
             IsWorking = true;
             var workerTHread = new Thread(StartWork);
             workerTHread.Start();

@@ -11,10 +11,9 @@ namespace E7_20_v2._0
         private readonly string _fileName;
         public FileDirectory(string directory, string fileName)
         {
-            this._directory = directory;
-            this._fileName = fileName;
+            _directory = directory;
+            _fileName = fileName;
         }
-
         private int SetFileNumber()
         {
             var list = Directory.GetFiles(_directory).Where(name => name.Contains($"{_fileName}_{SetDate()}")).ToArray();

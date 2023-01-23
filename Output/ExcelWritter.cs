@@ -5,9 +5,9 @@ namespace E7_20_v2._0
 {
     internal class ExcelWritter
     {
-        private FileDirectory _fileDirectory;
-        private ExcelFile _exelFile;
-        private ExcelWorksheet _exelSheet;
+        private readonly FileDirectory _fileDirectory;
+        private readonly ExcelFile _exelFile;
+        private readonly ExcelWorksheet _exelSheet;
         private int _lineNumber;
         private int _lineWidth;
         static ExcelWritter()

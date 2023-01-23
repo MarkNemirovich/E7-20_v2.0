@@ -6,7 +6,7 @@ namespace E7_20_v2._0
 {
     class IOprovider
     {
-        private SerialPort _port = new SerialPort("VirtualPort", 9600, Parity.None, 8, StopBits.One);
+        private readonly SerialPort _port;
         public delegate void Pack(byte[] pack);
         public event Pack ProvidePack;
         public static string[] GetPorts => SerialPort.GetPortNames();
@@ -15,16 +15,15 @@ namespace E7_20_v2._0
         {
             try
             {
-                _port = new SerialPort(name, 9600, Parity.None, 8, StopBits.One);
-                _port.ReadTimeout = 500;
-                _port.WriteTimeout = 500;
-                _port.ReadBufferSize = Constants.SIZE;
+                _port = new SerialPort(name, 9600, Parity.None, 8, StopBits.One)
+                {
+                    ReadTimeout = 500,
+                    WriteTimeout = 500,
+                    ReadBufferSize = Constants.SIZE
+                };
                 _port.DataReceived += new SerialDataReceivedEventHandler(ReceiveData);  // создание делегата на прием
             }
-            catch
-            {
-                throw new Exception("No port with such name!");
-            }
+            catch { throw new Exception("No port with such name!"); }
         }
         public void Start()
         {
@@ -33,10 +32,7 @@ namespace E7_20_v2._0
                 if (_port.IsOpen == false)
                     _port.Open();
             }
-            catch
-            {
-                throw new Exception("Empty port!");
-            }
+            catch { throw new Exception("Empty port!"); }
         }
         public void Finish()
         {
@@ -48,10 +44,7 @@ namespace E7_20_v2._0
                     _port.Close();
                 }
             }
-            catch
-            {
-                throw new Exception("Empty port!");
-            }
+            catch { throw new Exception("Empty port!"); }
         }
         public void SendData(byte message)
         {
@@ -66,9 +59,7 @@ namespace E7_20_v2._0
             {
                 _port.Read(bytes, 0, Constants.SIZE);
                 if (bytes[0] == 170 & bytes[1] == 0 & bytes[2] == 0)
-                {
                     ProvidePack?.Invoke(bytes);
-                }
                 _port.DiscardInBuffer();
             }
         }
