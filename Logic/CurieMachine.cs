@@ -8,10 +8,10 @@ namespace E7_20_v2._0
     internal class CurieMachine : BaseDevice
     {
         public double GetProgress => CalculateTime();
-        private RealGrasper _dataExchanger;
+        private readonly RealGrasper _dataExchanger;
         private int _measuresDone;
-        private int _measuresAmount;
-        private int _delay;
+        private readonly int _measuresAmount;
+        private readonly int _delay;
         public CurieMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, int amount, double delay) : base(direcroty, fileName, modes)
         {
             _measuresDone = 0;
@@ -32,12 +32,12 @@ namespace E7_20_v2._0
             IsDataChanged = true;
             do
             {
-                await MakeMeasurement();
+                new Thread(MakeMeasurement);
                 Thread.Sleep(_delay);
             } while (IsWorking);
             Break();
         }
-        public async void MakeMeasurement()
+        public void MakeMeasurement()
         {
             List<double> outputData = new List<double>(2);
             double[] main = new double[0];
@@ -97,7 +97,7 @@ namespace E7_20_v2._0
         }
         private double CalculateTime()
         {
-            return 0;
+            return ((double)(_measuresAmount-_measuresDone))/_measuresAmount*_delay/1000;
         }
     }
 }
