@@ -50,7 +50,6 @@ namespace E7_20_v2._0
         {
             byte[] pack = new byte[1] { message }; 
             _port.Write(pack, 0, 1);
-            Thread.Sleep(Constants.DELAY);
         }
         private void ReceiveData(object sender, SerialDataReceivedEventArgs e)
         {

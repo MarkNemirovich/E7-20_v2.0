@@ -159,7 +159,7 @@ namespace E7_20_v2._0
         private void ResetProgressBar()
         {
             ProgressBar.Maximum = 0;
-            ProgressBar.Step = 0;
+            ProgressBar.Step = 1;
             ProgressBar.Value = 0;
             EstimatedTime.Text = "preparing for start...";
         }
@@ -247,6 +247,7 @@ namespace E7_20_v2._0
                 MeasurementProcess(false);
                 ResetProgressBar();
                 _workMachine = new CurieMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, modes.ToArray(), Int32.Parse(Amount.Text), Double.Parse(Interval.Text));
+                MeasuresTimer.Start();
             }
         }
         private bool CurieValidate()
@@ -288,19 +289,10 @@ namespace E7_20_v2._0
                 {
                     _workMachine.IsDataChanged = false;
                     double time = _workMachine.GetProgress;
-                    if (ProgressBar.Maximum <= time)
-                    {
+                    if (ProgressBar.Maximum <= time)                    
                         ProgressBar.Maximum = (int)time;
-                    }
                     else
-                    {
-                        if (ProgressBar.Step == 0)
-                        {
-                            ProgressBar.Step = ProgressBar.Maximum - (int)time - 1;
-                            ProgressBar.Value += ProgressBar.Step;
-                        }
-                        ProgressBar.Value += ProgressBar.Step;
-                    }
+                        ProgressBar.Value = ProgressBar.Maximum - (int)time;
                     if (time > 60)
                         EstimatedTime.Text = Math.Round(time / 60, 2).ToString() + " min";
                     else

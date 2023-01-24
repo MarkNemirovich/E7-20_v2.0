@@ -6,8 +6,7 @@ namespace E7_20_v2._0
     internal static class Constants
     {
         public const int DELAY = 250;
-        public const int BUFFER_LIMIT = 100;
-        public const int MEASURES_AMOUNT = 5;
+        public const int MEASURES_AMOUNT = 2;
         public const int SIZE = 22;
         public static readonly int[] MAIN_FREQUENCES = new int[17] { 25, 50, 60, 100, 120, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000 };
     }

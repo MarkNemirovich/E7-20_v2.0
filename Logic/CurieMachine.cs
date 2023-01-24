@@ -32,16 +32,14 @@ namespace E7_20_v2._0
         }
         private void StartWork()
         {
-            int _f;
             do
             {
                 _f = _dataExchanger.GetFrequency();
-            } while (_f == -1);
-            IsDataChanged = true;
+            } while (_f <= 0);
+            StartTime = DateTime.UtcNow;
             do
             {
-                new Thread(MakeMeasurement);
-                Thread.Sleep(_delay);
+                MakeMeasurement();
             } while (IsWorking);
             Break();
         }
@@ -64,8 +62,7 @@ namespace E7_20_v2._0
                         if (_lastSwitchMode != mode)
                             ChangeMode((byte)mode);
                         _lastSwitchMode = mode;
-                        while (GetData(out main, out sub) == false)
-                            Thread.Sleep(Constants.DELAY);
+                        GetData(out main, out sub);
                         outputData.Add(main.Average());
                         break;
                     default:
@@ -77,12 +74,12 @@ namespace E7_20_v2._0
             outputThread.Start(outputData.ToArray());
             IsDataChanged = true;
             _measuresDone++;
-            if (_measuresDone == _measuresAmount)
+            if (_measuresDone >= _measuresAmount)
             {
                 IsWorking = false;
             }
         }
-        private bool GetData(out double[] main, out double[] sub)
+        private void GetData(out double[] main, out double[] sub)
         {
             main = new double[Constants.MEASURES_AMOUNT];
             sub = new double[Constants.MEASURES_AMOUNT];
@@ -93,7 +90,6 @@ namespace E7_20_v2._0
                     Thread.Sleep(Constants.DELAY);
                 Calculate(data, ref main[i], ref sub[i]);
             }
-            return true;
         }
         sealed protected override void ChangeMode(byte message)
         {
@@ -106,7 +102,9 @@ namespace E7_20_v2._0
         }
         sealed protected override double CalculateTime()
         {
-            return ((double)(_measuresAmount-_measuresDone))/_measuresAmount*_delay/1000;
+            var processTime = DateTime.UtcNow - StartTime;
+            StartTime = DateTime.UtcNow;
+            return processTime.TotalMilliseconds * (_measuresAmount-_measuresDone) / 1000;
         }
     }
 }

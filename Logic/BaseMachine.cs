@@ -12,6 +12,7 @@ namespace E7_20_v2._0
         protected ModeCommands[] _modes;
         protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
         protected int _f;
+        protected DateTime StartTime;
         public BaseMachine(string direcroty, string fileName, ModeCommands[] modes)
         {
             _modes = modes;

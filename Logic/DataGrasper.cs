@@ -11,9 +11,9 @@ namespace E7_20_v2._0
         private readonly IOprovider _port;
         public DataGrasper(string portName)
         {
-            _data= new Stack<byte[]>(Constants.BUFFER_LIMIT);
+            _data= new Stack<byte[]>(Constants.MEASURES_AMOUNT);
             _port = new IOprovider(portName);
-            _port.ProvidePack += GetPack;
+            _port.ProvidePack += AddToPack;
             _port.Start();
         }
         public bool ChangeMode(byte command)
@@ -43,10 +43,7 @@ namespace E7_20_v2._0
         }
         public void ChangeFrequency(byte command)
         {
-            int f = GetFrequency();
             Send(command);
-            while (GetFrequency() == f)
-                Thread.Sleep(Constants.DELAY);
         }
         public bool GetLastData(out byte[] output)
         {
@@ -60,14 +57,14 @@ namespace E7_20_v2._0
         }
         public void Break()
         {
-            _port.ProvidePack -= GetPack;
+            _port.ProvidePack -= AddToPack;
             _port.Finish();
         }
-        private void GetPack(byte[] newPack)
+        private void AddToPack(byte[] newPack)
         {
             lock (_data)
             {
-                if (_data.Count >= Constants.BUFFER_LIMIT)
+                if (_data.Count >= Constants.MEASURES_AMOUNT)
                     _data.Clear();
                 _data.Push(newPack);
             }

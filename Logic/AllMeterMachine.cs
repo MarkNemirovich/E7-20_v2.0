@@ -74,8 +74,7 @@ namespace E7_20_v2._0
                             if (_lastSwitchMode != mode)
                             ChangeMode((byte)mode);
                             _lastSwitchMode = mode;
-                            while (GetData(out main, out sub) == false)
-                                Thread.Sleep(Constants.DELAY);
+                            GetData(out main, out sub);
                             outputData.Add(main.Average());
                             break;
                         default:
@@ -99,7 +98,7 @@ namespace E7_20_v2._0
             }
             Break();
         }
-        private bool GetData(out double[] main, out double[] sub)
+        private void GetData(out double[] main, out double[] sub)
         {
             _f = _dataExchanger.GetFrequency();
             main = new double[Constants.MEASURES_AMOUNT];
@@ -111,7 +110,6 @@ namespace E7_20_v2._0
                     Thread.Sleep(Constants.DELAY);
                 Calculate(data, ref main[i], ref sub[i]);
             }
-            return true;
         }
         sealed protected override void SetInitialMode(int target) 
         {
