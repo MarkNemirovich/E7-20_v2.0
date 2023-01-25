@@ -9,7 +9,7 @@ namespace E7_20_v2._0
         public bool IsDataChanged = false;
         public double GetProgress => CalculateTime();
 
-        private readonly ExcelWritter _writter;
+        private readonly ExcelWritter _writter; // Check is there can be .net 4.0 installed and use Lazy<ExcelWritter>
         protected readonly DataGrasper _dataExchanger;
         protected ModeCommands[] _modes;
         protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
@@ -22,24 +22,24 @@ namespace E7_20_v2._0
             _writter = new ExcelWritter(direcroty, fileName);
             _writter.FillTheTitle(firstColumn, _modes);
         }
-        protected void Start()
-        {
-            IsWorking = true;
-            var workerTHread = new Thread(StartWork);
-            workerTHread.Start();
-        }
+        #region Abstract methods
         protected abstract void StartWork();
-        protected abstract double CalculateTime();
+        protected abstract void MakeMeasurement();
+        #endregion
         #region Virtual methods
+        protected virtual double CalculateTime()
+        {
+            var processTime = DateTime.UtcNow - StartTime;
+            StartTime = DateTime.UtcNow;
+            return processTime.TotalMilliseconds/1000;
+        }
         protected virtual void SetInitialMode(int target = 0) { }
         protected virtual void ChangeMode(byte message) { }
         protected virtual void Break()
         {
+            _dataExchanger.Break();
             _writter.Save();
         }
-        #endregion
-        #region FidexMethods
-
         protected virtual void GetData(out double main, out double sub)
         {
             main = 0;
@@ -48,6 +48,14 @@ namespace E7_20_v2._0
             while (_dataExchanger.GetLastData(out data) == false)
                 Thread.Sleep(Constants.DELAY);
             Calculate(data, ref main, ref sub);
+        }
+        #endregion
+        #region FidexMethods
+        protected void Start()
+        {
+            IsWorking = true;
+            var workerTHread = new Thread(StartWork);
+            workerTHread.Start();
         }
         protected void Calculate(byte[] input, ref double main, ref double sub)
         {

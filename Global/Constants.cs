@@ -5,6 +5,7 @@ namespace E7_20_v2._0
 {
     internal static class Constants
     {
+        public const double MEASUREMENT = 0.3;
         public const int DELAY = 250;
         public const int STACK_SIZE = 100;
         public const int SIZE = 22;

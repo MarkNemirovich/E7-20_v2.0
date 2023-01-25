@@ -7,18 +7,9 @@ namespace E7_20_v2._0
 {
     internal class CurieMachine : BaseMachine
     {
-        private int _measuresDone;
         private readonly int _measuresAmount;
         private readonly int _delay;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="portName"></param>
-        /// <param name="direcroty"></param>
-        /// <param name="fileName"></param>
-        /// <param name="modes"></param>
-        /// <param name="amount"></param>
-        /// <param name="delay"></param>
+        private int _measuresDone;
         public CurieMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, int amount, double delay) :
             base(portName, direcroty, fileName, modes, "time")
         {
@@ -40,7 +31,7 @@ namespace E7_20_v2._0
             } while (IsWorking);
             Break();
         }
-        public void MakeMeasurement()
+        sealed protected override void MakeMeasurement()
         {
             var startTime = DateTime.UtcNow;
             List<double> outputData = new List<double>(2);
@@ -85,16 +76,9 @@ namespace E7_20_v2._0
         {
             _dataExchanger.ChangeMode(message);
         }
-        sealed protected override void Break()
-        {
-            base.Break();
-            _dataExchanger.Break();
-        }
         sealed protected override double CalculateTime()
         {
-            var processTime = DateTime.UtcNow - StartTime;
-            StartTime = DateTime.UtcNow;
-            return processTime.TotalMilliseconds * (_measuresAmount-_measuresDone) / 1000;
+            return base.CalculateTime() * (_measuresAmount-_measuresDone);
         }
     }
 }

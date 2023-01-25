@@ -11,16 +11,6 @@ namespace E7_20_v2._0
         private readonly Direction _changeDirection;
         private readonly int _endFrequency;
         private readonly int _startFrequency;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="portName"></param>
-        /// <param name="direcroty"></param>
-        /// <param name="fileName"></param>
-        /// <param name="startFrequency"></param>
-        /// <param name="endFrequency"></param>
-        /// <param name="speed"></param>
-        /// <param name="modes"></param>
         public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) :
             base(portName, direcroty, fileName, modes)
         {
@@ -49,7 +39,7 @@ namespace E7_20_v2._0
             IsDataChanged = true;
             MakeMeasurement();
         }
-        public void MakeMeasurement()
+        sealed protected override void MakeMeasurement()
         {
             while (IsWorking)
             {
@@ -116,11 +106,6 @@ namespace E7_20_v2._0
         {
             _dataExchanger.ChangeMode(message);
         }
-        sealed protected override void Break()
-        {
-            base.Break();
-            _dataExchanger.Break();
-        }
         private void ChangeFrequency(int currentFrequency, int targetFrequency)
         {
             var changeDirection = Direction.RIGHT;
@@ -132,30 +117,22 @@ namespace E7_20_v2._0
         sealed protected override double CalculateTime()
         {
             int f = _f;
-            int amount = 0;
-            amount += Convert.ToInt32(_modes.Contains(ModeCommands.C));
-            amount += Convert.ToInt32(_modes.Contains(ModeCommands.L));
-            amount += Convert.ToInt32(_modes.Contains(ModeCommands.R));
-            amount += Convert.ToInt32(_modes.Contains(ModeCommands.Z));
-            double stepTime = 3 * amount;
-            double time;
-            if (amount == 1)
-                stepTime -= 0.5;
+            double steps;
             if (_changeDirection == Direction.UP || _changeDirection == Direction.DOWN)
             {
                 if (f >= 1000)
                 {
                     if (_endFrequency > 1000)
-                        time = Math.Abs((_endFrequency - f)) * stepTime / 1000;
+                        steps = Math.Abs((_endFrequency - f)) / 1000;
                     else
-                        time = (f / 1000 - 1 + 1000 - _endFrequency) * stepTime;
+                        steps = (f / 1000 - 1 + 1000 - _endFrequency);
                 }
                 else
                 {
                     if (_endFrequency >= 1000)
-                        time = (_endFrequency / 1000 - 1 + 1000 - f) * stepTime;
+                        steps = (_endFrequency / 1000 - 1 + 1000 - f);
                     else
-                        time = Math.Abs((_endFrequency - f)) * stepTime;
+                        steps = Math.Abs((_endFrequency - f));
                 }
             }
             else
@@ -168,9 +145,9 @@ namespace E7_20_v2._0
                     if (Constants.MAIN_FREQUENCES[i] == _endFrequency)
                         iEndF = i;
                 }
-                time = Math.Abs(iStartF - iEndF) * stepTime;
+                steps = Math.Abs(iStartF - iEndF);
             }
-            return time;
+            return base.CalculateTime() * steps;
         }
     }
 }
