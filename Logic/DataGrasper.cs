@@ -11,7 +11,7 @@ namespace E7_20_v2._0
         private readonly IOprovider _port;
         public DataGrasper(string portName)
         {
-            _data= new Stack<byte[]>(Constants.MEASURES_AMOUNT);
+            _data= new Stack<byte[]>(Constants.STACK_SIZE);
             _port = new IOprovider(portName);
             _port.ProvidePack += AddToPack;
             _port.Start();
@@ -64,8 +64,6 @@ namespace E7_20_v2._0
         {
             lock (_data)
             {
-                if (_data.Count >= Constants.MEASURES_AMOUNT)
-                    _data.Clear();
                 _data.Push(newPack);
             }
         }
@@ -79,7 +77,7 @@ namespace E7_20_v2._0
             do
             {
                 Thread.Sleep(Constants.DELAY);
-            } while (GetFrequency() == -1);
+            } while (GetFrequency() <= 0);
         }
     }
 }

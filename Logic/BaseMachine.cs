@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace E7_20_v2._0
 {
@@ -9,12 +10,14 @@ namespace E7_20_v2._0
         public double GetProgress => CalculateTime();
 
         private readonly ExcelWritter _writter;
+        protected readonly DataGrasper _dataExchanger;
         protected ModeCommands[] _modes;
         protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
         protected int _f;
         protected DateTime StartTime;
-        public BaseMachine(string direcroty, string fileName, ModeCommands[] modes)
+        public BaseMachine(string portName, string direcroty, string fileName, ModeCommands[] modes)
         {
+            _dataExchanger = new DataGrasper(portName);
             _modes = modes;
             _writter = new ExcelWritter(direcroty, fileName);
             _writter.FillTheTitle(_modes);
@@ -29,6 +32,16 @@ namespace E7_20_v2._0
         }
         #endregion
         #region FidexMethods
+
+        protected virtual void GetData(out double main, out double sub)
+        {
+            main = 0;
+            sub = 0;
+            byte[] data;
+            while (_dataExchanger.GetLastData(out data) == false)
+                Thread.Sleep(Constants.DELAY);
+            Calculate(data, ref main, ref sub);
+        }
         protected void Calculate(byte[] input, ref double main, ref double sub)
         {
             main = CountData(input, 16);

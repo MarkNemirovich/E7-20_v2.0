@@ -8,7 +8,6 @@ namespace E7_20_v2._0
 {
     internal class AllMeterMachine : BaseMachine
     {
-        private readonly DataGrasper _dataExchanger;
         private readonly Direction _changeDirection;
         private readonly int _endFrequency;
         private readonly int _startFrequency;
@@ -22,7 +21,8 @@ namespace E7_20_v2._0
         /// <param name="endFrequency"></param>
         /// <param name="speed"></param>
         /// <param name="modes"></param>
-        public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) : base(direcroty, fileName, modes)
+        public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) :
+            base(portName, direcroty, fileName, modes)
         {
             if (speed == SpeedMode.Fast)
             {
@@ -38,9 +38,8 @@ namespace E7_20_v2._0
                 else
                     _changeDirection = Direction.UP;
             }
-            _startFrequency= startFrequency;
-            _endFrequency= endFrequency;
-            _dataExchanger = new DataGrasper(portName);
+            _startFrequency = startFrequency;
+            _endFrequency = endFrequency;
             IsWorking = true;
             var workerTHread = new Thread(StartWork);
             workerTHread.Start();
@@ -58,8 +57,8 @@ namespace E7_20_v2._0
             {
                 int currentF = _f;
                 List<double> outputData = new List<double>(2);
-                double[] main = new double[0];
-                double[] sub = new double[0];
+                double main = 0;
+                double sub = 0;
                 outputData.Add(_f);
                 foreach (var mode in _modes)
                 {
@@ -72,13 +71,13 @@ namespace E7_20_v2._0
                         case ModeCommands.R:
                         case ModeCommands.Z:
                             if (_lastSwitchMode != mode)
-                            ChangeMode((byte)mode);
+                                ChangeMode((byte)mode);
                             _lastSwitchMode = mode;
                             GetData(out main, out sub);
-                            outputData.Add(main.Average());
+                            outputData.Add(main);
                             break;
                         default:
-                            outputData.Add(sub.Average());
+                            outputData.Add(sub);
                             break;
                     }
                 }
@@ -98,18 +97,10 @@ namespace E7_20_v2._0
             }
             Break();
         }
-        private void GetData(out double[] main, out double[] sub)
+        sealed protected override void GetData(out double main, out double sub)
         {
             _f = _dataExchanger.GetFrequency();
-            main = new double[Constants.MEASURES_AMOUNT];
-            sub = new double[Constants.MEASURES_AMOUNT];
-            byte[] data;
-            for (int i = 0; i < Constants.MEASURES_AMOUNT; i++)
-            {
-                while (_dataExchanger.GetLastData(out data) == false)
-                    Thread.Sleep(Constants.DELAY);
-                Calculate(data, ref main[i], ref sub[i]);
-            }
+            base.GetData(out main, out sub);
         }
         sealed protected override void SetInitialMode(int target) 
         {
