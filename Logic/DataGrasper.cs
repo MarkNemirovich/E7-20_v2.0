@@ -7,7 +7,7 @@ namespace E7_20_v2._0
 {
     class DataGrasper : IOoperations
     {
-        private readonly Stack<byte[]> _data;
+        private readonly Stack<byte[]> _data; // Check is there can be .net 4.0 installed and use ConcurrentStack<byte[]>
         private readonly IOprovider _port;
         public DataGrasper(string portName)
         {
