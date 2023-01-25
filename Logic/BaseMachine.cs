@@ -15,13 +15,20 @@ namespace E7_20_v2._0
         protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
         protected int _f;
         protected DateTime StartTime;
-        public BaseMachine(string portName, string direcroty, string fileName, ModeCommands[] modes)
+        public BaseMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, string firstColumn = "f")
         {
             _dataExchanger = new DataGrasper(portName);
             _modes = modes;
             _writter = new ExcelWritter(direcroty, fileName);
-            _writter.FillTheTitle(_modes);
+            _writter.FillTheTitle(firstColumn, _modes);
         }
+        protected void Start()
+        {
+            IsWorking = true;
+            var workerTHread = new Thread(StartWork);
+            workerTHread.Start();
+        }
+        protected abstract void StartWork();
         protected abstract double CalculateTime();
         #region Virtual methods
         protected virtual void SetInitialMode(int target = 0) { }

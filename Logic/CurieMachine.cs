@@ -20,16 +20,14 @@ namespace E7_20_v2._0
         /// <param name="amount"></param>
         /// <param name="delay"></param>
         public CurieMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, int amount, double delay) :
-            base(portName, direcroty, fileName, modes)
+            base(portName, direcroty, fileName, modes, "time")
         {
             _measuresDone = 0;
             _measuresAmount = amount;
             _delay = (int)(1000 * delay);
-            IsWorking = true;
-            var workerTHread = new Thread(StartWork);
-            workerTHread.Start();
+            Start();
         }
-        private void StartWork()
+        sealed protected override void StartWork()
         {
             do
             {
@@ -48,7 +46,7 @@ namespace E7_20_v2._0
             List<double> outputData = new List<double>(2);
             double main = 0;
             double sub = 0;
-            outputData.Add(_f);
+            outputData.Add(_measuresDone * _delay);
 
             foreach (var mode in _modes)
             {

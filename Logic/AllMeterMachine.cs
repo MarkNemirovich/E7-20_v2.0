@@ -40,11 +40,9 @@ namespace E7_20_v2._0
             }
             _startFrequency = startFrequency;
             _endFrequency = endFrequency;
-            IsWorking = true;
-            var workerTHread = new Thread(StartWork);
-            workerTHread.Start();
+            Start();
         }
-        private void StartWork()
+        sealed protected override void StartWork()
         {
             _f = _dataExchanger.GetFrequency();
             SetInitialMode(_startFrequency);

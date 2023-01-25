@@ -71,9 +71,21 @@ namespace E7_20_v2._0
                 case MenuMode.StartMenu:
                     break;
                 case MenuMode.AllMeterMenu:
+                    ParameterC.Checked = false;
+                    ParameterL.Checked = false;
+                    ParameterR.Checked = false;
+                    ParameterZ.Checked = false;
+                    MainParameters.Enabled = true;
                     AllMeterInit();
                     break;
                 case MenuMode.CurieMenu:
+                    ParameterC.Checked = false;
+                    ParameterL.Checked = true;
+                    ParameterR.Checked = true;
+                    ParameterZ.Checked = false;
+                    ParameterQl.Checked = false;
+                    ParameterQr.Checked = false;
+                    MainParameters.Enabled = false;
                     break;
             }
         }
@@ -138,21 +150,21 @@ namespace E7_20_v2._0
         private List<ModeCommands> GetModes()
         {
             List<ModeCommands> modes = new List<ModeCommands>();
-            if (AllMeterC.Checked)
+            if (ParameterC.Checked)
                 modes.Add(ModeCommands.C);
-            if (AllMeterD.Checked)
+            if (ParameterD.Checked)
                 modes.Add(ModeCommands.D);
-            if (AllMeterL.Checked)
+            if (ParameterL.Checked)
                 modes.Add(ModeCommands.L);
-            if (AllMeterQl.Checked)
+            if (ParameterQl.Checked)
                 modes.Add(ModeCommands.Ql);
-            if (AllMeterR.Checked)
+            if (ParameterR.Checked)
                 modes.Add(ModeCommands.R);
-            if (AllMeterQr.Checked)
+            if (ParameterQr.Checked)
                 modes.Add(ModeCommands.Qr);
-            if (AllMeterZ.Checked)
+            if (ParameterZ.Checked)
                 modes.Add(ModeCommands.Z);
-            if (AllMeterFi.Checked)
+            if (ParameterFi.Checked)
                 modes.Add(ModeCommands.Fi);
             return modes;
         }
@@ -181,36 +193,36 @@ namespace E7_20_v2._0
         }
         public void AllMeterC_CheckedChanged(object sender, EventArgs e)
         {
-            AllMeterD.Enabled = AllMeterC.Checked;
-            AllMeterD.Checked = AllMeterC.Checked;
+            ParameterD.Enabled = ParameterC.Checked;
+            ParameterD.Checked = ParameterC.Checked;
             StartEnabling();
         }
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
         {
-            AllMeterQl.Enabled = AllMeterL.Checked;
-            AllMeterQl.Checked = AllMeterL.Checked;
+            ParameterQl.Enabled = ParameterL.Checked;
+            ParameterQl.Checked = ParameterL.Checked;
             StartEnabling();
         }
 
         public void AllMeterR_CheckedChanged(object sender, EventArgs e)
         {
-            AllMeterQr.Enabled = AllMeterR.Checked;
-            AllMeterQr.Checked = AllMeterR.Checked;
+            ParameterQr.Enabled = ParameterR.Checked;
+            ParameterQr.Checked = ParameterR.Checked;
             StartEnabling();
         }
 
         public void AllMeterZ_CheckedChanged(object sender, EventArgs e)
         {
-            AllMeterFi.Enabled = AllMeterZ.Checked;
-            AllMeterFi.Checked = AllMeterZ.Checked;
+            ParameterFi.Enabled = ParameterZ.Checked;
+            ParameterFi.Checked = ParameterZ.Checked;
             StartEnabling();
         }
         private void StartEnabling()
         {
-            AllMeterFast.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
-            AllMeterSlow.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
-            CurieStart.Enabled = AllMeterC.Checked | AllMeterL.Checked | AllMeterR.Checked | AllMeterZ.Checked;
+            AllMeterFast.Enabled = ParameterC.Checked | ParameterL.Checked | ParameterR.Checked | ParameterZ.Checked;
+            AllMeterSlow.Enabled = ParameterC.Checked | ParameterL.Checked | ParameterR.Checked | ParameterZ.Checked;
+            CurieStart.Enabled = ParameterC.Checked | ParameterL.Checked | ParameterR.Checked | ParameterZ.Checked;
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
