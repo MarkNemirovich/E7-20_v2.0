@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Windows.Documents;
 
 namespace E7_20_v2._0
 {
@@ -9,7 +11,7 @@ namespace E7_20_v2._0
         public bool IsDataChanged = false;
         public double GetProgress => CalculateTime();
 
-        private readonly ExcelWritter _writter; // Check is there can be .net 4.0 installed and use Lazy<ExcelWritter>
+        protected readonly ExcelWritter _writter; // Check is there can be .net 4.0 installed and use Lazy<ExcelWritter>
         protected readonly DataGrasper _dataExchanger;
         protected ModeCommands[] _modes;
         protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
@@ -20,7 +22,7 @@ namespace E7_20_v2._0
             _dataExchanger = new DataGrasper(portName);
             _modes = modes;
             _writter = new ExcelWritter(direcroty, fileName);
-            _writter.FillTheTitle(firstColumn, _modes);
+            FillTheTitle();
         }
         #region Abstract methods
         protected abstract void StartWork();
@@ -32,6 +34,16 @@ namespace E7_20_v2._0
             var processTime = DateTime.UtcNow - StartTime;
             StartTime = DateTime.UtcNow;
             return processTime.TotalMilliseconds/1000;
+        }
+        protected virtual void FillTheTitle()
+        {
+            List<string> title = new List<string>();
+            title.Add("Frequency");
+            foreach (var mode in _modes)
+            {
+                title.Add(mode.ToString());
+            }
+            _writter.FillTheTitle(title.ToArray());
         }
         protected virtual void SetInitialMode(int target = 0) { }
         protected virtual void ChangeMode(byte message) { }

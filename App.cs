@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Security.Authentication;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static System.Windows.Forms.AxHost;
 
@@ -39,9 +40,10 @@ namespace E7_20_v2._0
             string[] ports = IOprovider.GetPorts;
             for (int i = 0; i < ports.Length; i++)
             {
-                PortsList.Items.Add(ports[i]);
+                if (Regex.IsMatch(ports[i], @"COM\d?$"))
+                    PortsList.Items.Add(ports[i]);
             }
-            if (ports.Length == 0)
+            if (PortsList.Items.Count == 0)
                 PortsList.Items.Add("VirtualCOM");
         }
         public void App_Resize(object sender, EventArgs e)
@@ -258,7 +260,13 @@ namespace E7_20_v2._0
                 List<ModeCommands> modes = GetModes();
                 MeasurementProcess(false);
                 ResetProgressBar();
-                _workMachine = new CurieMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, modes.ToArray(), Int32.Parse(Amount.Text), Double.Parse(Interval.Text));
+                _workMachine = new CurieMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, modes.ToArray(), Int32.Parse(Amount.Text), Double.Parse(Interval.Text), 
+                    new double[] {
+                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieA.Text)),
+                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieB.Text)),
+                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieC.Text)),
+                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieD.Text)),
+                    });
                 MeasuresTimer.Start();
             }
         }

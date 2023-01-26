@@ -16,18 +16,25 @@ namespace E7_20_v2._0
         }
         private int SetFileNumber()
         {
-            var list = Directory.GetFiles(_directory).Where(name => name.Contains($"{_fileName}_{SetDate()}")).ToArray();
-            Array.Sort(list);
-            int numberOfMeasurement = 0;
-            for (int i = 0; i < list.Length; i++)
+            var files = Directory.GetFiles(_directory);
+            var appropriateFiles = from file in files
+                        where file.Contains($"{_fileName}_{SetDate()}")
+                          let startIndex = file.IndexOf('№') + 1
+                          let finishIndex = file.IndexOf(".xlsx")
+                          select file.Substring(startIndex, (finishIndex-startIndex));
+            int[] numbers = new int[Directory.GetFiles(_directory).Length];
+            int count = 0;
+            foreach(string file in appropriateFiles)
             {
-                int start = list[i].IndexOf('№') + 1;
-                int end = list[i].IndexOf(".xlsx");
-                if (end - start <= 0)
-                    continue;
-                string number = list[i].Substring(start, end - start);
-                Int32.TryParse(number, out int n);
-                if (n == numberOfMeasurement)
+                if (Int32.TryParse(file, out numbers[count]))
+                    count++;
+            }
+            Array.Sort(numbers);
+            int zeros = Array.LastIndexOf(numbers, (int)0);
+            int numberOfMeasurement = 0;
+            for (int i = zeros; i < count+zeros; i++)
+            {
+                if (numberOfMeasurement == numbers[i])
                     numberOfMeasurement++;
                 else
                     break;
