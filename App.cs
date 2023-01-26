@@ -280,9 +280,9 @@ namespace E7_20_v2._0
             }
             Double.TryParse(Interval.Text, out double interval);
             Math.Round(interval, 2);
-            if (interval < 0.5 || interval > 1000)
+            if (interval < 1 || interval > 1000)
             {
-                MessageBox.Show("Interval between measurements have to be in the range from 0.5 to 1000.0 seconds with precition to 0.1 second");
+                MessageBox.Show("Interval between measurements have to be in the range from 1 to 1000.0 seconds with precision to 0.1 second");
                 return false;
             }
             return true;
