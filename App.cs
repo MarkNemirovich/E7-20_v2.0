@@ -273,7 +273,7 @@ namespace E7_20_v2._0
         private bool CurieValidate()
         {
             Int32.TryParse(Amount.Text, out int amount);
-            if (amount <= 0 || amount > 1000)
+            if (amount < 1|| amount > 1000)
             {
                 MessageBox.Show("Amount of measurements have to be in the range from 1 to 1000");
                 return false;
