@@ -50,7 +50,7 @@ namespace E7_20_v2._0
         }
         public void Save()
         {
-            if (_lineNumber > 1)
+            if (_lineNumber > 2)
             {
                 using (Stream stream = File.Create(_fileDirectory.GetFullName))
                 {
