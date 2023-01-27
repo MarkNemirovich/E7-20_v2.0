@@ -245,9 +245,17 @@ namespace E7_20_v2._0
             List<ModeCommands> modes = GetModes();
             MeasurementProcess(false);
             ResetProgressBar();
-            int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
-            int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
-            _workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
+            try
+            {
+                int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
+                int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
+                _workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
+            }
+            catch 
+            {
+                MessageBox.Show("Choose the frequency from the list. Do not write it by yourself.");
+                return; 
+            }
             MeasuresTimer.Start();
         }
         #endregion

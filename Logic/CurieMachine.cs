@@ -50,7 +50,7 @@ namespace E7_20_v2._0
             List<double> outputData = new List<double>(2);
             double main = 0;
             double sub = 0;
-            outputData.Add(_measuresDone * _delay);
+            outputData.Add(_measuresDone * _delay / 1000);
             double temperature = 0;
             foreach (var mode in _modes)
             {
