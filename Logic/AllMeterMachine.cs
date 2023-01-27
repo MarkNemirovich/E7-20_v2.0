@@ -36,7 +36,7 @@ namespace E7_20_v2._0
         {
             _f = _dataExchanger.GetFrequency();
             SetInitialMode(_startFrequency);
-            IsDataChanged = true;
+            StartTime = DateTime.UtcNow;
             MakeMeasurement();
         }
         sealed protected override void MakeMeasurement()
@@ -92,7 +92,7 @@ namespace E7_20_v2._0
         }
         sealed protected override void SetInitialMode(int target) 
         {
-            while (true && IsWorking)
+            while (IsWorking)
             {
                 _f = _dataExchanger.GetFrequency();
                 if (_f == -1)

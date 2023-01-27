@@ -242,11 +242,21 @@ namespace E7_20_v2._0
                 MessageBox.Show("Start and end frequencies have to be different!");
                 return;
             }
+            int startF;
+            int endF;
+            try
+            {
+                startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
+                endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
+            }
+            catch 
+            {
+                MessageBox.Show("Choose the frequency from the list. Do not write it by yourself.");
+                return; 
+            }
             List<ModeCommands> modes = GetModes();
             MeasurementProcess(false);
             ResetProgressBar();
-            int startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
-            int endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
             _workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             MeasuresTimer.Start();
         }

@@ -94,5 +94,13 @@ namespace E7_20_v2._0
             _writter.AddLine(data);
         }
         #endregion
+        ~BaseMachine()
+        {
+            try
+            {
+                Break();
+            }
+            catch { }
+        }
     }
 }
