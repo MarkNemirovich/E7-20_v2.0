@@ -59,13 +59,5 @@ namespace E7_20_v2._0
                 }
             }
         }
-        ~ExcelWritter()
-        {
-            try
-            {
-                Save();
-            }
-            catch { }
-        }
     }
 }
