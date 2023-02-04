@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -7,22 +6,22 @@ namespace E7_20_v2._0
 {
     internal class FileDirectory
     {
-        private readonly string _directory;
-        private readonly string _fileName;
+        private readonly string directory;
+        private readonly string fileName;
         public FileDirectory(string directory, string fileName)
         {
-            _directory = directory;
-            _fileName = fileName;
+            this.directory = directory;
+            this.fileName = fileName;
         }
         private int SetFileNumber()
         {
-            var files = Directory.GetFiles(_directory);
+            var files = Directory.GetFiles(directory);
             var appropriateFiles = from file in files
-                        where file.Contains($"{_fileName}_{SetDate()}")
+                        where file.Contains($"{fileName}_{SetDate()}")
                           let startIndex = file.IndexOf('№') + 1
                           let finishIndex = file.IndexOf(".xlsx")
                           select file.Substring(startIndex, (finishIndex-startIndex));
-            int[] numbers = new int[Directory.GetFiles(_directory).Length];
+            int[] numbers = new int[Directory.GetFiles(directory).Length];
             int count = 0;
             foreach(string file in appropriateFiles)
             {
@@ -46,7 +45,7 @@ namespace E7_20_v2._0
             string date = DateTime.Today.ToShortDateString();
             return StyleFormatter.ChangeDataSeparator(date);
         }
-        public string GetShortName => _fileName;
-        public string GetFullName => $"{_directory}/{_fileName}_{SetDate()}_№{SetFileNumber()}.xlsx";
+        public string GetShortName => fileName;
+        public string GetFullName => $"{directory}/{fileName}_{SetDate()}_№{SetFileNumber()}.xlsx";
     }
 }

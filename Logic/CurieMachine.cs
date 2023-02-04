@@ -7,42 +7,37 @@ namespace E7_20_v2._0
 {
     internal class CurieMachine : BaseMachine
     {
-        private readonly int _measuresAmount;
-        private readonly int _delay;
-        private int _measuresDone;
-        private readonly double[] _coefficient;
+        private readonly int measuresAmount;
+        private readonly int delay;
+        private int measuresDone;
+        private readonly double[] coefficients;
         public CurieMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, int amount, double delay, double[] coefficient) :
             base(portName, direcroty, fileName, modes, "time")
         {
-            _measuresDone = 0;
-            _measuresAmount = amount;
-            _delay = (int)(1000 * delay);
-            _coefficient = coefficient;
+            measuresDone = 0;
+            measuresAmount = amount;
+            this.delay = (int)(1000 * delay);
+            coefficients = coefficient;
             Start();
         }
         protected override void FillTheTitle()
         {
             List<string> title = new List<string>();
             title.Add("Time");
-            foreach (var mode in _modes)
+            foreach (var mode in modes)
             {
                 title.Add(mode.ToString());
             }
             title.Add("Temperature");
-            _writter.FillTheTitle(title.ToArray());
+            writter.FillTheTitle(title.ToArray());
         }
-        sealed protected override void StartWork()
+        sealed protected override void Work()
         {
             do
             {
-                _f = _dataExchanger.GetFrequency();
+                _f = dataExchanger.GetFrequency();
             } while (_f <= 0);
-            StartTime = DateTime.UtcNow;
-            do
-            {
-                MakeMeasurement();
-            } while (IsWorking);
-            Break();
+            base.Work();
         }
         sealed protected override void MakeMeasurement()
         {
@@ -50,9 +45,9 @@ namespace E7_20_v2._0
             List<double> outputData = new List<double>(2);
             double main = 0;
             double sub = 0;
-            outputData.Add(_measuresDone * _delay / 1000);
+            outputData.Add(measuresDone * delay / 1000);
             double temperature = 0;
-            foreach (var mode in _modes)
+            foreach (var mode in modes)
             {
                 if (IsWorking == false)
                     break;
@@ -60,9 +55,9 @@ namespace E7_20_v2._0
                 {
                     case ModeCommands.L:
                     case ModeCommands.R:
-                        if (_lastSwitchMode != mode)
+                        if (lastSwitchMode != mode)
                             ChangeMode((byte)mode);
-                        _lastSwitchMode = mode;
+                        lastSwitchMode = mode;
                         GetData(out main, out sub);
                         outputData.Add(main);
                         temperature = CalculateTemperature(main);
@@ -76,26 +71,26 @@ namespace E7_20_v2._0
             var outputThread = new Thread(WriteLine);
             outputThread.Start(outputData.ToArray());
             IsDataChanged = true;
-            _measuresDone++;
-            if (_measuresDone >= _measuresAmount)
+            measuresDone++;
+            if (measuresDone >= measuresAmount)
             {
                 IsWorking = false;
             }
             var spread = (DateTime.UtcNow - startTime).TotalMilliseconds;
-            if (_delay - spread > 0)
-                Thread.Sleep(_delay - (int)spread);
+            if (delay - spread > 0)
+                Thread.Sleep(delay - (int)spread);
         }
         sealed protected override void ChangeMode(byte message)
         {
-            _dataExchanger.ChangeMode(message);
+            dataExchanger.ChangeMode(message);
         }
         sealed protected override double CalculateTime()
         {
-            return base.CalculateTime() * (_measuresAmount-_measuresDone);
+            return base.CalculateTime() * (measuresAmount-measuresDone);
         }
         private double CalculateTemperature(double x)
         {
-            double a = _coefficient[0], b = _coefficient[1], c = _coefficient[2], d = _coefficient[3];
+            double a = coefficients[0], b = coefficients[1], c = coefficients[2], d = coefficients[3];
             return a * (Math.Pow(x, b)) + c * x + d;
         }
     }

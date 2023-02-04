@@ -63,14 +63,8 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
-      <HintPath>packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
     <Reference Include="EPPlus, Version=4.5.3.3, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <HintPath>packages\EPPlus.4.5.3.3\lib\net35\EPPlus.dll</HintPath>
-    </Reference>
-    <Reference Include="GemBox.Spreadsheet, Version=49.0.0.1225, Culture=neutral, PublicKeyToken=b1b72c69714d4847, processorArchitecture=MSIL">
-      <HintPath>packages\GemBox.Spreadsheet.49.0.1225\lib\net35\GemBox.Spreadsheet.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -97,11 +91,11 @@
     <Compile Include="Logic\BaseMachine.cs" />
     <Compile Include="Global\Constants.cs" />
     <Compile Include="Logic\CurieMachine.cs" />
-    <Compile Include="Logic\IOprovider.cs" />
+    <Compile Include="Logic\IOProvider.cs" />
     <Compile Include="Logic\AllMeterMachine.cs" />
     <Compile Include="Output\ExcelWritter.cs" />
     <Compile Include="Output\FileDirectory.cs" />
-    <Compile Include="Global\IOoperations.cs" />
+    <Compile Include="Global\IGrasperOperations.cs" />
     <Compile Include="App.cs">
       <SubType>Form</SubType>
     </Compile>

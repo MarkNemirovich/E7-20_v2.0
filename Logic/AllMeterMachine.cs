@@ -8,36 +8,35 @@ namespace E7_20_v2._0
 {
     internal class AllMeterMachine : BaseMachine
     {
-        private readonly Direction _changeDirection;
-        private readonly int _endFrequency;
-        private readonly int _startFrequency;
+        private readonly Direction changeDirection;
+        private readonly int endFrequency;
+        private readonly int startFrequency;
         public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) :
             base(portName, direcroty, fileName, modes)
         {
             if (speed == SpeedMode.Fast)
             {
                 if (startFrequency > endFrequency)
-                    _changeDirection = Direction.LEFT;
+                    changeDirection = Direction.LEFT;
                 else
-                    _changeDirection = Direction.RIGHT;
+                    changeDirection = Direction.RIGHT;
             }
             else
             {
                 if (startFrequency > endFrequency)
-                    _changeDirection = Direction.DOWN;
+                    changeDirection = Direction.DOWN;
                 else
-                    _changeDirection = Direction.UP;
+                    changeDirection = Direction.UP;
             }
-            _startFrequency = startFrequency;
-            _endFrequency = endFrequency;
+            this.startFrequency = startFrequency;
+            this.endFrequency = endFrequency;
             Start();
         }
-        sealed protected override void StartWork()
+        sealed protected override void Work()
         {
-            _f = _dataExchanger.GetFrequency();
-            SetInitialMode(_startFrequency);
-            StartTime = DateTime.UtcNow;
-            MakeMeasurement();
+            _f = dataExchanger.GetFrequency();
+            SetInitialMode(startFrequency);
+            base.Work();
         }
         sealed protected override void MakeMeasurement()
         {
@@ -48,7 +47,7 @@ namespace E7_20_v2._0
                 double main = 0;
                 double sub = 0;
                 outputData.Add(_f);
-                foreach (var mode in _modes)
+                foreach (var mode in modes)
                 {
                     if (IsWorking == false)
                         break;
@@ -58,9 +57,9 @@ namespace E7_20_v2._0
                         case ModeCommands.L:
                         case ModeCommands.R:
                         case ModeCommands.Z:
-                            if (_lastSwitchMode != mode)
+                            if (lastSwitchMode != mode)
                                 ChangeMode((byte)mode);
-                            _lastSwitchMode = mode;
+                            lastSwitchMode = mode;
                             GetData(out main, out sub);
                             outputData.Add(main);
                             break;
@@ -74,27 +73,26 @@ namespace E7_20_v2._0
                 var outputThread = new Thread(WriteLine);
                 outputThread.Start(outputData.ToArray());
                 IsDataChanged = true;
-                if (_f == _endFrequency)
+                if (_f == endFrequency)
                 {
                     IsWorking = false;
                     break;
                 }
-                _dataExchanger.ChangeFrequency((byte)_changeDirection);
+                dataExchanger.ChangeFrequency((byte)changeDirection);
                 while (_f == currentF)
-                    _f=_dataExchanger.GetFrequency();
+                    _f=dataExchanger.GetFrequency();
             }
-            Break();
         }
         sealed protected override void GetData(out double main, out double sub)
         {
-            _f = _dataExchanger.GetFrequency();
+            _f = dataExchanger.GetFrequency();
             base.GetData(out main, out sub);
         }
         sealed protected override void SetInitialMode(int target) 
         {
             while (IsWorking)
             {
-                _f = _dataExchanger.GetFrequency();
+                _f = dataExchanger.GetFrequency();
                 if (_f == -1)
                     continue;
                 if (_f == target)
@@ -104,35 +102,35 @@ namespace E7_20_v2._0
         }
         sealed protected override void ChangeMode(byte message) 
         {
-            _dataExchanger.ChangeMode(message);
+            dataExchanger.ChangeMode(message);
         }
         private void ChangeFrequency(int currentFrequency, int targetFrequency)
         {
             var changeDirection = Direction.RIGHT;
             if (currentFrequency > targetFrequency)
                 changeDirection = Direction.LEFT;
-            _dataExchanger.ChangeFrequency((byte)changeDirection);
+            dataExchanger.ChangeFrequency((byte)changeDirection);
         }
 
         sealed protected override double CalculateTime()
         {
             int f = _f;
             double steps;
-            if (_changeDirection == Direction.UP || _changeDirection == Direction.DOWN)
+            if (changeDirection == Direction.UP || changeDirection == Direction.DOWN)
             {
                 if (f >= 1000)
                 {
-                    if (_endFrequency > 1000)
-                        steps = Math.Abs((_endFrequency - f)) / 1000;
+                    if (endFrequency > 1000)
+                        steps = Math.Abs((endFrequency - f)) / 1000;
                     else
-                        steps = (f / 1000 - 1 + 1000 - _endFrequency);
+                        steps = (f / 1000 - 1 + 1000 - endFrequency);
                 }
                 else
                 {
-                    if (_endFrequency >= 1000)
-                        steps = (_endFrequency / 1000 - 1 + 1000 - f);
+                    if (endFrequency >= 1000)
+                        steps = (endFrequency / 1000 - 1 + 1000 - f);
                     else
-                        steps = Math.Abs((_endFrequency - f));
+                        steps = Math.Abs((endFrequency - f));
                 }
             }
             else
@@ -142,7 +140,7 @@ namespace E7_20_v2._0
                 {
                     if (Constants.MAIN_FREQUENCES[i] == f)
                         iStartF = i;
-                    if (Constants.MAIN_FREQUENCES[i] == _endFrequency)
+                    if (Constants.MAIN_FREQUENCES[i] == endFrequency)
                         iEndF = i;
                 }
                 steps = Math.Abs(iStartF - iEndF);

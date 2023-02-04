@@ -2,7 +2,7 @@
 
 namespace E7_20_v2._0
 {
-    internal interface IOoperations
+    internal interface IGrasperOperations
     { 
         bool ChangeMode(byte command);
         int GetFrequency();

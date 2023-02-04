@@ -6,19 +6,21 @@ using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
-    class IOprovider
+    class IOProvider : IDisposable
     {
-        private readonly SerialPort _port;
+        private readonly SerialPort port;
         public delegate void Pack(byte[] pack);
         public event Pack ProvidePack;
-        private Thread _virtualSender;
+        private Thread virtualSender;
+        private bool isWorking;
+        private bool isDisposed;
         public static string[] GetPorts => SerialPort.GetPortNames();
 
-        public IOprovider(string name)
+        public IOProvider(string name)
         {
             try
             {
-                _port = new SerialPort(name, 9600, Parity.None, 8, StopBits.One)
+                port = new SerialPort(name, 9600, Parity.None, 8, StopBits.One)
                 {
                     ReadTimeout = 500,
                     WriteTimeout = 500,
@@ -26,40 +28,45 @@ namespace E7_20_v2._0
                 };
                 if (name != "VirtualCOM")
                 {
-                    _port.DataReceived += new SerialDataReceivedEventHandler(ReceiveData);  // создание делегата на прием
+                    port.DataReceived += new SerialDataReceivedEventHandler(ReceiveData);  // создание делегата на прием
                 }
+                isWorking = true;
             }
             catch { throw new Exception("No port with such name!"); }
         }
         public void Start()
         {
-            if (_port.PortName == "VirtualCOM")
-            {
-                _virtualSender = new Thread(VirtualSender);
-                _virtualSender.Start();
-                return;
-            }
             try
             {
-                if (_port.IsOpen == false)
-                    _port.Open();
+                if (port.PortName == "VirtualCOM")
+                {
+                    virtualSender = new Thread(VirtualSender);
+                    virtualSender.Start();
+                    return;
+                }
             }
-            catch { throw new Exception("Empty port!"); }
+            catch { throw new Exception("Breaking start!"); }
+            try
+            {
+                if (port.IsOpen == false)
+                    port.Open();
+            }
+            catch { throw new Exception("Breaking open!"); }
         }
         public void Finish()
         {
-            if (_port.PortName == "VirtualCOM")
+            if (port.PortName == "VirtualCOM")
             {
-                if (_virtualSender != null)
-                    _virtualSender.Abort();
+                if (virtualSender != null)
+                    virtualSender.Abort();
                 return;
             }
             try
             {
-                if (_port.IsOpen == true)
+                if (port.IsOpen == true)
                 {
-                    _port.DataReceived -= new SerialDataReceivedEventHandler(ReceiveData);
-                    _port.Close();
+                    port.DataReceived -= new SerialDataReceivedEventHandler(ReceiveData);
+                    port.Close();
                 }
             }
             catch { throw new Exception("Empty port!"); }
@@ -67,11 +74,11 @@ namespace E7_20_v2._0
         public void SendData(byte message)
         {
             byte[] pack = new byte[1] { message };
-            if (_port.PortName == "VirtualCOM")
+            if (port.PortName == "VirtualCOM")
             {
                 return;
             }
-            _port.Write(pack, 0, 1);
+            port.Write(pack, 0, 1);
         }
         private void ReceiveData(byte[] sender)
         {
@@ -80,22 +87,39 @@ namespace E7_20_v2._0
         private void ReceiveData(object sender, SerialDataReceivedEventArgs e)
         {
             byte[] bytes = new byte[Constants.SIZE];
-            if (_port.BytesToRead >= Constants.SIZE)
+            if (port.BytesToRead >= Constants.SIZE)
             {
-                _port.Read(bytes, 0, Constants.SIZE);
+                port.Read(bytes, 0, Constants.SIZE);
                 if (bytes[0] == 170 & bytes[1] == 0 & bytes[2] == 0)
                     ProvidePack?.Invoke(bytes);
-                _port.DiscardInBuffer();
+                port.DiscardInBuffer();
             }
         }
         private void VirtualSender()
         {
-            while (true)
+            while (isWorking)
             {
                 var buffer = new byte[Constants.SIZE] { 170, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
                 ReceiveData(buffer);
                 Thread.Sleep(Constants.DELAY);
             }
         }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+            if (disposing)
+            {
+                isWorking = true;
+                Finish();
+            }
+            isDisposed = true;
+        }
+
+        ~IOProvider() => Dispose(false);
     }
 }

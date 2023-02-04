@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.Security.Authentication;
-using System.Text;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static System.Windows.Forms.AxHost;
 
 namespace E7_20_v2._0
 {
@@ -20,24 +15,25 @@ namespace E7_20_v2._0
             AllMeterMenu,
             CurieMenu
         }
-        private string _folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        private int _currentWidth = 800;
-        private int _currentHeight = 500;
-        private BaseMachine _workMachine = null;
-        private MenuMode _currentPage = MenuMode.StartMenu;
+        private string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        private int currentWidth = 800;
+        private int currentHeight = 500;
+        private BaseMachine workMachine = null;
+        private MenuMode currentPage = MenuMode.StartMenu;
         public App()
         {
             InitializeComponent();
         }
         public void App_Load(object sender, EventArgs e)
         {
-            DirectoryPath.Text = _folderPath;
+            DirectoryPath.Text = folderPath;
             ChangeMenuInterface(MenuMode.StartMenu);
+            ReadCoefficients();
         }
         private void FillThePorts(object sender, EventArgs e)
         {
             PortsList.Items.Clear();
-            string[] ports = IOprovider.GetPorts;
+            string[] ports = IOProvider.GetPorts;
             for (int i = 0; i < ports.Length; i++)
             {
                 if (Regex.IsMatch(ports[i], @"COM\d?$"))
@@ -50,9 +46,9 @@ namespace E7_20_v2._0
         {
             int width = App.ActiveForm.Size.Width;
             int height = App.ActiveForm.Size.Height;
-            App.ActiveForm.Scale(new SizeF(width / _currentWidth, height / _currentHeight));
-            _currentWidth = width;
-            _currentHeight = height;
+            App.ActiveForm.Scale(new SizeF(width / currentWidth, height / currentHeight));
+            currentWidth = width;
+            currentHeight = height;
         }
         private void ChangeMenuInterface(MenuMode mode)
         {
@@ -67,7 +63,7 @@ namespace E7_20_v2._0
             AllMeterFast.Visible = (mode == MenuMode.AllMeterMenu);
             AllMeterSlow.Visible = (mode == MenuMode.AllMeterMenu);
             CurieStart.Visible = (mode == MenuMode.CurieMenu);
-            _currentPage = mode;
+            currentPage = mode;
             switch (mode)
             {
                 case MenuMode.StartMenu:
@@ -102,8 +98,8 @@ namespace E7_20_v2._0
         {
             if (FolderBrowserDialog.ShowDialog() == DialogResult.Cancel)
                 return;
-            _folderPath = FolderBrowserDialog.SelectedPath;
-            DirectoryPath.Text = _folderPath;
+            folderPath = FolderBrowserDialog.SelectedPath;
+            DirectoryPath.Text = folderPath;
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
@@ -121,7 +117,7 @@ namespace E7_20_v2._0
         }
         private bool CheckGeneralInput()
         {
-            if (String.IsNullOrEmpty(PortsList.Text))
+            if (String.IsNullOrEmpty(PortsList.Text) || PortsList.Text.Contains("COM") == false)
             {
                 MessageBox.Show("Choose the port please");
                 return false;
@@ -138,7 +134,7 @@ namespace E7_20_v2._0
             AllMeterSettings.Enabled = state;
             CurieSettings.Enabled = state;
             SettingsModes.Enabled = state;
-            if (_currentPage == MenuMode.AllMeterMenu)
+            if (currentPage == MenuMode.AllMeterMenu)
             {
                 AllMeterFast.Enabled = state;
                 AllMeterSlow.Enabled = state;
@@ -249,41 +245,94 @@ namespace E7_20_v2._0
                 startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
                 endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
             }
-            catch 
+            catch
             {
                 MessageBox.Show("Choose the frequency from the list. Do not write it by yourself.");
-                return; 
+                return;
             }
             List<ModeCommands> modes = GetModes();
             MeasurementProcess(false);
             ResetProgressBar();
-            _workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
+            workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
             MeasuresTimer.Start();
         }
         #endregion
         #region TemperatureMeterPanel
+        private void ReadCoefficients()
+        {
+            string coefficientsFile = string.Concat(Directory.GetCurrentDirectory(), "coefficients.txt");
+            if (File.Exists(coefficientsFile))
+            {
+                using (StreamReader reader = new StreamReader(coefficientsFile))
+                {
+                    try
+                    {
+                        CurieA.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
+                        CurieB.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
+                        CurieC.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
+                        CurieD.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
+                    }
+                    catch (ArgumentException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                SetInitialCoefficients(out double[] coefficients);
+                SaveCoefficients(coefficients);
+            }
+        }
+        private void SaveCoefficients(double[] coefficients)
+        {
+            string coefficientsFile = string.Concat(Directory.GetCurrentDirectory(), "coefficients.txt");
+            using (StreamWriter writter = new StreamWriter(coefficientsFile))
+            {
+                foreach (var coefficient in coefficients)
+                    writter.WriteLine(coefficient);
+            }
+        }
+        private bool CheckCoefficients(out double[] coefficients)
+        {
+            bool isCorrect = true;
+            isCorrect &= double.TryParse(StyleFormatter.ChangeDoubleSeparator(CurieA.Text), out double a);
+            isCorrect &= double.TryParse(StyleFormatter.ChangeDoubleSeparator(CurieB.Text), out double b);
+            isCorrect &= double.TryParse(StyleFormatter.ChangeDoubleSeparator(CurieC.Text), out double c);
+            isCorrect &= double.TryParse(StyleFormatter.ChangeDoubleSeparator(CurieD.Text), out double d);
+            coefficients = new double[] { a, b, c, d };
+            if (isCorrect)
+                SaveCoefficients(coefficients);
+            return isCorrect;
+        }
+        private void SetInitialCoefficients(out double[] coefficients)
+        {
+            CurieA.Text = StyleFormatter.ChangeDoubleSeparator(1.0.ToString());
+            CurieB.Text = StyleFormatter.ChangeDoubleSeparator(1.0.ToString());
+            CurieC.Text = StyleFormatter.ChangeDoubleSeparator(1.0.ToString());
+            CurieD.Text = StyleFormatter.ChangeDoubleSeparator(1.0.ToString());
+            coefficients = new double[] { 1,1,1,1 };
+        }
         private void CurieStart_Click(object sender, EventArgs e)
         {
             Interval.Text = StyleFormatter.ChangeDoubleSeparator(Interval.Text);
-            if (CurieValidate())
-            {
-                List<ModeCommands> modes = GetModes();
-                MeasurementProcess(false);
-                ResetProgressBar();
-                _workMachine = new CurieMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, modes.ToArray(), Int32.Parse(Amount.Text), Double.Parse(Interval.Text), 
-                    new double[] {
-                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieA.Text)),
-                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieB.Text)),
-                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieC.Text)),
-                        double.Parse(StyleFormatter.ChangeDoubleSeparator(CurieD.Text)),
-                    });
-                MeasuresTimer.Start();
-            }
+            if (CurieValidate() == false)
+                return;
+            double[] coefficients;
+            if (CheckCoefficients(out coefficients) == false) 
+                return;
+            List<ModeCommands> modes = GetModes();
+            MeasurementProcess(false);
+            ResetProgressBar();
+            workMachine = new CurieMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, 
+                modes.ToArray(), Int32.Parse(Amount.Text), Double.Parse(Interval.Text), coefficients);    
+            MeasuresTimer.Start();
+
         }
         private bool CurieValidate()
         {
             Int32.TryParse(Amount.Text, out int amount);
-            if (amount < 1|| amount > 1000)
+            if (amount < 1 || amount > 1000)
             {
                 MessageBox.Show("Amount of measurements have to be in the range from 1 to 1000");
                 return false;
@@ -302,24 +351,24 @@ namespace E7_20_v2._0
         private void Stop_Click(object sender, EventArgs e)
         {
             MeasuresTimer.Stop();
-            if (_workMachine != null)
-                _workMachine.IsWorking = false;
+            if (workMachine != null)
+                workMachine.IsWorking = false;
             MeasurementProcess(true);
         }
         private void MeasuresTimer_Tick(object sender, EventArgs e)
         {
-            if (_workMachine != null)
+            if (workMachine != null)
             {
-                if (_workMachine.IsWorking == false)
+                if (workMachine.IsWorking == false)
                 {
                     Stop_Click(sender, e);
                     return;
                 }
-                if (_workMachine.IsDataChanged)
+                if (workMachine.IsDataChanged)
                 {
-                    _workMachine.IsDataChanged = false;
-                    double time = _workMachine.GetProgress;
-                    if (ProgressBar.Maximum <= time)                    
+                    workMachine.IsDataChanged = false;
+                    double time = workMachine.GetProgress;
+                    if (ProgressBar.Maximum <= time)
                         ProgressBar.Maximum = (int)time;
                     else
                         ProgressBar.Value = ProgressBar.Maximum - (int)time;

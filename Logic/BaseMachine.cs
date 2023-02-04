@@ -5,30 +5,43 @@ using System.Windows.Documents;
 
 namespace E7_20_v2._0
 {
-    internal abstract class BaseMachine
+    internal abstract class BaseMachine : IDisposable
     {
-        public bool IsWorking = false;
-        public bool IsDataChanged = false;
+        public bool IsWorking ;
+        public bool IsDataChanged;
         public double GetProgress => CalculateTime();
 
-        protected readonly ExcelWritter _writter; // Check is there can be .net 4.0 installed and use Lazy<ExcelWritter>
-        protected readonly DataGrasper _dataExchanger;
-        protected ModeCommands[] _modes;
-        protected ModeCommands _lastSwitchMode = ModeCommands.Fi;
+        protected readonly ExcelWritter writter; // Check is there can be .net 4.0 installed and use Lazy<ExcelWritter>
+        protected readonly DataGrasper dataExchanger;
+        protected ModeCommands[] modes;
+        protected ModeCommands lastSwitchMode;
         protected int _f;
         protected DateTime StartTime;
+        private bool isDisposed;
         public BaseMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, string firstColumn = "f")
         {
-            _dataExchanger = new DataGrasper(portName);
-            _modes = modes;
-            _writter = new ExcelWritter(direcroty, fileName);
+            IsWorking = false;
+            IsDataChanged = false;
+            lastSwitchMode = ModeCommands.Fi;
+            dataExchanger = new DataGrasper(portName);
+            this.modes = modes;
+            writter = new ExcelWritter(direcroty, fileName);
+            isDisposed = false;
             FillTheTitle();
         }
         #region Abstract methods
-        protected abstract void StartWork();
         protected abstract void MakeMeasurement();
         #endregion
         #region Virtual methods
+        protected virtual void Work()
+        {
+            StartTime = DateTime.UtcNow;
+            do
+            {
+                MakeMeasurement();
+            } while (IsWorking);
+            Dispose();
+        }
         protected virtual double CalculateTime()
         {
             var processTime = DateTime.UtcNow - StartTime;
@@ -39,25 +52,20 @@ namespace E7_20_v2._0
         {
             List<string> title = new List<string>();
             title.Add("Frequency");
-            foreach (var mode in _modes)
+            foreach (var mode in modes)
             {
                 title.Add(mode.ToString());
             }
-            _writter.FillTheTitle(title.ToArray());
+            writter.FillTheTitle(title.ToArray());
         }
         protected virtual void SetInitialMode(int target = 0) { }
         protected virtual void ChangeMode(byte message) { }
-        protected virtual void Break()
-        {
-            _dataExchanger.Break();
-            _writter.Save();
-        }
         protected virtual void GetData(out double main, out double sub)
         {
             main = 0;
             sub = 0;
             byte[] data;
-            while (_dataExchanger.GetLastData(out data) == false)
+            while (dataExchanger.GetLastData(out data) == false)
                 Thread.Sleep(Constants.DELAY);
             Calculate(data, ref main, ref sub);
         }
@@ -66,7 +74,7 @@ namespace E7_20_v2._0
         protected void Start()
         {
             IsWorking = true;
-            var workerTHread = new Thread(StartWork);
+            var workerTHread = new Thread(Work);
             workerTHread.Start();
         }
         protected void Calculate(byte[] input, ref double main, ref double sub)
@@ -91,16 +99,24 @@ namespace E7_20_v2._0
         protected void WriteLine(object o)
         {
             var data = (double[])o;
-            _writter.AddLine(data);
+            writter.AddLine(data);
         }
         #endregion
-        ~BaseMachine()
+        public void Dispose()
         {
-            try
-            {
-                Break();
-            }
-            catch { }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+            if (disposing)
+            {
+                dataExchanger?.Dispose();
+                writter?.Dispose();
+            }
+            isDisposed = true;
+        }
+        ~BaseMachine() => Dispose(false);
     }
 }
