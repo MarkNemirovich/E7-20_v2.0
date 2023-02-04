@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace E7_20_v2._0
 {
@@ -16,22 +17,28 @@ namespace E7_20_v2._0
         private int SetFileNumber()
         {
             var files = Directory.GetFiles(directory);
+            StringBuilder sb = new StringBuilder();
+            sb.Append(fileName);
+            sb.Append("_");
+            sb.Append(SetDate());
+            string fileNameWithDate = sb.ToString();
             var appropriateFiles = from file in files
-                        where file.Contains($"{fileName}_{SetDate()}")
-                          let startIndex = file.IndexOf('№') + 1
-                          let finishIndex = file.IndexOf(".xlsx")
-                          select file.Substring(startIndex, (finishIndex-startIndex));
-            int[] numbers = new int[Directory.GetFiles(directory).Length];
+                                   where file.Contains($"{fileNameWithDate}")
+                                   let startIndex = file.IndexOf('№') + 1
+                                   let finishIndex = file.IndexOf(".xlsx")
+                                   select file.Substring(startIndex, (finishIndex - startIndex));
             int count = 0;
-            foreach(string file in appropriateFiles)
+            int[] numbers = new int[files.Length];
+            for (int i = 0; i < files.Length; i++)
             {
-                if (Int32.TryParse(file, out numbers[count]))
-                    count++;
+                if (!Int32.TryParse(appropriateFiles.ElementAt(i), out numbers[count]))
+                    break;
+                count++;
             }
             Array.Sort(numbers);
-            int zeros = Array.LastIndexOf(numbers, (int)0);
+            int zeros = Array.LastIndexOf(numbers, 0);
             int numberOfMeasurement = 0;
-            for (int i = zeros; i < count+zeros; i++)
+            for (int i = zeros; i < count + zeros; i++)
             {
                 if (numberOfMeasurement == numbers[i])
                     numberOfMeasurement++;
@@ -46,6 +53,21 @@ namespace E7_20_v2._0
             return StyleFormatter.ChangeDataSeparator(date);
         }
         public string GetShortName => fileName;
-        public string GetFullName => $"{directory}/{fileName}_{SetDate()}_№{SetFileNumber()}.xlsx";
+        public string GetFullName
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(directory);
+                sb.Append(Path.DirectorySeparatorChar);
+                sb.Append(fileName);
+                sb.Append("_"); ;
+                sb.Append(SetDate());
+                sb.Append("_№"); ;
+                sb.Append(SetFileNumber());
+                sb.Append(".xlsx");
+                return sb.ToString();
+            }
+        }
     }
 }

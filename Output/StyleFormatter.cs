@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace E7_20_v2._0
 {
-    internal class StyleFormatter
+    internal static class StyleFormatter
     {
         private static readonly CultureInfo regionStyle = CultureInfo.InstalledUICulture;
         public static string ChangeDoubleSeparator(string input)

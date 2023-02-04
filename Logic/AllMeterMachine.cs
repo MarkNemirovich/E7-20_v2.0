@@ -34,7 +34,7 @@ namespace E7_20_v2._0
         }
         sealed protected override void Work()
         {
-            _f = dataExchanger.GetFrequency();
+            f = dataExchanger.GetFrequency();
             SetInitialMode(startFrequency);
             base.Work();
         }
@@ -42,11 +42,11 @@ namespace E7_20_v2._0
         {
             while (IsWorking)
             {
-                int currentF = _f;
+                int currentF = f;
                 List<double> outputData = new List<double>(2);
                 double main = 0;
                 double sub = 0;
-                outputData.Add(_f);
+                outputData.Add(f);
                 foreach (var mode in modes)
                 {
                     if (IsWorking == false)
@@ -73,31 +73,31 @@ namespace E7_20_v2._0
                 var outputThread = new Thread(WriteLine);
                 outputThread.Start(outputData.ToArray());
                 IsDataChanged = true;
-                if (_f == endFrequency)
+                if (f == endFrequency)
                 {
                     IsWorking = false;
                     break;
                 }
                 dataExchanger.ChangeFrequency((byte)changeDirection);
-                while (_f == currentF)
-                    _f=dataExchanger.GetFrequency();
+                while (f == currentF)
+                    f=dataExchanger.GetFrequency();
             }
         }
         sealed protected override void GetData(out double main, out double sub)
         {
-            _f = dataExchanger.GetFrequency();
+            f = dataExchanger.GetFrequency();
             base.GetData(out main, out sub);
         }
         sealed protected override void SetInitialMode(int target) 
         {
             while (IsWorking)
             {
-                _f = dataExchanger.GetFrequency();
-                if (_f == -1)
+                f = dataExchanger.GetFrequency();
+                if (f == -1)
                     continue;
-                if (_f == target)
+                if (f == target)
                     break;
-                ChangeFrequency(_f, target);
+                ChangeFrequency(f, target);
             } 
         }
         sealed protected override void ChangeMode(byte message) 
@@ -114,7 +114,7 @@ namespace E7_20_v2._0
 
         sealed protected override double CalculateTime()
         {
-            int f = _f;
+            int f = base.f;
             double steps;
             if (changeDirection == Direction.UP || changeDirection == Direction.DOWN)
             {

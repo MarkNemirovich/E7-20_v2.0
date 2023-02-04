@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics.Eventing.Reader;
 using System.IO.Ports;
 using System.Threading;
-using System.Xml.Linq;
 
 namespace E7_20_v2._0
 {
@@ -28,11 +26,14 @@ namespace E7_20_v2._0
                 };
                 if (name != "VirtualCOM")
                 {
-                    port.DataReceived += new SerialDataReceivedEventHandler(ReceiveData);  // создание делегата на прием
+                    port.DataReceived += ReceiveData;
                 }
                 isWorking = true;
             }
-            catch { throw new Exception("No port with such name!"); }
+            catch 
+            { 
+                throw new Exception("No port with such name!"); 
+            }
         }
         public void Start()
         {
@@ -45,40 +46,52 @@ namespace E7_20_v2._0
                     return;
                 }
             }
-            catch { throw new Exception("Breaking start!"); }
+            catch 
+            { 
+                throw new Exception("Breaking start!"); 
+            }
             try
             {
                 if (port.IsOpen == false)
+                {
                     port.Open();
+                }
             }
-            catch { throw new Exception("Breaking open!"); }
+            catch 
+            { 
+                throw new Exception("Breaking open!"); 
+            }
         }
         public void Finish()
         {
             if (port.PortName == "VirtualCOM")
             {
                 if (virtualSender != null)
+                {
                     virtualSender.Abort();
+                }
                 return;
             }
             try
             {
                 if (port.IsOpen == true)
                 {
-                    port.DataReceived -= new SerialDataReceivedEventHandler(ReceiveData);
+                    port.DataReceived -= ReceiveData;
                     port.Close();
                 }
             }
-            catch { throw new Exception("Empty port!"); }
+            catch 
+            { 
+                throw new Exception("Empty port!"); 
+            }
         }
         public void SendData(byte message)
         {
-            byte[] pack = new byte[1] { message };
             if (port.PortName == "VirtualCOM")
             {
                 return;
             }
-            port.Write(pack, 0, 1);
+            port.Write(new byte[] { message }, 0, 1);
         }
         private void ReceiveData(byte[] sender)
         {
@@ -86,12 +99,14 @@ namespace E7_20_v2._0
         }
         private void ReceiveData(object sender, SerialDataReceivedEventArgs e)
         {
-            byte[] bytes = new byte[Constants.SIZE];
             if (port.BytesToRead >= Constants.SIZE)
             {
+                byte[] bytes = new byte[Constants.SIZE];
                 port.Read(bytes, 0, Constants.SIZE);
                 if (bytes[0] == 170 & bytes[1] == 0 & bytes[2] == 0)
+                {
                     ProvidePack?.Invoke(bytes);
+                }
                 port.DiscardInBuffer();
             }
         }

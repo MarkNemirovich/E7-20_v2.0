@@ -1,31 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
-using System.Windows.Documents;
 
 namespace E7_20_v2._0
 {
     internal abstract class BaseMachine : IDisposable
     {
-        public bool IsWorking ;
+        public bool IsWorking;
         public bool IsDataChanged;
         public double GetProgress => CalculateTime();
 
-        protected readonly ExcelWritter writter; // Check is there can be .net 4.0 installed and use Lazy<ExcelWritter>
+        protected readonly ExcelWriter writer; // Check is there can be .net 4.0 installed and use Lazy<ExcelWriter>
         protected readonly DataGrasper dataExchanger;
         protected ModeCommands[] modes;
         protected ModeCommands lastSwitchMode;
-        protected int _f;
-        protected DateTime StartTime;
+        protected int f;
+        protected Stopwatch stopWatch;
         private bool isDisposed;
-        public BaseMachine(string portName, string direcroty, string fileName, ModeCommands[] modes, string firstColumn = "f")
+        //private readonly ManualResetEvent dataEvent = new ManualResetEvent(false);
+        public BaseMachine(string portName, string direcroty, string fileName, ModeCommands[] modes)
         {
             IsWorking = false;
             IsDataChanged = false;
             lastSwitchMode = ModeCommands.Fi;
             dataExchanger = new DataGrasper(portName);
             this.modes = modes;
-            writter = new ExcelWritter(direcroty, fileName);
+            writer = new ExcelWriter(direcroty, fileName);
+            stopWatch = new Stopwatch();
             isDisposed = false;
             FillTheTitle();
         }
@@ -35,7 +38,7 @@ namespace E7_20_v2._0
         #region Virtual methods
         protected virtual void Work()
         {
-            StartTime = DateTime.UtcNow;
+            stopWatch.Start();
             do
             {
                 MakeMeasurement();
@@ -44,19 +47,17 @@ namespace E7_20_v2._0
         }
         protected virtual double CalculateTime()
         {
-            var processTime = DateTime.UtcNow - StartTime;
-            StartTime = DateTime.UtcNow;
-            return processTime.TotalMilliseconds/1000;
+            stopWatch.Stop();
+            TimeSpan processTime = stopWatch.Elapsed;
+            stopWatch.Start();
+            return processTime.TotalMilliseconds/Constants.SECOND;
         }
         protected virtual void FillTheTitle()
         {
-            List<string> title = new List<string>();
+            List<string> title = new List<string>() { "f" };
+            title.AddRange(modes.Select(mode => mode.ToString()));
             title.Add("Frequency");
-            foreach (var mode in modes)
-            {
-                title.Add(mode.ToString());
-            }
-            writter.FillTheTitle(title.ToArray());
+            writer.FillTheTitle(title.ToArray());
         }
         protected virtual void SetInitialMode(int target = 0) { }
         protected virtual void ChangeMode(byte message) { }
@@ -67,6 +68,18 @@ namespace E7_20_v2._0
             byte[] data;
             while (dataExchanger.GetLastData(out data) == false)
                 Thread.Sleep(Constants.DELAY);
+
+            //byte[] data = new byte[Constants.SIZE];
+            //dataEvent.Reset();
+            //ThreadPool.QueueUserWorkItem(state =>
+            //{
+            //    while (dataExchanger.GetLastData(out data) == false)
+            //    {
+            //        Thread.Sleep(Constants.DELAY);
+            //    }
+            //    dataEvent.Set();
+            //});
+            //dataEvent.WaitOne();
             Calculate(data, ref main, ref sub);
         }
         #endregion
@@ -74,8 +87,7 @@ namespace E7_20_v2._0
         protected void Start()
         {
             IsWorking = true;
-            var workerTHread = new Thread(Work);
-            workerTHread.Start();
+            new Thread(Work).Start();
         }
         protected void Calculate(byte[] input, ref double main, ref double sub)
         {
@@ -99,7 +111,7 @@ namespace E7_20_v2._0
         protected void WriteLine(object o)
         {
             var data = (double[])o;
-            writter.AddLine(data);
+            writer.AddLine(data);
         }
         #endregion
         public void Dispose()
@@ -113,7 +125,7 @@ namespace E7_20_v2._0
             if (disposing)
             {
                 dataExchanger?.Dispose();
-                writter?.Dispose();
+                writer?.Dispose();
             }
             isDisposed = true;
         }

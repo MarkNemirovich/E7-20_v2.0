@@ -4,7 +4,7 @@ using OfficeOpenXml;
 
 namespace E7_20_v2._0
 {
-    internal class ExcelWritter : IDisposable
+    internal class ExcelWriter : IDisposable
     {
         private readonly FileDirectory fileDirectory;
         private readonly ExcelPackage exelFile;
@@ -12,24 +12,22 @@ namespace E7_20_v2._0
         private bool isDisposed;
         private int lineNumber;
         private int lineWidth;
-        private bool isSaved;
-        public ExcelWritter(string directory, string fileName)
+        public ExcelWriter(string directory, string fileName)
         {
             fileDirectory = new FileDirectory(directory, fileName);
             exelFile = new ExcelPackage();
             exelSheet = exelFile.Workbook.Worksheets.Add($"{fileDirectory.GetShortName}");
-
+            lineNumber = 1;
         }
         public void FillTheTitle(string[] data)
         {
-            lineNumber = 1;
             int column = 1;
             foreach (string cell in data)
             {
                 exelSheet.Cells[lineNumber, column].Value = cell;
                 column++;
             }
-            lineWidth = column - 1; // cause start from 1
+            lineWidth = column - 1; // cause start from 1 in Excel
             lineNumber++;
         }
         public void AddLine(double[] data)
@@ -51,7 +49,6 @@ namespace E7_20_v2._0
                 {
                     exelFile.SaveAs(stream);
                     exelFile.Dispose();
-                    isSaved = true;
                 }
             }
         }
@@ -69,6 +66,6 @@ namespace E7_20_v2._0
             }
             isDisposed = true;
         }
-        ~ExcelWritter() => Dispose(false);
+        ~ExcelWriter() => Dispose(false);
     }
 }
