@@ -11,23 +11,12 @@ namespace E7_20_v2._0
         private readonly Direction changeDirection;
         private readonly int endFrequency;
         private readonly int startFrequency;
-        public AllMeterMachine(string portName, string direcroty, string fileName, int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) :
+        public AllMeterMachine(string portName, string direcroty, string fileName, 
+            int startFrequency, int endFrequency, SpeedMode speed, ModeCommands[] modes) :
             base(portName, direcroty, fileName, modes)
         {
-            if (speed == SpeedMode.Fast)
-            {
-                if (startFrequency > endFrequency)
-                    changeDirection = Direction.LEFT;
-                else
-                    changeDirection = Direction.RIGHT;
-            }
-            else
-            {
-                if (startFrequency > endFrequency)
-                    changeDirection = Direction.DOWN;
-                else
-                    changeDirection = Direction.UP;
-            }
+            changeDirection = startFrequency < endFrequency ? (speed == SpeedMode.Fast ? Direction.RIGHT : Direction.UP) :
+                                                              (speed == SpeedMode.Fast ? Direction.LEFT : Direction.DOWN);
             this.startFrequency = startFrequency;
             this.endFrequency = endFrequency;
             Start();
@@ -42,110 +31,90 @@ namespace E7_20_v2._0
         {
             while (IsWorking)
             {
+                f = dataExchanger.GetFrequency();
                 int currentF = f;
-                List<double> outputData = new List<double>(2);
+                double[] outputData = new double[2+modes.Length];
                 double main = 0;
                 double sub = 0;
-                outputData.Add(f);
-                foreach (var mode in modes)
+                outputData[0] = f;
+                for (int i = 0; i < modes.Length; i++)
                 {
                     if (IsWorking == false)
                         break;
-                    switch (mode)
+                    switch (modes[i])
                     {
                         case ModeCommands.C:
                         case ModeCommands.L:
                         case ModeCommands.R:
                         case ModeCommands.Z:
-                            if (lastSwitchMode != mode)
-                                ChangeMode((byte)mode);
-                            lastSwitchMode = mode;
+                            if (lastSwitchMode != modes[i])
+                                ChangeMode((byte)modes[i]);
+                            lastSwitchMode = modes[i];
                             GetData(out main, out sub);
-                            outputData.Add(main);
+                            outputData[i+1] = main;
                             break;
                         default:
-                            outputData.Add(sub);
+                            outputData[i + 1] = sub;
                             break;
                     }
                 }
-                if (IsWorking == false)
-                    break;
-                var outputThread = new Thread(WriteLine);
-                outputThread.Start(outputData.ToArray());
-                IsDataChanged = true;
+                new Thread(WriteLine).Start(outputData.ToArray());
+                CalculateTime();
                 if (f == endFrequency)
                 {
                     IsWorking = false;
-                    break;
                 }
+                if (!IsWorking) break;
                 dataExchanger.ChangeFrequency((byte)changeDirection);
                 while (f == currentF)
-                    f=dataExchanger.GetFrequency();
+                {
+                    f = dataExchanger.GetFrequency();
+                }
             }
-        }
-        sealed protected override void GetData(out double main, out double sub)
-        {
-            f = dataExchanger.GetFrequency();
-            base.GetData(out main, out sub);
         }
         sealed protected override void SetInitialMode(int target) 
         {
             while (IsWorking)
             {
                 f = dataExchanger.GetFrequency();
-                if (f == -1)
-                    continue;
-                if (f == target)
-                    break;
+                if (f == -1) continue;
+                if (f == target) break;
                 ChangeFrequency(f, target);
             } 
         }
-        sealed protected override void ChangeMode(byte message) 
-        {
-            dataExchanger.ChangeMode(message);
-        }
         private void ChangeFrequency(int currentFrequency, int targetFrequency)
         {
-            var changeDirection = Direction.RIGHT;
-            if (currentFrequency > targetFrequency)
-                changeDirection = Direction.LEFT;
-            dataExchanger.ChangeFrequency((byte)changeDirection);
+            dataExchanger.ChangeFrequency(currentFrequency < targetFrequency ? (byte)Direction.RIGHT : (byte)Direction.LEFT);
         }
-
-        sealed protected override double CalculateTime()
+        sealed protected override void CalculateTime(double d = 1)
         {
             int f = base.f;
-            double steps;
+            int iStartF = 0, iEndF = 0;
+            double steps; 
             if (changeDirection == Direction.UP || changeDirection == Direction.DOWN)
             {
-                if (f >= 1000)
+                steps = Math.Abs(endFrequency - f) / Constants.THOUSAND;
+                if (f < Constants.THOUSAND && endFrequency >= Constants.THOUSAND || f >= Constants.THOUSAND && endFrequency < Constants.THOUSAND)
                 {
-                    if (endFrequency > 1000)
-                        steps = Math.Abs((endFrequency - f)) / 1000;
-                    else
-                        steps = (f / 1000 - 1 + 1000 - endFrequency);
-                }
-                else
-                {
-                    if (endFrequency >= 1000)
-                        steps = (endFrequency / 1000 - 1 + 1000 - f);
-                    else
-                        steps = Math.Abs((endFrequency - f));
+                    steps += Constants.THOUSAND - Math.Min(f, endFrequency) % Constants.THOUSAND;
                 }
             }
             else
             {
-                int iStartF = 0, iEndF = 0;
                 for (int i = 0; i < Constants.MAIN_FREQUENCES.Length; i++)
                 {
                     if (Constants.MAIN_FREQUENCES[i] == f)
+                    {
                         iStartF = i;
+                    }
                     if (Constants.MAIN_FREQUENCES[i] == endFrequency)
+                    {
                         iEndF = i;
+                    }
                 }
                 steps = Math.Abs(iStartF - iEndF);
             }
-            return base.CalculateTime() * steps;
+            base.CalculateTime(steps);
         }
     }
 }

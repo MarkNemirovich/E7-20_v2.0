@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
 
 namespace E7_20_v2._0
 {
@@ -16,10 +18,10 @@ namespace E7_20_v2._0
             CurieMenu
         }
         private string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-        private int currentWidth = 800;
-        private int currentHeight = 500;
         private BaseMachine workMachine = null;
         private MenuMode currentPage = MenuMode.StartMenu;
+        private double estimatedTime = 0;
+        private double lastTime = 0;
         public App()
         {
             InitializeComponent();
@@ -29,26 +31,23 @@ namespace E7_20_v2._0
             DirectoryPath.Text = folderPath;
             ChangeMenuInterface(MenuMode.StartMenu);
             ReadCoefficients();
+            FillThePorts(sender, e);
         }
         private void FillThePorts(object sender, EventArgs e)
         {
             PortsList.Items.Clear();
             string[] ports = IOProvider.GetPorts;
-            for (int i = 0; i < ports.Length; i++)
+            foreach (string port in ports)
             {
-                if (Regex.IsMatch(ports[i], @"COM\d?$"))
-                    PortsList.Items.Add(ports[i]);
+                if (Regex.IsMatch(port, @"COM\d+$"))
+                {
+                    PortsList.Items.Add(port);
+                }
             }
             if (PortsList.Items.Count == 0)
+            {
                 PortsList.Items.Add("VirtualCOM");
-        }
-        public void App_Resize(object sender, EventArgs e)
-        {
-            int width = App.ActiveForm.Size.Width;
-            int height = App.ActiveForm.Size.Height;
-            App.ActiveForm.Scale(new SizeF(width / currentWidth, height / currentHeight));
-            currentWidth = width;
-            currentHeight = height;
+            }
         }
         private void ChangeMenuInterface(MenuMode mode)
         {
@@ -90,16 +89,16 @@ namespace E7_20_v2._0
         #region GeneralPanel
         private void AutoName_CheckedChanged(object sender, EventArgs e)
         {
-            if (AutoName.Checked)
-                FileName.Text = "Experiment";
+            FileName.Text = AutoName.Checked ? "Experiment" : "";
             FileName.Enabled = !AutoName.Checked;
         }
         public void DirectoryButton_Click(object sender, EventArgs e)
         {
-            if (FolderBrowserDialog.ShowDialog() == DialogResult.Cancel)
-                return;
-            folderPath = FolderBrowserDialog.SelectedPath;
-            DirectoryPath.Text = folderPath;
+            if (FolderBrowserDialog.ShowDialog() != DialogResult.Cancel)
+            {
+                folderPath = FolderBrowserDialog.SelectedPath;
+                DirectoryPath.Text = folderPath;
+            }
         }
         public void AllMeterButton_Click(object sender, EventArgs e)
         {
@@ -134,41 +133,29 @@ namespace E7_20_v2._0
             AllMeterSettings.Enabled = state;
             CurieSettings.Enabled = state;
             SettingsModes.Enabled = state;
-            if (currentPage == MenuMode.AllMeterMenu)
-            {
-                AllMeterFast.Enabled = state;
-                AllMeterSlow.Enabled = state;
-            }
-            else
-                CurieStart.Enabled = state;
+            AllMeterFast.Enabled = state && currentPage == MenuMode.AllMeterMenu;
+            AllMeterSlow.Enabled = state && currentPage == MenuMode.AllMeterMenu;
+            CurieStart.Enabled = state && currentPage == MenuMode.CurieMenu;
             ReturnButton.Enabled = state;
             AllMeterStop.Enabled = !state;
             ProgressPanel.Visible = !state;
         }
-        private List<ModeCommands> GetModes()
+        private ModeCommands[] GetModes()
         {
             List<ModeCommands> modes = new List<ModeCommands>();
-            if (ParameterC.Checked)
-                modes.Add(ModeCommands.C);
-            if (ParameterD.Checked)
-                modes.Add(ModeCommands.D);
-            if (ParameterL.Checked)
-                modes.Add(ModeCommands.L);
-            if (ParameterQl.Checked)
-                modes.Add(ModeCommands.Ql);
-            if (ParameterR.Checked)
-                modes.Add(ModeCommands.R);
-            if (ParameterQr.Checked)
-                modes.Add(ModeCommands.Qr);
-            if (ParameterZ.Checked)
-                modes.Add(ModeCommands.Z);
-            if (ParameterFi.Checked)
-                modes.Add(ModeCommands.Fi);
-            return modes;
+            if (ParameterC.Checked) modes.Add(ModeCommands.C);
+            if (ParameterD.Checked) modes.Add(ModeCommands.D);
+            if (ParameterL.Checked) modes.Add(ModeCommands.L);
+            if (ParameterQl.Checked) modes.Add(ModeCommands.Ql);
+            if (ParameterR.Checked) modes.Add(ModeCommands.R);
+            if (ParameterQr.Checked) modes.Add(ModeCommands.Qr);
+            if (ParameterZ.Checked) modes.Add(ModeCommands.Z);
+            if (ParameterFi.Checked) modes.Add(ModeCommands.Fi);
+            return modes.ToArray();
         }
-        private void ResetProgressBar()
+        private void ResetProgressBar(int maxValue)
         {
-            ProgressBar.Maximum = 0;
+            ProgressBar.Maximum = maxValue;
             ProgressBar.Step = 1;
             ProgressBar.Value = 0;
             EstimatedTime.Text = "preparing for start...";
@@ -187,40 +174,41 @@ namespace E7_20_v2._0
             }
             AllMeterStartFDropBox.SelectedIndex = 0;
             AllMeterEndFDropBox.SelectedIndex = 1;
-            StartEnabling();
+            UpdateStartEnabling();
+        }
+
+        private void UpdateCheckBox(CheckBox targetCheckbox, CheckBox linkedCheckbox)
+        {
+            linkedCheckbox.Enabled = targetCheckbox.Checked;
+            linkedCheckbox.Checked = targetCheckbox.Checked;
+            UpdateStartEnabling();
         }
         public void AllMeterC_CheckedChanged(object sender, EventArgs e)
         {
-            ParameterD.Enabled = ParameterC.Checked;
-            ParameterD.Checked = ParameterC.Checked;
-            StartEnabling();
+            UpdateCheckBox(ParameterC, ParameterD);
         }
 
         public void AllMeterL_CheckedChanged(object sender, EventArgs e)
         {
-            ParameterQl.Enabled = ParameterL.Checked;
-            ParameterQl.Checked = ParameterL.Checked;
-            StartEnabling();
+            UpdateCheckBox(ParameterL, ParameterQl);
         }
 
-        public void AllMeterR_CheckedChanged(object sender, EventArgs e)
+        private void AllMeterR_CheckedChanged(object sender, EventArgs e)
         {
-            ParameterQr.Enabled = ParameterR.Checked;
-            ParameterQr.Checked = ParameterR.Checked;
-            StartEnabling();
+            UpdateCheckBox(ParameterR, ParameterQr);
         }
 
-        public void AllMeterZ_CheckedChanged(object sender, EventArgs e)
+        private void AllMeterZ_CheckedChanged(object sender, EventArgs e)
         {
-            ParameterFi.Enabled = ParameterZ.Checked;
-            ParameterFi.Checked = ParameterZ.Checked;
-            StartEnabling();
+            UpdateCheckBox(ParameterZ, ParameterFi);
         }
-        private void StartEnabling()
+
+        private void UpdateStartEnabling()
         {
-            AllMeterFast.Enabled = ParameterC.Checked | ParameterL.Checked | ParameterR.Checked | ParameterZ.Checked;
-            AllMeterSlow.Enabled = ParameterC.Checked | ParameterL.Checked | ParameterR.Checked | ParameterZ.Checked;
-            CurieStart.Enabled = ParameterC.Checked | ParameterL.Checked | ParameterR.Checked | ParameterZ.Checked;
+            bool anyChecked = ParameterC.Checked | ParameterL.Checked | ParameterR.Checked | ParameterZ.Checked;
+            AllMeterFast.Enabled = anyChecked;
+            AllMeterSlow.Enabled = anyChecked;
+            CurieStart.Enabled = anyChecked;
         }
         public void AllMeterFast_Click(object sender, EventArgs e)
         {
@@ -250,48 +238,55 @@ namespace E7_20_v2._0
                 MessageBox.Show("Choose the frequency from the list. Do not write it by yourself.");
                 return;
             }
-            List<ModeCommands> modes = GetModes();
+            ModeCommands[] modes = GetModes();
             MeasurementProcess(false);
-            ResetProgressBar();
-            workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes.ToArray());
-            MeasuresTimer.Start();
+            ResetProgressBar(EvaluateProgress(speed));
+            workMachine = new AllMeterMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, startF, endF, speed, modes);
+            workMachine.TimeUpdated += UpdateTimeBar;
+            BarUpdateTimer.Start();
         }
-        #endregion
-        #region TemperatureMeterPanel
-        private void ReadCoefficients()
+        private int EvaluateProgress(SpeedMode mode)
         {
-            string coefficientsFile = string.Concat(Directory.GetCurrentDirectory(), "coefficients.txt");
-            if (File.Exists(coefficientsFile))
+            if (mode == SpeedMode.Fast)
             {
-                using (StreamReader reader = new StreamReader(coefficientsFile))
-                {
-                    try
-                    {
-                        CurieA.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
-                        CurieB.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
-                        CurieC.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
-                        CurieD.Text = StyleFormatter.ChangeDoubleSeparator(reader.ReadLine());
-                    }
-                    catch (ArgumentException ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }
+                return Math.Abs(AllMeterStartFDropBox.SelectedIndex - AllMeterEndFDropBox.SelectedIndex);
             }
             else
             {
-                SetInitialCoefficients(out double[] coefficients);
+                var startF = Constants.MAIN_FREQUENCES[AllMeterStartFDropBox.SelectedIndex];
+                var endF = Constants.MAIN_FREQUENCES[AllMeterEndFDropBox.SelectedIndex];
+                var steps = Math.Abs(endF - startF) / Constants.THOUSAND;
+                if (startF < Constants.THOUSAND && endF >= Constants.THOUSAND || startF >= Constants.THOUSAND && endF < Constants.THOUSAND)
+                {
+                    steps += Constants.THOUSAND - Math.Min(startF, endF) % Constants.THOUSAND;
+                }
+                return steps;
+            }
+        }
+        #endregion
+        #region TemperatureMeterPanel
+        private double[] ReadCoefficients()
+        {
+            string coefficientsFile = string.Concat(Directory.GetCurrentDirectory(), "coefficients.txt");
+            double[] coefficients;
+            if (File.Exists(coefficientsFile))
+            {
+                coefficients = File.ReadAllLines(coefficientsFile)
+                        .Select(x => double.TryParse(StyleFormatter.ChangeDoubleSeparator(x), out double value)
+                                ? value : throw new ArgumentException("Invalid double value in coefficients.txt"))
+                        .ToArray();
+            }
+            else
+            {
+                SetInitialCoefficients(out coefficients);
                 SaveCoefficients(coefficients);
             }
+            return coefficients;
         }
         private void SaveCoefficients(double[] coefficients)
         {
-            string coefficientsFile = string.Concat(Directory.GetCurrentDirectory(), "coefficients.txt");
-            using (StreamWriter writter = new StreamWriter(coefficientsFile))
-            {
-                foreach (var coefficient in coefficients)
-                    writter.WriteLine(coefficient);
-            }
+            string coefficientsFile = Path.Combine(Directory.GetCurrentDirectory(), "coefficients.txt");
+            File.WriteAllLines(coefficientsFile, coefficients.Select(x => x.ToString()).ToArray());
         }
         private bool CheckCoefficients(out double[] coefficients)
         {
@@ -302,7 +297,9 @@ namespace E7_20_v2._0
             isCorrect &= double.TryParse(StyleFormatter.ChangeDoubleSeparator(CurieD.Text), out double d);
             coefficients = new double[] { a, b, c, d };
             if (isCorrect)
+            {
                 SaveCoefficients(coefficients);
+            }
             return isCorrect;
         }
         private void SetInitialCoefficients(out double[] coefficients)
@@ -316,30 +313,28 @@ namespace E7_20_v2._0
         private void CurieStart_Click(object sender, EventArgs e)
         {
             Interval.Text = StyleFormatter.ChangeDoubleSeparator(Interval.Text);
-            if (CurieValidate() == false)
-                return;
-            double[] coefficients;
-            if (CheckCoefficients(out coefficients) == false) 
-                return;
-            List<ModeCommands> modes = GetModes();
+            if (!CurieValidate()) return;
+            double[] coefficients = ReadCoefficients();
+            if (!CheckCoefficients(out coefficients)) return;
+            ModeCommands[] modes = GetModes();
             MeasurementProcess(false);
-            ResetProgressBar();
+            ResetProgressBar(Int32.Parse(Amount.Text));
             workMachine = new CurieMachine(PortsList.Text, DirectoryPath.Text, FileName.Text, 
-                modes.ToArray(), Int32.Parse(Amount.Text), Double.Parse(Interval.Text), coefficients);    
-            MeasuresTimer.Start();
-
+                modes, Int32.Parse(Amount.Text), Double.Parse(Interval.Text), coefficients);
+            workMachine.TimeUpdated += UpdateTimeBar;
+            BarUpdateTimer.Start();
         }
         private bool CurieValidate()
         {
             Int32.TryParse(Amount.Text, out int amount);
-            if (amount < 1 || amount > 1000)
+            if (amount < 1 || amount > Constants.THOUSAND)
             {
                 MessageBox.Show("Amount of measurements have to be in the range from 1 to 1000");
                 return false;
             }
             Double.TryParse(Interval.Text, out double interval);
             Math.Round(interval, 2);
-            if (interval < 1 || interval > 1000)
+            if (interval < 1 || interval > Constants.THOUSAND)
             {
                 MessageBox.Show("Interval between measurements have to be in the range from 1 to 1000.0 seconds with precision to 0.1 second");
                 return false;
@@ -350,34 +345,33 @@ namespace E7_20_v2._0
         #region MeasurementControllers
         private void Stop_Click(object sender, EventArgs e)
         {
-            MeasuresTimer.Stop();
-            if (workMachine != null)
-                workMachine.IsWorking = false;
+            EndExperiment();
+        }
+        private void EndExperiment()
+        {
+            BarUpdateTimer.Stop();
+            workMachine.TimeUpdated -= UpdateTimeBar;
+            workMachine?.Stop();
             MeasurementProcess(true);
         }
-        private void MeasuresTimer_Tick(object sender, EventArgs e)
+        private void BarUpdateTimer_Tick(object sender, EventArgs e)
         {
-            if (workMachine != null)
+            if (estimatedTime != lastTime)
             {
-                if (workMachine.IsWorking == false)
-                {
-                    Stop_Click(sender, e);
-                    return;
-                }
-                if (workMachine.IsDataChanged)
-                {
-                    workMachine.IsDataChanged = false;
-                    double time = workMachine.GetProgress;
-                    if (ProgressBar.Maximum <= time)
-                        ProgressBar.Maximum = (int)time;
-                    else
-                        ProgressBar.Value = ProgressBar.Maximum - (int)time;
-                    if (time > 60)
-                        EstimatedTime.Text = Math.Round(time / 60, 2).ToString() + " min";
-                    else
-                        EstimatedTime.Text = Math.Round(time, 2).ToString() + " sec";
-                }
+                ProgressBar.Value += ProgressBar.Step;
+                EstimatedTime.Text = estimatedTime > 60
+                    ? $"{Math.Round(estimatedTime / 60, 2)} min"
+                    : $"{Math.Round(estimatedTime, 2)} sec";
+                lastTime = estimatedTime;
             }
+            if (estimatedTime == -1 || ProgressBar.Value >= ProgressBar.Maximum)
+            {
+                EndExperiment();
+            }
+        }
+        private void UpdateTimeBar(double time)
+        {
+            estimatedTime = time;
         }
         #endregion
     }

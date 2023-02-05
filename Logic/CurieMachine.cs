@@ -18,7 +18,7 @@ namespace E7_20_v2._0
         {
             measuresDone = 0;
             measuresAmount = amount;
-            this.delay = (int)(Constants.SECOND * delay);
+            this.delay = (int)(Constants.THOUSAND * delay);
             coefficients = coefficient;
             Start();
         }
@@ -44,7 +44,7 @@ namespace E7_20_v2._0
             double main = 0;
             double sub = 0;
             double temperature = 0;
-            outputData[0] = measuresDone * delay / Constants.SECOND;
+            outputData[0] = measuresDone * delay / Constants.THOUSAND;
             for (int i = 0; i < modes.Length; i++)
             {
                 if (IsWorking == false)
@@ -67,7 +67,7 @@ namespace E7_20_v2._0
             }
             outputData[modes.Length+1] = temperature;
             new Thread(WriteLine).Start(outputData);
-            IsDataChanged = true;
+            CalculateTime();
             measuresDone++;
             if (measuresDone >= measuresAmount)
             {
@@ -79,10 +79,9 @@ namespace E7_20_v2._0
                 Thread.Sleep(delay - spread);
             }
         }
-        sealed protected override void ChangeMode(byte message)=>dataExchanger.ChangeMode(message);
-        sealed protected override double CalculateTime()
+        sealed protected override void CalculateTime(double scale = 1)
         {
-            return base.CalculateTime() * (measuresAmount-measuresDone);
+            base.CalculateTime((measuresAmount - measuresDone));
         }
         private double CalculateTemperature(double x)
         {

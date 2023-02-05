@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
+using static E7_20_v2._0.BaseMachine;
 
 namespace E7_20_v2._0
 {
     internal abstract class BaseMachine : IDisposable
     {
         public bool IsWorking;
-        public bool IsDataChanged;
-        public double GetProgress => CalculateTime();
+        public void Stop() => IsWorking = false;
+        public event Action<double> TimeUpdated;
 
         protected readonly ExcelWriter writer; // Check is there can be .net 4.0 installed and use Lazy<ExcelWriter>
         protected readonly DataGrasper dataExchanger;
@@ -23,7 +25,6 @@ namespace E7_20_v2._0
         public BaseMachine(string portName, string direcroty, string fileName, ModeCommands[] modes)
         {
             IsWorking = false;
-            IsDataChanged = false;
             lastSwitchMode = ModeCommands.Fi;
             dataExchanger = new DataGrasper(portName);
             this.modes = modes;
@@ -45,12 +46,12 @@ namespace E7_20_v2._0
             } while (IsWorking);
             Dispose();
         }
-        protected virtual double CalculateTime()
+        protected virtual void CalculateTime(double multiplyer = 1)
         {
             stopWatch.Stop();
             TimeSpan processTime = stopWatch.Elapsed;
             stopWatch.Start();
-            return processTime.TotalMilliseconds/Constants.SECOND;
+            TimeUpdated?.Invoke(processTime.TotalMilliseconds / Constants.THOUSAND * multiplyer);
         }
         protected virtual void FillTheTitle()
         {
@@ -60,7 +61,6 @@ namespace E7_20_v2._0
             writer.FillTheTitle(title.ToArray());
         }
         protected virtual void SetInitialMode(int target = 0) { }
-        protected virtual void ChangeMode(byte message) { }
         protected virtual void GetData(out double main, out double sub)
         {
             main = 0;
@@ -89,6 +89,7 @@ namespace E7_20_v2._0
             IsWorking = true;
             new Thread(Work).Start();
         }
+        protected void ChangeMode(byte message) => dataExchanger.ChangeMode(message);
         protected void Calculate(byte[] input, ref double main, ref double sub)
         {
             main = CountData(input, 16);
@@ -116,6 +117,7 @@ namespace E7_20_v2._0
         #endregion
         public void Dispose()
         {
+            TimeUpdated?.Invoke(-1);
             Dispose(true);
             GC.SuppressFinalize(this);
         }

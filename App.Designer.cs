@@ -67,13 +67,13 @@ namespace E7_20_v2._0
             this.ParameterD = new System.Windows.Forms.CheckBox();
             this.ParameterQl = new System.Windows.Forms.CheckBox();
             this.ParameterQr = new System.Windows.Forms.CheckBox();
+            this.ParameterFi = new System.Windows.Forms.CheckBox();
             this.MainParameters = new System.Windows.Forms.Panel();
             this.ParameterC = new System.Windows.Forms.CheckBox();
             this.ParameterL = new System.Windows.Forms.CheckBox();
             this.ParameterR = new System.Windows.Forms.CheckBox();
             this.ParameterZ = new System.Windows.Forms.CheckBox();
             this.AllMeterModesLabel = new System.Windows.Forms.Label();
-            this.ParameterFi = new System.Windows.Forms.CheckBox();
             this.AllMeterStop = new System.Windows.Forms.Button();
             this.ReturnButton = new System.Windows.Forms.Button();
             this.AllMeterSlow = new System.Windows.Forms.Button();
@@ -82,9 +82,9 @@ namespace E7_20_v2._0
             this.EstimatedTimeLabel = new System.Windows.Forms.Label();
             this.EstimatedTime = new System.Windows.Forms.TextBox();
             this.ProgressBar = new System.Windows.Forms.ProgressBar();
-            this.MeasuresTimer = new System.Windows.Forms.Timer(this.components);
             this.ControlButtonPanel = new System.Windows.Forms.Panel();
             this.CurieStart = new System.Windows.Forms.Button();
+            this.BarUpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.StartPanel.SuspendLayout();
             this.Settings.SuspendLayout();
             this.CurieSettings.SuspendLayout();
@@ -490,7 +490,7 @@ namespace E7_20_v2._0
             this.ParameterD.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ParameterD.Location = new System.Drawing.Point(0, 10);
             this.ParameterD.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterD.Name = "AllMeterD";
+            this.ParameterD.Name = "ParameterD";
             this.ParameterD.Size = new System.Drawing.Size(44, 24);
             this.ParameterD.TabIndex = 12;
             this.ParameterD.Text = "D";
@@ -503,7 +503,7 @@ namespace E7_20_v2._0
             this.ParameterQl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ParameterQl.Location = new System.Drawing.Point(100, 10);
             this.ParameterQl.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterQl.Name = "AllMeterQl";
+            this.ParameterQl.Name = "ParameterQl";
             this.ParameterQl.Size = new System.Drawing.Size(48, 24);
             this.ParameterQl.TabIndex = 13;
             this.ParameterQl.Text = "Ql";
@@ -516,11 +516,24 @@ namespace E7_20_v2._0
             this.ParameterQr.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ParameterQr.Location = new System.Drawing.Point(200, 10);
             this.ParameterQr.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterQr.Name = "AllMeterQr";
+            this.ParameterQr.Name = "ParameterQr";
             this.ParameterQr.Size = new System.Drawing.Size(50, 24);
             this.ParameterQr.TabIndex = 14;
             this.ParameterQr.Text = "Qr";
             this.ParameterQr.UseVisualStyleBackColor = true;
+            // 
+            // ParameterFi
+            // 
+            this.ParameterFi.AutoSize = true;
+            this.ParameterFi.Enabled = false;
+            this.ParameterFi.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ParameterFi.Location = new System.Drawing.Point(300, 10);
+            this.ParameterFi.Margin = new System.Windows.Forms.Padding(4);
+            this.ParameterFi.Name = "ParameterFi";
+            this.ParameterFi.Size = new System.Drawing.Size(45, 24);
+            this.ParameterFi.TabIndex = 15;
+            this.ParameterFi.Text = "Fi";
+            this.ParameterFi.UseVisualStyleBackColor = true;
             // 
             // MainParameters
             // 
@@ -539,7 +552,7 @@ namespace E7_20_v2._0
             this.ParameterC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ParameterC.Location = new System.Drawing.Point(0, 10);
             this.ParameterC.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterC.Name = "AllMeterC";
+            this.ParameterC.Name = "ParameterC";
             this.ParameterC.Size = new System.Drawing.Size(43, 24);
             this.ParameterC.TabIndex = 8;
             this.ParameterC.Text = "C";
@@ -552,7 +565,7 @@ namespace E7_20_v2._0
             this.ParameterL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ParameterL.Location = new System.Drawing.Point(100, 10);
             this.ParameterL.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterL.Name = "AllMeterL";
+            this.ParameterL.Name = "ParameterL";
             this.ParameterL.Size = new System.Drawing.Size(41, 24);
             this.ParameterL.TabIndex = 9;
             this.ParameterL.Text = "L";
@@ -565,7 +578,7 @@ namespace E7_20_v2._0
             this.ParameterR.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ParameterR.Location = new System.Drawing.Point(200, 10);
             this.ParameterR.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterR.Name = "AllMeterR";
+            this.ParameterR.Name = "ParameterR";
             this.ParameterR.Size = new System.Drawing.Size(43, 24);
             this.ParameterR.TabIndex = 10;
             this.ParameterR.Text = "R";
@@ -578,7 +591,7 @@ namespace E7_20_v2._0
             this.ParameterZ.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ParameterZ.Location = new System.Drawing.Point(300, 10);
             this.ParameterZ.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterZ.Name = "AllMeterZ";
+            this.ParameterZ.Name = "ParameterZ";
             this.ParameterZ.Size = new System.Drawing.Size(40, 24);
             this.ParameterZ.TabIndex = 11;
             this.ParameterZ.Text = "Z";
@@ -596,19 +609,6 @@ namespace E7_20_v2._0
             this.AllMeterModesLabel.TabIndex = 16;
             this.AllMeterModesLabel.Text = "Measuring parameters";
             this.AllMeterModesLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // ParameterFi
-            // 
-            this.ParameterFi.AutoSize = true;
-            this.ParameterFi.Enabled = false;
-            this.ParameterFi.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.ParameterFi.Location = new System.Drawing.Point(300, 10);
-            this.ParameterFi.Margin = new System.Windows.Forms.Padding(4);
-            this.ParameterFi.Name = "AllMeterFi";
-            this.ParameterFi.Size = new System.Drawing.Size(45, 24);
-            this.ParameterFi.TabIndex = 15;
-            this.ParameterFi.Text = "Fi";
-            this.ParameterFi.UseVisualStyleBackColor = true;
             // 
             // AllMeterStop
             // 
@@ -708,11 +708,6 @@ namespace E7_20_v2._0
             this.ProgressBar.Size = new System.Drawing.Size(851, 39);
             this.ProgressBar.TabIndex = 0;
             // 
-            // MeasuresTimer
-            // 
-            this.MeasuresTimer.Interval = 1000;
-            this.MeasuresTimer.Tick += new System.EventHandler(this.MeasuresTimer_Tick);
-            // 
             // ControlButtonPanel
             // 
             this.ControlButtonPanel.Controls.Add(this.CurieStart);
@@ -740,6 +735,10 @@ namespace E7_20_v2._0
             this.CurieStart.Text = "Start";
             this.CurieStart.UseVisualStyleBackColor = false;
             this.CurieStart.Click += new System.EventHandler(this.CurieStart_Click);
+            // 
+            // BarUpdateTimer
+            // 
+            this.BarUpdateTimer.Tick += new System.EventHandler(this.BarUpdateTimer_Tick);
             // 
             // App
             // 
@@ -815,7 +814,6 @@ namespace E7_20_v2._0
         private System.Windows.Forms.Button ReturnButton;
         private System.Windows.Forms.Button AllMeterFast;
         private System.Windows.Forms.Button AllMeterSlow;
-        private System.Windows.Forms.Timer MeasuresTimer;
         private System.Windows.Forms.CheckBox AutoName;
         private System.Windows.Forms.Button AllMeterStop;
         private System.Windows.Forms.ProgressBar ProgressBar;
@@ -839,6 +837,7 @@ namespace E7_20_v2._0
         private System.Windows.Forms.Button CurieStart;
         private System.Windows.Forms.Panel SubParameters;
         private System.Windows.Forms.Panel MainParameters;
+        private System.Windows.Forms.Timer BarUpdateTimer;
     }
 }
 
