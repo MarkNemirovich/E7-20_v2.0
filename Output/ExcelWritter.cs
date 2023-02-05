@@ -43,14 +43,21 @@ namespace E7_20_v2._0
         }
         public void Save()
         {
-            using (Stream stream = File.Create(fileDirectory.GetFullName))
+            string filePath = fileDirectory.GetFullName;
+            using (Stream stream = File.Create(filePath))
             {
                 if (exelFile != null)
                 {
-                    exelFile.SaveAs(stream);
-                    exelFile.Dispose();
+                    if (lineNumber > 2)
+                    {
+                        exelFile.SaveAs(stream);
+                        exelFile.Dispose();
+                        stream.Close();
+                        return;
+                    }
                 }
             }
+            File.Delete(filePath);
         }
         public void Dispose()
         {

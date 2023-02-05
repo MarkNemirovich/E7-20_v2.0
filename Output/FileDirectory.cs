@@ -29,11 +29,10 @@ namespace E7_20_v2._0
                                    select file.Substring(startIndex, (finishIndex - startIndex));
             int count = 0;
             int[] numbers = new int[files.Length];
-            for (int i = 0; i < files.Length; i++)
+            foreach (var file in appropriateFiles)
             {
-                if (!Int32.TryParse(appropriateFiles.ElementAt(i), out numbers[count]))
-                    break;
-                count++;
+                if (Int32.TryParse(file, out numbers[count]))
+                    count++;
             }
             Array.Sort(numbers);
             int zeros = Array.LastIndexOf(numbers, 0);
